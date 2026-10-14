@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Packaging &amp; releases</title>
+    <meta name="title" content="Packaging & releases">
+    <meta name="description" content="LingoLLM is built once as a WAR and then shipped in two forms: a Docker image for servers and a desktop app with its own Java runtime and Jetty. This page describes how each is built, what CI does, and how a release is made.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/packaging/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/packaging/">
+    <meta property="og:title" content="Packaging & releases">
+    <meta property="og:description" content="LingoLLM is built once as a WAR and then shipped in two forms: a Docker image for servers and a desktop app with its own Java runtime and Jetty. This page describes how each is built, what CI does, and how a release is made.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/packaging/">
+    <meta name="twitter:title" content="Packaging & releases">
+    <meta name="twitter:description" content="LingoLLM is built once as a WAR and then shipped in two forms: a Docker image for servers and a desktop app with its own Java runtime and Jetty. This page describes how each is built, what CI does, and how a release is made.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/packaging.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="packaging--releases">Packaging &amp; releases</h1>
+<p>LingoLLM is built once as a WAR and then shipped in two forms: a <strong>Docker image</strong> for servers and a <strong>desktop app</strong>
+with its own Java runtime and Jetty. This page describes how each is built, what CI does, and how a release is made.
+For everyday builds see <a href="../building/">Building from source</a>.</p>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    src[&quot;lingollm/ sources&quot;] --&gt; war[&quot;lingollm-1.0.0.war&quot;]
+    war --&gt; docker[&quot;Docker image&lt;br/&gt;Jetty 12 + WAR&quot;]
+    war --&gt; desktop[&quot;Desktop distribution&lt;br/&gt;jlink runtime + Jetty + WAR + launcher&quot;]
+    desktop --&gt; portable[&quot;portable archive&lt;br/&gt;lingollm-&amp;lt;v&amp;gt;-&amp;lt;os&amp;gt;-&amp;lt;arch&amp;gt;&quot;]
+    desktop --&gt; appimage[&quot;native app image&lt;br/&gt;lingollm-&amp;lt;v&amp;gt;-&amp;lt;os&amp;gt;-&amp;lt;arch&amp;gt;-app&quot;]</pre></div>
+<retype-table copy-text="| Artifact | Built by | Where it goes |
+|---|---|---|
+| WAR | `mvn package` | Input of the other two; can be deployed to any Servlet 6.1 container. Attached to GitHub releases for `v*` tags. |
+| Docker image | `Dockerfile`, `docker compose build`, `.github/workflows/server.yml` | `ghcr.io/enerccio/lingollm` (amd64 + arm64) for `master` and `v*` tags; or built from source with compose. |
+| Desktop archives | `mvn package -Pdesktop`, `.github/workflows/desktop.yml` | Attached to GitHub releases for `v*` tags. |
+| Manual | `retype build` | `docs/`, served by GitHub Pages. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Built by</th>
+<th>Where it goes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAR</td>
+<td><code translate="no" v-pre>mvn package</code></td>
+<td>Input of the other two; can be deployed to any Servlet 6.1 container. Attached to GitHub releases for <code translate="no" v-pre>v*</code> tags.</td>
+</tr>
+<tr>
+<td>Docker image</td>
+<td><code translate="no" v-pre>Dockerfile</code>, <code translate="no" v-pre>docker compose build</code>, <code translate="no" v-pre>.github/workflows/server.yml</code></td>
+<td><code translate="no" v-pre>ghcr.io/enerccio/lingollm</code> (amd64 + arm64) for <code translate="no" v-pre>master</code> and <code translate="no" v-pre>v*</code> tags; or built from source with compose.</td>
+</tr>
+<tr>
+<td>Desktop archives</td>
+<td><code translate="no" v-pre>mvn package -Pdesktop</code>, <code translate="no" v-pre>.github/workflows/desktop.yml</code></td>
+<td>Attached to GitHub releases for <code translate="no" v-pre>v*</code> tags.</td>
+</tr>
+<tr>
+<td>Manual</td>
+<td><code translate="no" v-pre>retype build</code></td>
+<td><code translate="no" v-pre>docs/</code>, served by GitHub Pages.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="the-war">The WAR</h2>
+<p><code translate="no" v-pre>mvn package</code> in <code translate="no" v-pre>lingollm/</code> produces <code translate="no" v-pre>target/lingollm-1.0.0.war</code> (see
+<a href="../building/#building-the-application">Building the application</a>). The WAR always runs in Vaadin production mode:
+<code translate="no" v-pre>build-frontend</code> writes the production <code translate="no" v-pre>flow-build-info.json</code> into it, and a development one left in
+<code translate="no" v-pre>src/main/resources</code> is never packaged (see <a href="../building/#development-and-production-mode">Development and production mode</a>).</p>
+<p>One resource differs between a development build and a release build:</p>
+<retype-table copy-text="| File | Development | Release |
+|---|---|---|
+| `log4j.properties` | `src/main/resources/` - `com.github.enerccio` at `DEBUG` | `src/main/resources-release/` - everything at `INFO`, no chat content in the log |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>File</th>
+<th>Development</th>
+<th>Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>log4j.properties</code></td>
+<td><code translate="no" v-pre>src/main/resources/</code> - <code translate="no" v-pre>com.github.enerccio</code> at <code translate="no" v-pre>DEBUG</code></td>
+<td><code translate="no" v-pre>src/main/resources-release/</code> - everything at <code translate="no" v-pre>INFO</code>, no chat content in the log</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The build decides, not the packaging: IDE runs and <code translate="no" v-pre>mvn jetty:run</code> use <code translate="no" v-pre>target/classes</code>, which has the development
+file. The WAR plugin adds <code translate="no" v-pre>src/main/resources-release/</code> to <code translate="no" v-pre>WEB-INF/classes</code> and leaves the development file out, so
+every WAR from <code translate="no" v-pre>mvn package</code> - the Docker image, the <code translate="no" v-pre>desktop</code> profile, a WAR deployed by hand - logs at <code translate="no" v-pre>INFO</code>.</p>
+<p>The build also needs the Git history: <code translate="no" v-pre>git-commit-id-plugin</code> writes the commit id and the closest tag into
+<code translate="no" v-pre>git.properties</code>, and the WAR filters them into its build info. Build from a clone, not from a source archive.</p>
+<h2 id="docker-image">Docker image</h2>
+<p>The <code translate="no" v-pre>Dockerfile</code> in the repository root has two stages:</p>
+<ol>
+<li><strong>builder</strong> (<code translate="no" v-pre>maven:3.9-eclipse-temurin-25</code>)
+<ul>
+<li>
+<p>copies the parent <code translate="no" v-pre>pom.xml</code> and <code translate="no" v-pre>lingollm/pom.xml</code> and runs <code translate="no" v-pre>mvn dependency:go-offline</code>, so the dependency layer is cached while only
+the sources change;</p>
+</li>
+<li>
+<p>copies <code translate="no" v-pre>lingollm/src</code> and <code translate="no" v-pre>.git</code> (for <code translate="no" v-pre>git-commit-id-plugin</code>);</p>
+</li>
+<li>
+<p>runs <code translate="no" v-pre>mvn clean package -DskipTests</code>.</p>
+</li>
+</ul>
+</li>
+<li><strong>runtime</strong> (<code translate="no" v-pre>jetty:12-jdk25-eclipse-temurin</code>)
+<ul>
+<li>
+<p>creates a Jetty base with the modules <code translate="no" v-pre>server, http, ee11-deploy, ee11-websocket-jakarta, ee11-webapp, ee11-jsp</code> (the WebSocket module is required for Vaadin push);</p>
+</li>
+<li>
+<p>deploys the WAR as <code translate="no" v-pre>webapps/ROOT.war</code>, so LingoLLM is at <code translate="no" v-pre>/</code>;</p>
+</li>
+<li>
+<p>creates <code translate="no" v-pre>/var/lingollm/.lingollm</code> for the data, owned by the <code translate="no" v-pre>jetty</code> user;</p>
+</li>
+<li>
+<p>declares a <code translate="no" v-pre>HEALTHCHECK</code> (every 30 s, 120 s start period): the image has no <code translate="no" v-pre>curl</code>, so <code translate="no" v-pre>bash</code> opens a socket to
+<code translate="no" v-pre>127.0.0.1:8080</code>, sends <code translate="no" v-pre>GET /</code> and the container is healthy when the status line is 2xx or 3xx (the login
+redirect counts). Docker only reports the state, it does not restart the container;</p>
+</li>
+<li>
+<p>starts with <code translate="no" v-pre>docker-entrypoint.sh</code> (as <code translate="no" v-pre>lingollm-entrypoint.sh</code>) as root: it creates the data folder if
+needed and, when it isn&#x27;t owned by <code translate="no" v-pre>jetty</code> - a <code translate="no" v-pre>./data</code> bind mount that Docker created on a Linux host is owned
+by root - changes its owner to <code translate="no" v-pre>jetty</code> (recursively, only then). It then runs the Jetty image&#x27;s own
+<code translate="no" v-pre>/docker-entrypoint.sh</code> and Jetty as <code translate="no" v-pre>jetty</code> (<code translate="no" v-pre>setpriv</code>), on port 8080. Started with another user
+(<code translate="no" v-pre>--user</code>, compose <code translate="no" v-pre>user:</code>), it changes nothing and the folder must already be writable for that user.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>Tests are skipped in the image build - they run in CI. <code translate="no" v-pre>.dockerignore</code> keeps <code translate="no" v-pre>lingollm/target/</code>, <code translate="no" v-pre>.idea/</code>, the
+server&#x27;s <code translate="no" v-pre>data/</code> folder and <code translate="no" v-pre>lingollm/node_modules/</code> out of the build context.</p>
+<p><code translate="no" v-pre>docker-compose.yml</code> builds the image and sets the runtime configuration:</p>
+<retype-table copy-text="| Setting | |
+|---|---|
+| `volumes: ./data:/var/lingollm/.lingollm` | The data folder (database, backups, extensions) on the host. |
+| `JAVA_TOOL_OPTIONS=-Duser.home=/var/lingollm ...` | LingoLLM keeps its data in `${user.home}/.lingollm`, so this points it to the volume. Also the heap size and a heap dump on out-of-memory errors. |
+| `ports: 8080:8080` | Jetty's HTTP port. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Setting</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>volumes: ./data:/var/lingollm/.lingollm</code></td>
+<td>The data folder (database, backups, extensions) on the host.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>JAVA_TOOL_OPTIONS=-Duser.home=/var/lingollm ...</code></td>
+<td>LingoLLM keeps its data in <code translate="no" v-pre>${user.home}/.lingollm</code>, so this points it to the volume. Also the heap size and a heap dump on out-of-memory errors.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ports: 8080:8080</code></td>
+<td>Jetty&#x27;s HTTP port.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>server.yml</code> publishes the image to the GitHub Container Registry (see <doc-anchor-trigger to="#continuous-integration">Continuous integration</doc-anchor-trigger>),
+users can also build it with <code translate="no" v-pre>docker compose up -d --build</code> from a clone (see
+<a href="../../user/getting-started/docker-server/">Server (Docker)</a>). A published image is used with the same data volume and
+<code translate="no" v-pre>JAVA_TOOL_OPTIONS</code> as in <code translate="no" v-pre>docker-compose.yml</code>.</p>
+<p>To try a change in the image:</p>
+<div id="docker-image-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">docker compose build
+docker compose up        # foreground, logs in the terminal; Ctrl+C stops it</code></pre>
+</doc-codeblock></div>
+<p>Use a different <code translate="no" v-pre>./data</code> folder (edit the volume) when testing, so you don&#x27;t touch a real installation&#x27;s data.</p>
+<h2 id="desktop-app">Desktop app</h2>
+<p>The <code translate="no" v-pre>desktop</code> Maven profile turns the WAR into a self-contained application for the operating system and CPU it is
+built on:</p>
+<div id="desktop-app-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">cd lingollm
+mvn package -Pdesktop -DskipTests</code></pre>
+</doc-codeblock></div>
+<p>It needs a full JDK 25 (with <code translate="no" v-pre>jlink</code> and <code translate="no" v-pre>jpackage</code>) and, on Windows, <code translate="no" v-pre>tar.exe</code> from <code translate="no" v-pre>System32</code> (present on Windows 10
+and later).</p>
+<h3 id="what-the-profile-does">What the profile does</h3>
+<p>In <code translate="no" v-pre>prepare-package</code>:</p>
+<ul>
+<li>downloads <code translate="no" v-pre>jetty-home</code> (version <code translate="no" v-pre>desktop.jetty.version</code>) into <code translate="no" v-pre>target/desktop/download/</code>.</li>
+</ul>
+<p>In <code translate="no" v-pre>package</code> (after the WAR is built):</p>
+<ol>
+<li>
+<p>compiles <code translate="no" v-pre>src/desktop/java</code> (<code translate="no" v-pre>DesktopLauncher</code>, JDK only) into <code translate="no" v-pre>app/lingollm-launcher.jar</code>;</p>
+</li>
+<li>
+<p>copies the WAR to <code translate="no" v-pre>server/lingollm.war</code> and unpacks <code translate="no" v-pre>jetty-home</code> into <code translate="no" v-pre>server/jetty-home/</code>;</p>
+</li>
+<li>
+<p>builds a trimmed Java runtime with <code translate="no" v-pre>jlink</code> (the modules in <code translate="no" v-pre>desktop.modules</code>) into <code translate="no" v-pre>runtime/</code>;</p>
+</li>
+<li>
+<p>copies the launch scripts from <code translate="no" v-pre>src/desktop/bin/</code> into <code translate="no" v-pre>bin/</code>;</p>
+</li>
+<li>
+<p>builds a native app image with <code translate="no" v-pre>jpackage --type app-image</code> (no installer), with the runtime, the launcher JAR and
+the <code translate="no" v-pre>server/</code> folder as app content;</p>
+</li>
+<li>
+<p>packs both into archives.</p>
+</li>
+</ol>
+<p>Outputs in <code translate="no" v-pre>target/desktop/</code>:</p>
+<retype-table copy-text="| Path | |
+|---|---|
+| `lingollm-1.0.0/` | The portable folder: `bin/lingollm`, `bin/lingollm.bat`, `app/`, `server/`, `runtime/`. |
+| `package/` | The app image: `LingoLLM.app` (macOS), `LingoLLM/LingoLLM.exe` (Windows), `LingoLLM/bin/LingoLLM` (Linux). |
+| `lingollm-1.0.0-&lt;os&gt;-&lt;arch&gt;.tar.gz` / `.zip` | Archive of the portable folder (`.zip` on Windows). |
+| `lingollm-1.0.0-&lt;os&gt;-&lt;arch&gt;-app.tar.gz` / `.zip` | Archive of the app image. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.0.0/</code></td>
+<td>The portable folder: <code translate="no" v-pre>bin/lingollm</code>, <code translate="no" v-pre>bin/lingollm.bat</code>, <code translate="no" v-pre>app/</code>, <code translate="no" v-pre>server/</code>, <code translate="no" v-pre>runtime/</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>package/</code></td>
+<td>The app image: <code translate="no" v-pre>LingoLLM.app</code> (macOS), <code translate="no" v-pre>LingoLLM/LingoLLM.exe</code> (Windows), <code translate="no" v-pre>LingoLLM/bin/LingoLLM</code> (Linux).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.0.0-&lt;os&gt;-&lt;arch&gt;.tar.gz</code> / <code translate="no" v-pre>.zip</code></td>
+<td>Archive of the portable folder (<code translate="no" v-pre>.zip</code> on Windows).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.0.0-&lt;os&gt;-&lt;arch&gt;-app.tar.gz</code> / <code translate="no" v-pre>.zip</code></td>
+<td>Archive of the app image.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>&lt;os&gt;</code> is <code translate="no" v-pre>linux</code>, <code translate="no" v-pre>macos</code> or <code translate="no" v-pre>windows</code>, <code translate="no" v-pre>&lt;arch&gt;</code> is Java&#x27;s <code translate="no" v-pre>os.arch</code> (<code translate="no" v-pre>amd64</code>, <code translate="no" v-pre>aarch64</code>...). Archives are made with
+<code translate="no" v-pre>tar</code> so the executable bits of the launchers survive.</p>
+<h3 id="the-launcher">The launcher</h3>
+<p><code translate="no" v-pre>DesktopLauncher</code> is the main class of the app image and of the portable scripts. It depends on the JDK only and
+starts Jetty in its own JVM by loading <code translate="no" v-pre>start.jar</code> through a class loader, so it never needs Jetty on the classpath
+and never ends up in the WAR. On start it:</p>
+<ol>
+<li>
+<p>resolves the data folder <code translate="no" v-pre>&lt;home&gt;/.lingollm</code> (<code translate="no" v-pre>--home</code> sets <code translate="no" v-pre>user.home</code>) and redirects its output to
+<code translate="no" v-pre>.lingollm/desktop/logs/</code>;</p>
+</li>
+<li>
+<p>finds <code translate="no" v-pre>server/</code> next to or above the launcher JAR (jpackage places app content differently per OS);</p>
+</li>
+<li>
+<p>checks the port (default 8765): if LingoLLM already runs there, it just opens the browser; if another program
+uses it, it picks a free port (unless <code translate="no" v-pre>--port</code> was given);</p>
+</li>
+<li>
+<p>writes a Jetty base into <code translate="no" v-pre>.lingollm/desktop/jetty-base/</code> (modules <code translate="no" v-pre>ee11-*</code>, <code translate="no" v-pre>webapps/ROOT.xml</code> pointing to the
+WAR, a persistent work folder) - so the installation itself can stay read-only, e.g. inside a signed app bundle;</p>
+</li>
+<li>
+<p>starts Jetty on <code translate="no" v-pre>127.0.0.1</code>, waits up to three minutes for the start page, then shows the tray icon (or a small
+window where there is no system tray) and opens the browser.</p>
+</li>
+</ol>
+<p>The JVM options needed by the extension agent (<code translate="no" v-pre>-Djdk.attach.allowAttachSelf=true -XX:+EnableDynamicAgentLoading</code>,
+plus <code translate="no" v-pre>--enable-native-access=ALL-UNNAMED</code> for SQLite) are passed by <code translate="no" v-pre>jpackage --java-options</code> and by the scripts in
+<code translate="no" v-pre>bin/</code>. The scripts add <code translate="no" v-pre>LINGOLLM_JAVA_OPTS</code>. Keep the three places in sync - the <code translate="no" v-pre>desktop.javaOptions</code> property
+and both scripts. On macOS, <code translate="no" v-pre>-Dapple.awt.UIElement=true</code> keeps the app out of the Dock; it lives only in the tray.</p>
+<p>Command-line options are described in <a href="../../user/getting-started/desktop-app/#options">Desktop app</a>.</p>
+<h3 id="cross-platform-builds">Cross-platform builds</h3>
+<p><code translate="no" v-pre>jlink</code> and <code translate="no" v-pre>jpackage</code> only build for the platform they run on, so each operating system and CPU is built on its own
+machine. CI does this with a build matrix (below). Locally you get only your own platform.</p>
+<p>If you add a dependency that needs a JDK module not in <code translate="no" v-pre>desktop.modules</code> (a <code translate="no" v-pre>ClassNotFoundException</code> or
+<code translate="no" v-pre>NoClassDefFoundError</code> for a <code translate="no" v-pre>java.*</code> / <code translate="no" v-pre>javax.*</code> / <code translate="no" v-pre>jdk.*</code> class in the desktop log only), add the module to the
+list. <code translate="no" v-pre>jdeps --print-module-deps</code> on the WAR&#x27;s libraries helps to find it.</p>
+<h3 id="signing">Signing</h3>
+<p>The app images are not signed or notarized. macOS Gatekeeper and Windows SmartScreen warn on the first start; the
+<a href="../../user/getting-started/desktop-app/">Desktop app</a> page tells users how to get past it. Signing would be added to
+the <code translate="no" v-pre>jpackage</code> call (<code translate="no" v-pre>--mac-sign</code>, <code translate="no" v-pre>--mac-signing-key-user-name</code>...) and, for Windows, as a separate <code translate="no" v-pre>signtool</code> step
+in CI.</p>
+<h2 id="continuous-integration">Continuous integration</h2>
+<p>Two workflows, <code translate="no" v-pre>desktop.yml</code> (tests and the desktop archives) and <code translate="no" v-pre>server.yml</code> (WAR, Docker image). Both run
+on pushes to <code translate="no" v-pre>master</code>, on <code translate="no" v-pre>v*</code> tags, on pull requests that change <code translate="no" v-pre>lingollm/**</code> or the workflow, and by hand
+(<em>workflow_dispatch</em>). A newer run on the same ref cancels the running one.</p>
+<h3 id="desktopyml">desktop.yml</h3>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    test[&quot;test&lt;br/&gt;mvn test (ubuntu)&quot;] --&gt; matrix
+    subgraph matrix[&quot;desktop (matrix)&quot;]
+        l64[linux-x64]
+        la64[linux-arm64]
+        w64[windows-x64]
+        ma[macos-arm64]
+        mx[macos-x64]
+    end
+    matrix --&gt; release[&quot;release&lt;br/&gt;(v* tags only)&quot;]</pre></div>
+<retype-table copy-text="| Job | Runs on | Does |
+|---|---|---|
+| `test` | `ubuntu-latest` | For `v*` tags, checks that the tag matches the POM version; `mvn test`; uploads `surefire-reports/` when a test fails. |
+| `desktop` | one runner per platform | `mvn -Pdesktop -DskipTests package`, a smoke test, uploads the archives (kept 14 days). |
+| `release` | `ubuntu-latest`, `v*` tags only | Downloads all archives and attaches them to the GitHub release of the tag. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Job</th>
+<th>Runs on</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>test</code></td>
+<td><code translate="no" v-pre>ubuntu-latest</code></td>
+<td>For <code translate="no" v-pre>v*</code> tags, checks that the tag matches the POM version; <code translate="no" v-pre>mvn test</code>; uploads <code translate="no" v-pre>surefire-reports/</code> when a test fails.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>desktop</code></td>
+<td>one runner per platform</td>
+<td><code translate="no" v-pre>mvn -Pdesktop -DskipTests package</code>, a smoke test, uploads the archives (kept 14 days).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>release</code></td>
+<td><code translate="no" v-pre>ubuntu-latest</code>, <code translate="no" v-pre>v*</code> tags only</td>
+<td>Downloads all archives and attaches them to the GitHub release of the tag.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>All jobs use Temurin JDK 25 with the Maven cache and check out the full history (<code translate="no" v-pre>fetch-depth: 0</code>) for
+<code translate="no" v-pre>git-commit-id-plugin</code>.</p>
+<p>The <strong>smoke test</strong> starts the native app (and on Linux and macOS also the portable <code translate="no" v-pre>bin/lingollm</code>) with a temporary
+<code translate="no" v-pre>--home</code>, a fixed port, <code translate="no" v-pre>--no-browser --no-tray</code>, and waits up to three minutes until the start page contains
+<code translate="no" v-pre>&lt;title&gt;LingoLLM&lt;/title&gt;</code>. It fails and prints the launcher log otherwise. It catches broken packaging - a missing
+JDK module, a launcher that can&#x27;t find <code translate="no" v-pre>server/</code>, a WAR that doesn&#x27;t deploy - but doesn&#x27;t test any feature.</p>
+<h3 id="serveryml">server.yml</h3>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    build[&quot;build&lt;br/&gt;WAR&quot;] --&gt; publish
+    docker[&quot;docker (amd64, arm64)&lt;br/&gt;build, smoke test, push by digest&quot;] --&gt; publish[&quot;publish&lt;br/&gt;multi-platform manifest&quot;]
+    publish --&gt; release[&quot;release&lt;br/&gt;(v* tags only)&quot;]</pre></div>
+<retype-table copy-text="| Job | Runs on | Does |
+|---|---|---|
+| `build` | `ubuntu-latest` | For `v*` tags, checks the tag against the POM version; `mvn -DskipTests install` (tests run in `desktop.yml`), uploads the WAR (kept 14 days). |
+| `docker` | one native runner per platform | Builds the image from the `Dockerfile` (natively, because the Maven stage is too slow under emulation), starts a container with a root-owned bind-mounted data folder and waits for the start page, then (not for pull requests) pushes the image by digest. |
+| `publish` | `ubuntu-latest`, not for pull requests | Joins both digests into one multi-platform manifest and tags it: `edge` for `master`, `&lt;version&gt;`, `&lt;major&gt;.&lt;minor&gt;` and `latest` for `v*` tags. |
+| `release` | `ubuntu-latest`, `v*` tags only | Attaches the WAR to the GitHub release of the tag. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Job</th>
+<th>Runs on</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>build</code></td>
+<td><code translate="no" v-pre>ubuntu-latest</code></td>
+<td>For <code translate="no" v-pre>v*</code> tags, checks the tag against the POM version; <code translate="no" v-pre>mvn -DskipTests install</code> (tests run in <code translate="no" v-pre>desktop.yml</code>), uploads the WAR (kept 14 days).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>docker</code></td>
+<td>one native runner per platform</td>
+<td>Builds the image from the <code translate="no" v-pre>Dockerfile</code> (natively, because the Maven stage is too slow under emulation), starts a container with a root-owned bind-mounted data folder and waits for the start page, then (not for pull requests) pushes the image by digest.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>publish</code></td>
+<td><code translate="no" v-pre>ubuntu-latest</code>, not for pull requests</td>
+<td>Joins both digests into one multi-platform manifest and tags it: <code translate="no" v-pre>edge</code> for <code translate="no" v-pre>master</code>, <code translate="no" v-pre>&lt;version&gt;</code>, <code translate="no" v-pre>&lt;major&gt;.&lt;minor&gt;</code> and <code translate="no" v-pre>latest</code> for <code translate="no" v-pre>v*</code> tags.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>release</code></td>
+<td><code translate="no" v-pre>ubuntu-latest</code>, <code translate="no" v-pre>v*</code> tags only</td>
+<td>Attaches the WAR to the GitHub release of the tag.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The image is <code translate="no" v-pre>ghcr.io/&lt;owner&gt;/lingollm</code> and is pushed with the workflow&#x27;s <code translate="no" v-pre>GITHUB_TOKEN</code>. The package is private
+the first time it is pushed; make it public in the package settings on GitHub so that users can pull it without logging in.</p>
+<h2 id="making-a-release">Making a release</h2>
+<ol>
+<li><strong>Version.</strong> Set the new version in the parent <code translate="no" v-pre>pom.xml</code> in the repository root and in the <code translate="no" v-pre>&lt;parent&gt;</code> of the
+application (and plugin) POMs - <code translate="no" v-pre>mvn versions:set -DnewVersion=&lt;version&gt; -DgenerateBackupPoms=false</code> in the root
+does all of it. The archive names and the app version shown by the OS
+come from the POM, not from the tag, so the two must match: for a <code translate="no" v-pre>v*</code> tag the <code translate="no" v-pre>test</code> job first checks that the
+tag is <code translate="no" v-pre>v</code> + the POM version and fails otherwise, so no archives are built or attached. <code translate="no" v-pre>jpackage</code> on macOS
+requires a version of the form <code translate="no" v-pre>x.y.z</code> with <code translate="no" v-pre>x</code> ≥ 1.</li>
+<li><strong>Database.</strong> If the release changes the schema, check that the migrations upgrade a database of the previous
+release (keep a copy of one around).</li>
+<li><strong>Manual.</strong> Update the manual for user-visible changes, run <code translate="no" v-pre>retype build</code>, commit <code translate="no" v-pre>docs/</code>.</li>
+<li><strong>Test.</strong> <code translate="no" v-pre>mvn test</code>, and <code translate="no" v-pre>mvn package -Pdesktop</code> on at least your own platform; start the app, create a language profile and test a provider
+against a real model.</li>
+<li>
+<p><strong>Tag.</strong> Commit, then create and push the tag:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">git tag v1.0.0
+git push origin master v1.0.0</code></pre>
+</doc-codeblock></div>
+</li>
+<li><strong>Release.</strong> Create the GitHub release for the tag (by hand or <code translate="no" v-pre>gh release create v1.0.0</code>) with the release
+notes. <code translate="no" v-pre>desktop.yml</code> attaches the ten desktop archives when its matrix finishes, <code translate="no" v-pre>server.yml</code> the WAR and
+pushes the Docker image - whichever finishes first creates the release if it doesn&#x27;t exist yet
+(<code translate="no" v-pre>softprops/action-gh-release</code>).</li>
+<li><strong>Announce upgrades.</strong> Docker users update with <code translate="no" v-pre>docker compose pull &amp;&amp; docker compose up -d</code> (published image) or
+<code translate="no" v-pre>git pull &amp;&amp; docker compose up -d --build</code> (built from source), desktop users replace the app. Remind them to make a <a href="../../user/administration/database-backups/">database backup</a> first when the
+schema changed.</li>
+</ol>
+<h2 id="publishing-the-manual">Publishing the manual</h2>
+<p>The manual is part of the repository: Retype reads <code translate="no" v-pre>manual/</code> and writes the static site to <code translate="no" v-pre>docs/</code> (configured in
+<code translate="no" v-pre>retype.yml</code>). GitHub Pages serves <code translate="no" v-pre>docs/</code> from the <code translate="no" v-pre>master</code> branch, so the published manual changes when a commit
+with a new <code translate="no" v-pre>docs/</code> reaches <code translate="no" v-pre>master</code>. Rebuild and commit <code translate="no" v-pre>docs/</code> in the same change as the sources - see
+<a href="../building/#building-the-manual">Building the manual</a>.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/testing/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Testing</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/contributing/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Contributing</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Packaging & releases", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/packaging.md" }</script>
+</body>
+</html>

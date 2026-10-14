@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Plugin basics</title>
+    <meta name="title" content="Plugin basics">
+    <meta name="description" content="This page covers what every plugin needs: the Maven project, the bundle activator, the LingoLLMExtension and how LingoLLM loads, starts and unloads it.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/plugins/overview/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/overview/">
+    <meta property="og:title" content="Plugin basics">
+    <meta property="og:description" content="This page covers what every plugin needs: the Maven project, the bundle activator, the LingoLLMExtension and how LingoLLM loads, starts and unloads it.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/overview/">
+    <meta name="twitter:title" content="Plugin basics">
+    <meta name="twitter:description" content="This page covers what every plugin needs: the Maven project, the bundle activator, the LingoLLMExtension and how LingoLLM loads, starts and unloads it.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/plugins/overview.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="plugin-basics">Plugin basics</h1>
+<p>This page covers what every plugin needs: the Maven project, the bundle activator, the <code translate="no" v-pre>LingoLLMExtension</code> and how
+LingoLLM loads, starts and unloads it.</p>
+<h2 id="project-layout">Project layout</h2>
+<p>A plugin is an ordinary Maven project with <code translate="no" v-pre>bundle</code> packaging:</p>
+<div id="project-layout-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">myplugin/
+├── pom.xml
+└── src/main/java/com/example/lingollm/myplugin/
+    ├── MyPluginActivator.java     BundleActivator - registers the extension
+    ├── MyPluginExtension.java     LingoLLMExtension - registers hooks, cleans up
+    ├── model/                     data classes stored as JSON in attributes (optional)
+    ├── service/                   plugin logic, @Configurable (optional)
+    └── ui/                        Vaadin components (optional)</code></pre>
+</doc-codeblock></div>
+<p>Use your own package; <code translate="no" v-pre>com.github.enerccio.lingollm.extensions</code> is the application&#x27;s (the <code translate="no" v-pre>LingoLLMExtension</code> interface).</p>
+<h2 id="pomxml">pom.xml</h2>
+<p>The pom of a plugin follows the sketch below (<code translate="no" v-pre>lingollm/plugins/gemma4toolsfix/pom.xml</code> is a complete one;
+Marginalia&#x27;s plugins have the same shape). A plugin inside the repository would inherit its version from the parent POM
+(<code translate="no" v-pre>&lt;parent&gt;</code> with <code translate="no" v-pre>lingollm-parent</code>) and be a module of it; a plugin of your own outside the repository has no
+<code translate="no" v-pre>&lt;parent&gt;</code> and gives its <code translate="no" v-pre>&lt;version&gt;</code> itself. The important parts:</p>
+<div id="pomxml-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;packaging&gt;bundle&lt;/packaging&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- the application's classes, installed by `mvn install` in lingollm/ --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;io.github.enerccio&lt;/groupId&gt;
+        &lt;artifactId&gt;lingollm&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0&lt;/version&gt;
+        &lt;classifier&gt;classes&lt;/classifier&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;!-- plus, all `provided`: org.apache.felix.framework, vaadin-core, and any library
+         of the application you use directly (gson, commons-lang3, font-awesome-iron-iconset...) --&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;!-- maven-compiler-plugin, release 25 --&gt;
+        &lt;!-- aspectj-maven-plugin with spring-aspects as aspect library - needed for @Configurable --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.felix&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-bundle-plugin&lt;/artifactId&gt;
+            &lt;version&gt;6.2.0&lt;/version&gt;
+            &lt;extensions&gt;true&lt;/extensions&gt;
+            &lt;configuration&gt;
+                &lt;instructions&gt;
+                    &lt;Bundle-SymbolicName&gt;${project.artifactId}&lt;/Bundle-SymbolicName&gt;
+                    &lt;Bundle-Version&gt;${project.version}&lt;/Bundle-Version&gt;
+                    &lt;Bundle-Activator&gt;com.example.lingollm.myplugin.MyPluginActivator&lt;/Bundle-Activator&gt;
+                    &lt;Import-Package&gt;!com.example.lingollm.myplugin.*&lt;/Import-Package&gt;
+                    &lt;Export-Package&gt;com.example.lingollm.myplugin.*&lt;/Export-Package&gt;
+                &lt;/instructions&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><strong>Everything from the application is <code translate="no" v-pre>provided</code>.</strong> LingoLLM runs the bundle with boot delegation for all packages
+(see <doc-anchor-trigger to="#class-loading">Class loading</doc-anchor-trigger>), so the bundle sees exactly the classes and libraries of the running WAR.
+Bundling your own copy of Vaadin, Spring or Gson would create a second, incompatible copy of their classes.</p>
+</li>
+<li>
+<p><strong>Versions must match the application.</strong> Take the Vaadin, Gson and commons versions from <code translate="no" v-pre>lingollm/pom.xml</code>.
+Compiling against a different Vaadin version than the one that runs usually works until it doesn&#x27;t.</p>
+</li>
+<li>
+<p><strong><code translate="no" v-pre>Import-Package</code> imports nothing.</strong> The single negated entry stops bnd from generating <code translate="no" v-pre>Import-Package</code> headers -
+they are not needed with boot delegation and would make the bundle fail to resolve.</p>
+</li>
+<li>
+<p><strong>AspectJ</strong> weaves Spring&#x27;s <code translate="no" v-pre>AnnotationBeanConfigurerAspect</code> into the plugin&#x27;s classes, so a plugin class annotated
+<code translate="no" v-pre>@Configurable</code> gets its <code translate="no" v-pre>@Autowired</code> fields injected from the application&#x27;s Spring context, like the
+application&#x27;s own UI classes (<a href="../../building/#aspectj-weaving">AspectJ weaving</a>). Without it, those fields stay
+<code translate="no" v-pre>null</code>.</p>
+</li>
+<li>
+<p>Libraries the application doesn&#x27;t have must be embedded in the bundle (<code translate="no" v-pre>Embed-Dependency</code>) or shaded. Keep this to a minimum.</p>
+</li>
+</ul>
+<p>Build with <code translate="no" v-pre>mvn package</code>; the result is <code translate="no" v-pre>target/&lt;artifactId&gt;-&lt;version&gt;.jar</code>. The application must be installed in the
+local Maven repository first (<code translate="no" v-pre>mvn install -DskipTests</code> in <code translate="no" v-pre>lingollm/</code>), and reinstalled whenever you change
+classes the plugin uses.</p>
+<h2 id="the-activator">The activator</h2>
+<p>The bundle&#x27;s activator registers one <code translate="no" v-pre>LingoLLMExtension</code> as an OSGi service. That&#x27;s all it should do - LingoLLM
+discovers the service and calls it:</p>
+<div id="the-activator-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">public class MyPluginActivator implements BundleActivator {
+
+    private ServiceRegistration&lt;LingoLLMExtension&gt; registration;
+
+    @Override
+    public void start(BundleContext context) {
+        registration = context.registerService(LingoLLMExtension.class, new MyPluginExtension(), null);
+    }
+
+    @Override
+    public void stop(BundleContext context) {
+        if (registration != null) {
+            registration.unregister();
+            registration = null;
+        }
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Only bundles that register a <code translate="no" v-pre>LingoLLMExtension</code> are listed in <em>Admin → Extensions</em>.</p>
+<h2 id="the-extension">The extension</h2>
+<div id="the-extension-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">public interface LingoLLMExtension {
+
+    void onExtensionLoad(Bundle bundle, OsgiService parentService, ExtensionService extensionService);
+
+    void onExtensionUnload(Bundle b, OsgiService osgiService, ExtensionService extensionService);
+}</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><code translate="no" v-pre>onExtensionLoad</code> registers everything the plugin needs: decorators (<code translate="no" v-pre>extensionService.registerDecorator(...)</code>,
+see <a href="../extendable/">@Extendable hooks</a>), cleanup contributors (<a href="../extended-attributes/#references-to-other-entities">Extended attributes</a>). It should not build UI - there is no UI at that moment. UI is added later, from decorators, when the
+user opens the screen the plugin extends.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>onExtensionUnload</code> undoes all of it: unregister every decorator and listener, remove the components the plugin
+added to open screens (<a href="../ui-extensions/#unloading">Unloading</a>), stop background work. Nothing is removed
+automatically - a decorator left registered keeps running, from a bundle that no longer exists.</p>
+</li>
+</ul>
+<p>Annotate the extension <code translate="no" v-pre>@Configurable</code> and inject what you need:</p>
+<div id="the-extension-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Configurable
+public class MyPluginExtension implements LingoLLMExtension {
+
+    @Autowired
+    private Localization loc;
+
+    @Autowired
+    private LanguageService languageService;
+    ...
+}</code></pre>
+</doc-codeblock></div>
+<p>Any bean of the application can be injected - every service in <code translate="no" v-pre>domain/service</code> (<a href="../../services/">Services</a>),
+<code translate="no" v-pre>Localization</code>, <code translate="no" v-pre>InferenceServices</code>, <code translate="no" v-pre>Configuration</code>, <code translate="no" v-pre>OsgiService</code>... Plugin classes created with <code translate="no" v-pre>new</code> (services,
+dialogs, forms) can be <code translate="no" v-pre>@Configurable</code> too; the <a href="../example/">example plugin</a> creates its service object in the
+extension (<code translate="no" v-pre>new NotesService()</code>) and it is injected the same way.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Errors in onExtensionLoad</h5>
+<p>At startup <code translate="no" v-pre>onExtensionLoad</code> runs without a UI, so <code translate="no" v-pre>UIUtils.internalServerError(...)</code> (which opens a dialog) can&#x27;t
+show anything. Throw instead: an exception that escapes <code translate="no" v-pre>onExtensionLoad</code> is logged, <code translate="no" v-pre>onExtensionUnload</code> is called to
+undo what was registered so far and the bundle is stopped. The other extensions load normally; an upload shows the
+error to the administrator.</p>
+        </div>
+    </div>
+</div>
+<h2 id="lifecycle">Lifecycle</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">sequenceDiagram
+    participant S as Spring (root context)
+    participant O as OsgiServiceImpl
+    participant F as Felix
+    participant A as Activator
+    participant E as LingoLLMExtension
+
+    S-&gt;&gt;O: ContextRefreshedEvent
+    O-&gt;&gt;F: start framework (storage extensions/org.eclipse.osgi, cleaned)
+    O-&gt;&gt;F: installBundle(file:...) for every *.jar in extensions/
+    loop every bundle
+        O-&gt;&gt;O: verify (reuse name.valid / name.invalid or run ExtensionService.verifyExtension)
+        O-&gt;&gt;F: bundle.start() - only when valid
+        F-&gt;&gt;A: start(context)
+        A-&gt;&gt;F: registerService(LingoLLMExtension)
+        O-&gt;&gt;E: onExtensionLoad(bundle, osgiService, extensionService)
+    end
+    Note over O,E: Admin → Extensions → Unload
+    O-&gt;&gt;E: run bound component callbacks, then onExtensionUnload(...)
+    O-&gt;&gt;F: bundle.uninstall() (stops it → Activator.stop), delete the JAR</pre></div>
+<ul>
+<li>
+<p><strong>Startup.</strong> <code translate="no" v-pre>OsgiServiceImpl</code> listens for the root context&#x27;s <code translate="no" v-pre>ContextRefreshedEvent</code>, starts Felix with its
+storage in <code translate="no" v-pre>~/.lingollm/extensions/org.eclipse.osgi</code> (wiped on every start, so the JARs are always read fresh),
+installs every <code translate="no" v-pre>*.jar</code> in <code translate="no" v-pre>~/.lingollm/extensions</code> and starts them. For each <code translate="no" v-pre>LingoLLMExtension</code> service a
+bundle registered, it calls <code translate="no" v-pre>onExtensionLoad</code>. Each JAR is installed and started on its own: one that can&#x27;t be
+installed (not a bundle, a second copy of an installed plugin) or fails to start is logged with its file name and
+skipped. When the folder holds several versions of one extension (same symbolic name, e.g. an update copied next to
+the old JAR), only the newest is started; a warning names the skipped JARs, which are moved to <code translate="no" v-pre>extensions/old-versions</code> (not deleted). Before a bundle
+is started it is <strong>verified</strong>: the decorators it registers are checked against this version
+of the application (<a href="../extendable/#verification-before-loading">Verification before loading</a>). An invalid extension
+stays installed but is not started, and its report is logged. A bundle whose JAR has a <code translate="no" v-pre>&lt;jar name&gt;.STOPPED</code> flag
+next to it (see <strong>Stopping</strong>) is installed but not started either.</p>
+</li>
+<li>
+<p><strong>Installing at runtime.</strong> <em>Admin → Extensions → Load Extension (.jar)</em> writes the uploaded file into
+<code translate="no" v-pre>~/.lingollm/extensions</code> (the file name is sanitized: only letters, digits, <code translate="no" v-pre>.</code>, <code translate="no" v-pre>_</code> and <code translate="no" v-pre>-</code>) and installs and
+starts it the same way, verification included (<code translate="no" v-pre>OsgiService.installPackage</code>, like <code translate="no" v-pre>uninstallPackage</code> administrators only: <code translate="no" v-pre>AdminGuard.requireAdmin()</code>; an invalid upload throws <code translate="no" v-pre>ExtensionVerificationException</code> with the report). Screens that are already open are not rebuilt: the plugin&#x27;s
+decorators run the next time the decorated methods run (the next time the user selects a language profile, opens a tab...).</p>
+</li>
+<li>
+<p><strong>Updating.</strong> Uploading a bundle whose symbolic name (or file name) is already installed replaces it: the old one is
+unloaded as by <em>Unload</em>, uninstalled and its JAR deleted, then the new one is loaded. If the new one fails to
+install, verify or start, its JAR is deleted and the old one is put back.</p>
+</li>
+<li>
+<p><strong>Unloading.</strong> <em>Unload</em> calls the callbacks registered with <code translate="no" v-pre>bindAttachableComponent</code>, then <code translate="no" v-pre>onExtensionUnload</code>,
+uninstalls the bundle and <strong>deletes its JAR and its verification reports</strong> (<code translate="no" v-pre>OsgiService.uninstallPackage</code>). Bundles that failed to start are
+listed too (state <em>Installed</em> or <em>Resolved</em>) and can be unloaded the same way.</p>
+</li>
+<li>
+<p><strong>Stopping.</strong> <em>Stop</em> (<code translate="no" v-pre>OsgiService.stopExtension</code>, administrators only) creates the <code translate="no" v-pre>&lt;jar name&gt;.STOPPED</code> flag
+file, unloads the extension like <em>Unload</em> does (bound callbacks, <code translate="no" v-pre>onExtensionUnload</code>) and stops the bundle; the
+bundle stays installed and is listed with the state <em>Stopped</em> (<code translate="no" v-pre>isStopped</code>). <em>Start</em> (<code translate="no" v-pre>startExtension</code>) verifies it,
+starts it and deletes the flag; when that fails, the flag stays. The flag survives restarts. Uploading a
+replacement of a stopped extension deletes the flag, and <em>Unload</em> deletes the flag too.</p>
+</li>
+<li>
+<p><strong>Shutdown.</strong> When the application stops (the root context closes), every extension is unloaded the same way -
+bound callbacks, <code translate="no" v-pre>onExtensionUnload</code>, the activator&#x27;s <code translate="no" v-pre>stop</code> - and the framework is stopped. Still save data as you
+go: a killed process runs none of this.</p>
+</li>
+</ul>
+<h3 id="logging">Logging</h3>
+<p>An extension should not use <code translate="no" v-pre>LoggerFactory</code> (its lines are mixed with everything else and the administrator cannot
+see them next to the extension). <code translate="no" v-pre>OsgiService.createLogger(bundle)</code> returns an <code translate="no" v-pre>org.slf4j.Logger</code> that writes to its own file,
+<code translate="no" v-pre>&lt;jar name&gt;.log</code> in the extensions folder (<code translate="no" v-pre>myplugin.jar.log</code>), which administrators read in <em>Admin → Extensions →
+Log</em>:</p>
+<div id="logging-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">private Logger log;
+
+@Override
+public void onExtensionLoad(Bundle bundle, OsgiService parentService, ExtensionService extensionService) {
+    log = parentService.createLogger(bundle);           // or createLogger(bundle, &quot;my.name&quot;)
+    log.info(&quot;Loaded {} {}&quot;, bundle.getSymbolicName(), bundle.getVersion());
+}</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p>The usual SLF4J API: <code translate="no" v-pre>{}</code> placeholders and a trailing throwable (logged with its stack trace). TRACE is dropped,
+DEBUG and above are written. Each line has the time, level, thread, logger name (the symbolic name by default) and
+the message. The line is also chained to the application log (logger <code translate="no" v-pre>extension.&lt;name&gt;</code>, same level, so the
+level settings of the application apply - the release build logs at INFO and keeps chat content out of its log,
+so don&#x27;t log chat text above DEBUG).</p>
+</li>
+<li>
+<p>The logger is thread safe and can be kept; the file is opened for every line, so nothing stays open after the
+extension is gone. A file over 2 MB is moved to <code translate="no" v-pre>&lt;jar name&gt;.log.old</code> (replacing the previous one).</p>
+</li>
+<li>
+<p><code translate="no" v-pre>OsgiService.readLog(bundle, maxBytes)</code> and <code translate="no" v-pre>clearLog(bundle)</code> (administrators only) read the end of the file and
+delete it. The log is deleted with the extension when it is unloaded.</p>
+</li>
+<li>
+<p>Code that is not created by the extension class (components made by <code translate="no" v-pre>new</code>, services) needs the logger too: pass it
+on to your service or keep it in a static holder that is set in <code translate="no" v-pre>onExtensionLoad</code> and
+reset in <code translate="no" v-pre>onExtensionUnload</code>, with <code translate="no" v-pre>LoggerFactory</code> as the fallback before and after.</p>
+</li>
+<li>
+<p>The class <code translate="no" v-pre>org.slf4j.Logger</code> comes from the application (boot delegation); if your bundle lists its
+<code translate="no" v-pre>Import-Package</code> explicitly, include <code translate="no" v-pre>org.slf4j</code>.</p>
+</li>
+</ul>
+<h3 id="extension-events">Extension events</h3>
+<p><code translate="no" v-pre>OsgiService</code> reports single extensions that are loaded or unloaded to <code translate="no" v-pre>ExtensionListener</code>s, for code that has to
+react to the extension set - the application itself uses it to keep the styles of extensions in the pages
+(<a href="../ui-extensions/#styles-of-a-plugin">Styles of a plugin</a>):</p>
+<div id="extension-events-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">osgiService.addExtensionListener(listener);       // held weakly: the subscriber keeps the reference
+osgiService.removeExtensionListener(listener);
+osgiService.getLoadedExtensions();                // the extensions that are loaded now: (Bundle, LingoLLMExtension)</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><code translate="no" v-pre>extensionLoaded(bundle, extension)</code> is called after <code translate="no" v-pre>onExtensionLoad</code> returned. An extension whose load failed is
+never reported (and not as unloaded either); it is unloaded again as before.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>extensionUnloaded(bundle, extension)</code> is called after <code translate="no" v-pre>onExtensionUnload</code>, for every extension that was reported as
+loaded: <em>Unload</em>, an update that replaces the bundle, the shutdown of the application.</p>
+</li>
+<li>
+<p>The methods run on the thread that loads or unloads (an administrator&#x27;s request, the startup), with no UI session.
+Change a UI through <code translate="no" v-pre>ui.access(...)</code>. An exception is logged and doesn&#x27;t stop other listeners or the loading.</p>
+</li>
+<li>
+<p>Listeners get no events for extensions that are loaded already. Subscribe first, then read <code translate="no" v-pre>getLoadedExtensions()</code>;
+an extension loaded between the two is seen twice, so handle repeats (<code translate="no" v-pre>CssRegistry.attach</code> does).</p>
+</li>
+</ul>
+<p><strong>Optional interfaces.</strong> Besides <code translate="no" v-pre>LingoLLMExtension</code>, the extension class can implement <code translate="no" v-pre>ExtensionHasCss</code> (styles
+put into every page, see <a href="../ui-extensions/#styles-of-a-plugin">Styles of a plugin</a>) and <code translate="no" v-pre>ExtensionHasLocalization</code>
+(languages for the UI: <code translate="no" v-pre>OsgiServiceImpl</code> registers the returned <code translate="no" v-pre>LocalizationBundle</code>s in <code translate="no" v-pre>Localization</code> right after
+<code translate="no" v-pre>onExtensionLoad</code> returned and removes them when the extension is unloaded; a language that already has a bundle is refused, English can&#x27;t be replaced).</p>
+<p>The older <code translate="no" v-pre>ExtensionObserver</code> (<code translate="no" v-pre>addSubscriber</code>) reports the start and stop of the whole framework, including the
+pauses during an upload or unload.</p>
+<h2 id="class-loading">Class loading</h2>
+<p>Felix is started with <code translate="no" v-pre>org.osgi.framework.bootdelegation=*</code> and the framework class loader as the bundle parent, which
+is the web application&#x27;s class loader. Every class a bundle asks for is therefore looked up in the application
+first: LingoLLM&#x27;s own classes, Vaadin, Spring, Hibernate, Gson, everything in <code translate="no" v-pre>WEB-INF/lib</code>. The consequences:</p>
+<ul>
+<li>
+<p>Plugins use the application&#x27;s classes directly - no imports, no service lookups, <code translate="no" v-pre>instanceof</code> and casts work.</p>
+</li>
+<li>
+<p>A plugin can&#x27;t override or replace a library of the application, and can&#x27;t use a different version of one.</p>
+</li>
+<li>
+<p>Plugins don&#x27;t see each other&#x27;s classes through imports either; if two plugins need to cooperate, do it through
+shared data (attributes) or through the application&#x27;s components. A plugin that uses the objects of another one
+(which may be missing, or unloaded and installed again) finds it among <code translate="no" v-pre>OsgiService.getLoadedExtensions()</code> by the
+<em>name</em> of its class and calls it by reflection, taking the types it needs from <code translate="no" v-pre>extension.getClass().getClassLoader()</code>.
+Do not import its packages (<code translate="no" v-pre>Import-Package</code>, <code translate="no" v-pre>DynamicImport-Package</code>) or name its classes in your code: the
+wiring is to one revision of the other bundle, so after it is unloaded and installed again your bundle keeps the old
+classes and does not recognize the new objects, and the JVM remembers a class reference that failed to resolve
+(<code translate="no" v-pre>NoClassDefFoundError</code>), so a reference used while the other bundle was missing keeps failing after it is installed.</p>
+</li>
+<li>
+<p>The plugin&#x27;s own classes are loaded by the bundle&#x27;s class loader, so the class names you pass to
+<code translate="no" v-pre>registerDecorator</code> must be those of the <strong>application&#x27;s</strong> classes; a plugin&#x27;s own classes are never instrumented.</p>
+</li>
+</ul>
+<h2 id="the-development-loop">The development loop</h2>
+<ol>
+<li>
+<p>Run LingoLLM from your IDE or a local Jetty with a separate data folder
+(<a href="../../building/#running-locally">Running locally</a>).</p>
+</li>
+<li>
+<p><code translate="no" v-pre>mvn package</code> the plugin.</p>
+</li>
+<li>
+<p>Load the JAR in <em>Admin → Extensions</em>, or copy it into <code translate="no" v-pre>&lt;data folder&gt;/extensions</code> and restart.</p>
+</li>
+<li>
+<p>Open the screen the plugin extends. If nothing happens, check the log: a decorator that can&#x27;t find an argument,
+local variable or field logs <code translate="no" v-pre>Mod '&lt;class&gt;' skipped on &lt;class&gt;.&lt;method&gt;: ...</code> with the missing name; other
+exceptions are logged as <code translate="no" v-pre>Unhandled exception in extension ...</code>.</p>
+</li>
+<li>
+<p>To try a new build: <em>Unload</em> the plugin (it deletes the JAR), load the new one.</p>
+</li>
+</ol>
+<p>When a plugin uses a class or method of the application that changed, the plugin fails at runtime with a
+<code translate="no" v-pre>NoSuchMethodError</code> or <code translate="no" v-pre>NoClassDefFoundError</code>. Rebuild it against the current application.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Plugin development</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/extendable/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">@Extendable hooks</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Plugin basics", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/plugins/overview.md" }</script>
+</body>
+</html>

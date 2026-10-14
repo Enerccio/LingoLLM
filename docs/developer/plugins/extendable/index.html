@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>@Extendable hooks</title>
+    <meta name="title" content="@Extendable hooks">
+    <meta name="description" content="Most of what a plugin does starts with a decorator: an object whose onMethodEnter and onMethodLeave run before and after a method of an application class.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/plugins/extendable/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/extendable/">
+    <meta property="og:title" content="@Extendable hooks">
+    <meta property="og:description" content="Most of what a plugin does starts with a decorator: an object whose onMethodEnter and onMethodLeave run before and after a method of an application class.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/extendable/">
+    <meta name="twitter:title" content="@Extendable hooks">
+    <meta name="twitter:description" content="Most of what a plugin does starts with a decorator: an object whose onMethodEnter and onMethodLeave run before and after a method of an application class.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/plugins/extendable.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="extendable-hooks">@Extendable hooks</h1>
+<p>Most of what a plugin does starts with a <strong>decorator</strong>: an object whose <code translate="no" v-pre>onMethodEnter</code> and <code translate="no" v-pre>onMethodLeave</code> run
+before and after a method of an application class. Any method of a class annotated <code translate="no" v-pre>@Extendable</code> can be decorated,
+private ones included, and the decorator can read the method&#x27;s arguments and local variables and change what
+the method returns. This page explains how that works and how to use it. The signature of every such method is declared in the source with
+<doc-anchor-trigger to="#the-public-api"><code translate="no" v-pre>@PublicAPI</code></doc-anchor-trigger>, which is what plugins can rely on.</p>
+<h2 id="instrumentation">Instrumentation</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    Init[&quot;RuntimeInstrumentationInitializer&lt;br/&gt;(Spring bean, at startup)&quot;] --&gt;|ByteBuddyAgent.install| Agent[&quot;agent&quot;]
+    Agent --&gt;|&quot;classes annotated @Extendable&lt;br/&gt;in com.github.enerccio.*&quot;| Vis[&quot;ExtendableMethodVisitor&lt;br/&gt;rewrites each method&quot;]
+    Vis --&gt; Code[&quot;instrumented method&quot;]
+    Code --&gt;|enter / leave| Holder[&quot;ExtensionServiceHolder&quot;] --&gt; ES[&quot;ExtensionServiceImpl&lt;br/&gt;decorators by class + method name&quot;]</pre></div>
+<p><code translate="no" v-pre>RuntimeInstrumentationInitializer</code> installs a ByteBuddy agent into the running JVM when the Spring context starts.
+The agent transforms every class annotated <code translate="no" v-pre>@Extendable</code> whose name starts with <code translate="no" v-pre>com.github.enerccio</code> - classes
+loaded later when they are loaded, classes already loaded by retransformation. Only method bodies change; the class
+keeps its fields and methods (<code translate="no" v-pre>disableClassFormatChanges</code>), which is what makes retransformation possible.</p>
+<p><code translate="no" v-pre>ExtendableMethodVisitor</code> rewrites every method that is not a constructor, not static and not synthetic (lambda
+bodies are synthetic). In pseudo-code, an instrumented method looks like this:</p>
+<div id="instrumentation-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">ReturnType method(A a, B b) {
+    ExtensionService service = ExtensionServiceHolder.getInstance();
+    ExtendableMethodContext context = service.createContextHolder(this);
+    context.registerMethodArgument(&quot;a&quot;, a, A.class);           // declared parameter types
+    context.registerMethodArgument(&quot;b&quot;, b, B.class);
+    service.onExtendableMethodEnter(DeclaringClass.class, this, context, &quot;method&quot;);
+    a = (A) &lt;argument &quot;a&quot; from context&gt;;                        // decorators may have replaced it
+    b = (B) &lt;argument &quot;b&quot; from context&gt;;
+    try {
+        ... original body; after every store into an object local variable:
+        context.registerLocalVariable(&quot;name&quot;, value, value.getClass());
+        ... at every return of a value (not in a void method):
+        context.registerReturnValue(result, ReturnType.class);      // declared return type, the original value
+        service.onExtendableMethodLeave(DeclaringClass.class, this, context, &quot;method&quot;, null);
+        return (ReturnType) context.resolveReturnValue();           // decorators may have replaced it
+        ... at a return in a void method:
+        service.onExtendableMethodLeave(DeclaringClass.class, this, context, &quot;method&quot;, null);
+        return;
+    } catch (Throwable t) {
+        service.onExtendableMethodLeave(DeclaringClass.class, this, context, &quot;method&quot;, t);
+        throw t;
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>This runs on <strong>every</strong> call, whether a decorator is registered or not. That&#x27;s why <code translate="no" v-pre>@Extendable</code> is on UI classes,
+which run at human speed, and not on services or entities.</p>
+<p>Names come from the class file: parameter names from the <code translate="no" v-pre>MethodParameters</code> attribute (the application is compiled
+with <code translate="no" v-pre>-parameters</code>), local variable names from the local variable table (<code translate="no" v-pre>preserveAllLocals</code>). If either is
+missing, arguments are called <code translate="no" v-pre>arg0</code>, <code translate="no" v-pre>arg1</code>... and locals <code translate="no" v-pre>var&lt;slot&gt;</code>.</p>
+<h2 id="the-public-api">The public API</h2>
+<p>Everything a decorator can name - the class, the method, its arguments, its local variables - is a promise the
+application makes to the plugins. Every instrumented method of an <code translate="no" v-pre>@Extendable</code> class (not a constructor, not static,
+not synthetic, with a body - the methods that can be decorated) therefore declares its signature with <code translate="no" v-pre>@PublicAPI</code>
+(<code translate="no" v-pre>domain.traits</code>):</p>
+<div id="the-public-api-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@PublicAPI(from = &quot;1.1.0&quot;,
+        returns = @APIReturn(type = MenuItem.class),
+        parameters = {@APIParameter(name = &quot;bar&quot;, type = MenuBar.class)},
+        locals = {@APILocals(name = &quot;cogs&quot;, type = MenuItem.class)})
+private MenuItem createCogsMenuItem(MenuBar bar) {</code></pre>
+</doc-codeblock></div>
+<retype-table copy-text="| Element | Meaning |
+|---|---|
+| `from` | The first version of the application in which the method has this signature (`&quot;1.2.0&quot;`). When a change of the signature can be seen by a plugin (below), set it to the version that contains the change. |
+| `returns` | `@APIReturn(type = ...)`: the declared return type, `void.class` for `void`. The type a decorator reads with `getOriginalReturn` / `getCurrentReturn` and the one `setCurrentReturn` has to fit: a plugin that replaces the result depends on it. |
+| `parameters` | One `@APIParameter(name, type)` for each argument, in declaration order: the name `getMethodArgument` takes and the declared type. Primitives stay primitive (`int.class`). |
+| `locals` | One `@APILocals(name, type)` for each named object local variable that is not an argument: what `getLocalVariable` in `onMethodLeave` can read. The type is the declared type of the variable; a name used for more than one type is listed once for each. Primitive locals are not recorded and not listed. Locals of lambdas and compiler-generated locals (`var5`) are not part of it. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Element</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>from</code></td>
+<td>The first version of the application in which the method has this signature (<code translate="no" v-pre>&quot;1.2.0&quot;</code>). When a change of the signature can be seen by a plugin (below), set it to the version that contains the change.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>returns</code></td>
+<td><code translate="no" v-pre>@APIReturn(type = ...)</code>: the declared return type, <code translate="no" v-pre>void.class</code> for <code translate="no" v-pre>void</code>. The type a decorator reads with <code translate="no" v-pre>getOriginalReturn</code> / <code translate="no" v-pre>getCurrentReturn</code> and the one <code translate="no" v-pre>setCurrentReturn</code> has to fit: a plugin that replaces the result depends on it.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>parameters</code></td>
+<td>One <code translate="no" v-pre>@APIParameter(name, type)</code> for each argument, in declaration order: the name <code translate="no" v-pre>getMethodArgument</code> takes and the declared type. Primitives stay primitive (<code translate="no" v-pre>int.class</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>locals</code></td>
+<td>One <code translate="no" v-pre>@APILocals(name, type)</code> for each named object local variable that is not an argument: what <code translate="no" v-pre>getLocalVariable</code> in <code translate="no" v-pre>onMethodLeave</code> can read. The type is the declared type of the variable; a name used for more than one type is listed once for each. Primitive locals are not recorded and not listed. Locals of lambdas and compiler-generated locals (<code translate="no" v-pre>var5</code>) are not part of it.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Types are class literals, so a refactoring that renames or moves a class in the IDE updates them too. They are erased
+(<code translate="no" v-pre>List.class</code> for <code translate="no" v-pre>List&lt;String&gt;</code>).</p>
+<p><strong>What counts as a change.</strong> Renaming or retyping an argument or a local variable, adding or removing one, changing
+the return type, renaming or removing the method, or moving it to another class (a decorator registered for the old
+class and name is never called) can break a plugin. Adding a method does not, and neither does changing the body in a
+way that keeps the arguments, the locals and what they hold. For each change that can be seen:</p>
+<ol>
+<li>update the annotation (see below) and set <code translate="no" v-pre>from</code> to the current version of the project (<code translate="no" v-pre>pom.xml</code>);</li>
+<li>search <code translate="no" v-pre>lingollm/plugins/</code> for the class, method and variable names and fix the plugins;</li>
+<li>mention it in the release notes.</li>
+</ol>
+<p>A new method starts with the current version in <code translate="no" v-pre>from</code>. The methods that existed in 1.1.0 (the same class, name and
+argument names) were given <code translate="no" v-pre>&quot;1.1.0&quot;</code> when the annotation was introduced; the local variables were not compared with 1.1.0.</p>
+<p><strong>It is tested.</strong> <code translate="no" v-pre>PublicAPISignatureTest</code> (<code translate="no" v-pre>instruct</code> package) reads the compiled <code translate="no" v-pre>@Extendable</code> classes with
+ByteBuddy - the type pool, so nothing is loaded - and the local variable table, and fails when</p>
+<ul>
+<li>
+<p>an instrumented method has no <code translate="no" v-pre>@PublicAPI</code>;</p>
+</li>
+<li>
+<p>the annotation differs from the compiled method (name or type of an argument, return type, a local that is missing,
+extra or of another type);</p>
+</li>
+<li>
+<p>a class is compiled without parameter names (<code translate="no" v-pre>-parameters</code>), so the names would be <code translate="no" v-pre>arg0</code>...;</p>
+</li>
+<li>
+<p><code translate="no" v-pre>from</code> is not <code translate="no" v-pre>major.minor.patch</code>, or the annotation is on a method that is not instrumented (a constructor, a static
+or abstract method) or in a class that is not <code translate="no" v-pre>@Extendable</code>.</p>
+</li>
+</ul>
+<p>The message names the method and prints the annotation to write, so after changing a method you run the test, paste
+what it says and review the difference - that difference is exactly the change a plugin would see. Methods that
+AspectJ adds to the <code translate="no" v-pre>@Configurable</code> classes (<code translate="no" v-pre>readResolve()</code>) have no source and are skipped.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p><code translate="no" v-pre>@PublicAPI</code> describes methods only. The fields a plugin reads with <code translate="no" v-pre>getReflectiveFieldValue</code> (such as <code translate="no" v-pre>languageCombo</code>
+or <code translate="no" v-pre>this$0</code>) are not declared, so check <code translate="no" v-pre>lingollm/plugins/</code> before renaming or retyping a field of an <code translate="no" v-pre>@Extendable</code>
+class.</p>
+        </div>
+    </div>
+</div>
+<h2 id="registering-a-decorator">Registering a decorator</h2>
+<div id="registering-a-decorator-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">ExtensionDecorator decorator = new ExtensionDecorator() {
+    @Override
+    public void onMethodEnter(Object instrumented, ExtendableMethodContext context) throws Exception {
+        // before the body: arguments are known, no locals yet
+    }
+
+    @Override
+    public void onMethodLeave(Object instrumented, ExtendableMethodContext context, Throwable throwing) throws Exception {
+        // after the body: arguments, locals, fields; throwing != null if the method is throwing
+    }
+};
+
+extensionService.registerDecorator(decorator,
+        &quot;com.github.enerccio.lingollm.ui.workspace.parts.LanguagePart&quot;, &quot;selectLanguage&quot;);
+
+// in onExtensionUnload
+extensionService.unregisterDecorator(decorator);    // removes it from every method it was registered for</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><code translate="no" v-pre>instrumented</code> is the object whose method runs (<code translate="no" v-pre>this</code>).</p>
+</li>
+<li>
+<p><strong>Class name</strong> is the binary name of the class that <em>declares</em> the method: nested classes use <code translate="no" v-pre>$</code>
+(<code translate="no" v-pre>Outer$Inner</code>). A method inherited from a superclass is reported under the superclass,
+for all subclasses; a subclass&#x27;s own methods under the subclass. The class itself must be <code translate="no" v-pre>@Extendable</code> - the
+annotation is not inherited, and nested classes need their own.</p>
+</li>
+<li>
+<p><strong>Method name</strong> only: all overloads of a method share its decorators. Check the arguments
+(<code translate="no" v-pre>hasMethodArgument(name, type)</code>) if you need to tell overloads apart.</p>
+</li>
+<li>
+<p>Several decorators on the same method run in the order they were registered, for enter and for leave.</p>
+</li>
+<li>
+<p>A decorator registered for a class or method that doesn&#x27;t exist is accepted and never called - check names
+carefully. <doc-anchor-trigger to="#verification-before-loading">Verification</doc-anchor-trigger> refuses to load an extension that does this.</p>
+</li>
+<li>
+<p>Decorators are <strong>global</strong>: they run for every user and every session. Use the arguments and fields to decide
+whether to act. The current user is the session-scoped <code translate="no" v-pre>User</code> bean, injected as in services
+(<a href="../../services/#the-current-user">The current user</a>) - on the UI thread it resolves to the session&#x27;s user.</p>
+</li>
+</ul>
+<h2 id="the-method-context">The method context</h2>
+<p>Each call gets its own <code translate="no" v-pre>ExtendableMethodContext</code> (calls don&#x27;t share them, recursive and concurrent calls neither).</p>
+<retype-table copy-text="| Method | Use |
+|---|---|
+| `getMethodArgument(name, type)` | An argument by parameter name. Primitives come boxed, but ask for the primitive type (`int.class`) - the registered type is the primitive and `Integer.class` is not accepted. |
+| `hasMethodArgument(name)`, `hasMethodArgument(name, type)` | Check before reading. |
+| `registerMethodArgument(name, value, type)` | In `onMethodEnter`: **replace** an argument - the method body sees the new value. Use the declared type. A value that can't be cast to the parameter type (or `null` for a primitive) makes the method throw before its body runs. |
+| `getLocalVariable(name, type)` | A local variable by name, with its latest value. Only in `onMethodLeave` (none exist on enter). |
+| `hasLocalVariable(name)`, `hasLocalVariable(name, type)` | Check before reading - a local stored only on some paths may be missing. |
+| `hasReturn()` | Whether the method returned a value: `false` in `onMethodEnter`, for a `void` method and when the method throws. |
+| `getOriginalReturn(type)` | What the body of the method returned, whatever the decorators did. Only in `onMethodLeave`. Primitives come boxed, but ask for the primitive type (`int.class`) like for arguments. |
+| `getCurrentReturn(type)` | What the method returns **as of now**: the original value, or the value set by the decorator that ran before this one ([chaining](#changing-the-return-value)). |
+| `setCurrentReturn(value)` | **Replace** the value the method returns. See [Changing the return value](#changing-the-return-value). |
+| `getReflectiveFieldValue(object, field, type)` | Read a field of any object, private fields and fields of superclasses included. |
+| `setReflectiveFieldValue(object, field, value, type)` | Write a field. |
+| `callReflectiveMethod(object, name, argTypes, args, returnType)` | Call any method, private ones included. `argTypes` must be the exact declared parameter types; pass `void.class` as the return type for `void` methods. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Method</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>getMethodArgument(name, type)</code></td>
+<td>An argument by parameter name. Primitives come boxed, but ask for the primitive type (<code translate="no" v-pre>int.class</code>) - the registered type is the primitive and <code translate="no" v-pre>Integer.class</code> is not accepted.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hasMethodArgument(name)</code>, <code translate="no" v-pre>hasMethodArgument(name, type)</code></td>
+<td>Check before reading.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>registerMethodArgument(name, value, type)</code></td>
+<td>In <code translate="no" v-pre>onMethodEnter</code>: <strong>replace</strong> an argument - the method body sees the new value. Use the declared type. A value that can&#x27;t be cast to the parameter type (or <code translate="no" v-pre>null</code> for a primitive) makes the method throw before its body runs.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getLocalVariable(name, type)</code></td>
+<td>A local variable by name, with its latest value. Only in <code translate="no" v-pre>onMethodLeave</code> (none exist on enter).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hasLocalVariable(name)</code>, <code translate="no" v-pre>hasLocalVariable(name, type)</code></td>
+<td>Check before reading - a local stored only on some paths may be missing.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hasReturn()</code></td>
+<td>Whether the method returned a value: <code translate="no" v-pre>false</code> in <code translate="no" v-pre>onMethodEnter</code>, for a <code translate="no" v-pre>void</code> method and when the method throws.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getOriginalReturn(type)</code></td>
+<td>What the body of the method returned, whatever the decorators did. Only in <code translate="no" v-pre>onMethodLeave</code>. Primitives come boxed, but ask for the primitive type (<code translate="no" v-pre>int.class</code>) like for arguments.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getCurrentReturn(type)</code></td>
+<td>What the method returns <strong>as of now</strong>: the original value, or the value set by the decorator that ran before this one (<doc-anchor-trigger to="#changing-the-return-value">chaining</doc-anchor-trigger>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>setCurrentReturn(value)</code></td>
+<td><strong>Replace</strong> the value the method returns. See <doc-anchor-trigger to="#changing-the-return-value">Changing the return value</doc-anchor-trigger>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getReflectiveFieldValue(object, field, type)</code></td>
+<td>Read a field of any object, private fields and fields of superclasses included.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>setReflectiveFieldValue(object, field, value, type)</code></td>
+<td>Write a field.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>callReflectiveMethod(object, name, argTypes, args, returnType)</code></td>
+<td>Call any method, private ones included. <code translate="no" v-pre>argTypes</code> must be the exact declared parameter types; pass <code translate="no" v-pre>void.class</code> as the return type for <code translate="no" v-pre>void</code> methods.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Type checks are against the <strong>registered</strong> type: for arguments the declared parameter type, for locals the runtime
+class of the value (<code translate="no" v-pre>Object</code> when the value was <code translate="no" v-pre>null</code>), for fields and methods the declared type. The requested type
+must be the same or a supertype.</p>
+<p>Local variables, in detail:</p>
+<ul>
+<li>
+<p>Only <strong>object</strong> locals are recorded (<code translate="no" v-pre>ASTORE</code>): <code translate="no" v-pre>int</code>, <code translate="no" v-pre>boolean</code> and other primitive locals are not.</p>
+</li>
+<li>
+<p>A local is recorded each time it&#x27;s assigned, so you get its last value. Locals in different scopes that reuse the
+same slot keep their own names.</p>
+</li>
+<li>
+<p>Locals of lambdas (event listeners) belong to the synthetic lambda method, which is not instrumented.</p>
+</li>
+</ul>
+<h3 id="changing-the-return-value">Changing the return value</h3>
+<p>A decorator of a method that returns a value can replace the value in <code translate="no" v-pre>onMethodLeave</code>. The decorators of a method form
+a <strong>chain</strong> in the order they were registered, sharing one <em>current</em> value:</p>
+<div id="changing-the-return-value-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Override
+public void onMethodLeave(Object instrumented, ExtendableMethodContext context, Throwable throwing) {
+    if (!context.hasReturn()) {
+        return;                                         // void method, or it threw
+    }
+    String original = context.getOriginalReturn(String.class);   // what the body returned
+    String current = context.getCurrentReturn(String.class);     // original, or the previous decorator's result
+    context.setCurrentReturn(current + &quot; (edited)&quot;);             // the next decorator and the caller get this
+}</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><code translate="no" v-pre>getOriginalReturn</code> is always what the body returned, <code translate="no" v-pre>getCurrentReturn</code> starts as the same value and is whatever the
+last <code translate="no" v-pre>setCurrentReturn</code> set. A decorator that only wants to add to the result reads the <em>current</em> value, so it keeps
+what the decorators before it did; one that wants to start over reads the original.</p>
+</li>
+<li>
+<p>When the last decorator is done, the caller of the method receives the current value. If nobody set one, the method
+returns what its body returned.</p>
+</li>
+<li>
+<p>The value must fit the <strong>declared</strong> return type of the method (a subtype is fine, <code translate="no" v-pre>null</code> is fine for objects); for a
+primitive return type pass the matching wrapper (<code translate="no" v-pre>setCurrentReturn(5)</code> for <code translate="no" v-pre>int</code>), not <code translate="no" v-pre>null</code>. A value that does not
+fit is refused with a <code translate="no" v-pre>ModCompatibilityException</code> (a warning in the log, as for the other <doc-anchor-trigger to="#errors">errors</doc-anchor-trigger>), the
+current value stays and the method is not affected.</p>
+</li>
+<li>
+<p>Type checks of the getters are against the declared return type: <code translate="no" v-pre>getOriginalReturn(CharSequence.class)</code> works for a
+method that returns <code translate="no" v-pre>String</code>, <code translate="no" v-pre>Integer.class</code> does not work for <code translate="no" v-pre>int</code>.</p>
+</li>
+<li>
+<p>The return value exists only after the body returned. In <code translate="no" v-pre>onMethodEnter</code>, for a <code translate="no" v-pre>void</code> method and when the method
+throws, <code translate="no" v-pre>hasReturn()</code> is <code translate="no" v-pre>false</code> and the getters and the setter are refused. A decorator cannot swallow an exception
+or turn a return into one, and the body always runs (<doc-anchor-trigger to="#what-a-decorator-cant-do">What a decorator can&#x27;t do</doc-anchor-trigger>).</p>
+</li>
+<li>
+<p>The mutable objects a method returns (a component, a list) can be changed without replacing the value; replace it
+when you need a different object, or the value is immutable (<code translate="no" v-pre>String</code>, numbers, <code translate="no" v-pre>Optional</code>).</p>
+</li>
+</ul>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>The return value is part of the contract</h5>
+<p>What a method returns is read by its caller, and every plugin that replaces it is now a part of that. A change of the
+declared return type of an <code translate="no" v-pre>@Extendable</code> method is a change of its <doc-anchor-trigger to="#the-public-api">public API</doc-anchor-trigger>, and a plugin that
+replaces the value with a type that no longer fits is refused at run time.</p>
+        </div>
+    </div>
+</div>
+<h3 id="errors">Errors</h3>
+<p>The getters and the reflective calls throw a <code translate="no" v-pre>ModCompatibilityException</code> (a private <code translate="no" v-pre>RuntimeException</code> subclass of
+<code translate="no" v-pre>ExtensionServiceImpl</code>) when a name doesn&#x27;t exist or the type doesn&#x27;t match. <code translate="no" v-pre>ExtensionServiceImpl</code> catches everything a decorator throws, so a failing decorator
+never breaks the decorated method or the other decorators:</p>
+<ul>
+<li>
+<p>in <code translate="no" v-pre>onMethodLeave</code>, a <code translate="no" v-pre>ModCompatibilityException</code> is logged as a warning:
+<code translate="no" v-pre>Mod '&lt;decorator class&gt;' skipped on &lt;class&gt;.&lt;method&gt;: Required component variable 'component' was not found ...</code>;</p>
+</li>
+<li>
+<p>anything else, and anything in <code translate="no" v-pre>onMethodEnter</code>, is logged as an error with the stack trace.</p>
+</li>
+</ul>
+<p>That makes a renamed variable a log line, not a crash - but also easy to miss. When you work on a plugin, watch the
+log.</p>
+<h2 id="what-a-decorator-cant-do">What a decorator can&#x27;t do</h2>
+<ul>
+<li>
+<p><strong>Skip the method.</strong> The body always runs, with its arguments as they are after <code translate="no" v-pre>onMethodEnter</code>. What it returns can
+be <doc-anchor-trigger to="#changing-the-return-value">replaced</doc-anchor-trigger> afterwards, and so can what it built (a local variable or field) or saved.</p>
+</li>
+<li>
+<p><strong>Replace the result of a method that throws</strong>, or throw instead of a return: a decorator can read the exception in
+<code translate="no" v-pre>onMethodLeave</code> but it is always rethrown.</p>
+</li>
+<li>
+<p><strong>Decorate constructors, static methods or lambda bodies.</strong> Decorate the method the constructor calls (for example
+the constructor of an inner class calls the method), or the method that registers the listener.</p>
+</li>
+<li>
+<p><strong>Decorate classes that aren&#x27;t <code translate="no" v-pre>@Extendable</code></strong>, plugin classes, or library classes.</p>
+</li>
+<li>
+<p><strong>Read primitive locals.</strong> Read the fields or objects they end up in.</p>
+</li>
+</ul>
+<h2 id="extension-points">Extension points</h2>
+<p>The <code translate="no" v-pre>@Extendable</code> classes are listed in <a href="../../ui/#extension-points">User interface → Extension points</a>. To find a
+hook for what you want to do:</p>
+<ol>
+<li>
+<p>Find the component in the UI and the class that builds it (<a href="../../ui/">User interface</a> maps screens to classes).</p>
+</li>
+<li>
+<p>Find the method that builds or refreshes it - preferably one that runs every time the component is (re)built, so
+that your change is applied again.</p>
+</li>
+<li>
+<p>Find how to reach the component: a local variable of that method (<code translate="no" v-pre>getLocalVariable</code>), a field
+(<code translate="no" v-pre>getReflectiveFieldValue</code>), or the method&#x27;s arguments.</p>
+</li>
+<li>
+<p>Decide on enter or leave: almost always <code translate="no" v-pre>onMethodLeave</code>, when the component exists. <code translate="no" v-pre>onMethodEnter</code> is for
+reading state the method is about to overwrite, or replacing arguments - the bundled plugins save their settings
+in <code translate="no" v-pre>UserPart.save</code>&#x27;s <em>enter</em>, so that the application&#x27;s own <code translate="no" v-pre>settingService.save(userSetting)</code> in the body
+stores them.</p>
+</li>
+</ol>
+<p>Methods to start from:</p>
+<retype-table copy-text="| Class | Method | Reached through | Used for |
+|---|---|---|---|
+| `DesktopWorkspace` | `create()` | locals `vl`, `...TabHeader`, `...Tab`; field `tabs` | Add a tab (a `WorkspaceComponent`) to the workspace; do the same on `PhoneWorkspace`. |
+| `LanguagePart` | `create()` | locals `layout`, `header`; fields `languageCombo`, `content` | Add a component next to the language selector. Runs once. |
+| `LanguagePart` | `selectLanguage(language, remember)` | arguments `language`, `remember`; field `selectedLanguage` | React to the language profile the user picks (also when the first one is selected after login). |
+| `LanguagePart` | `showLanguage(language)` | argument `language`; locals `ui`, `component`; field `languageUI` | Wrap or extend the screen of a language after it was built. |
+| `UserPart` | `refresh()` / `save()` | fields `extensionSettings`, `userSetting` | Add a settings panel; save its values. |
+| `AIDialog` | `create()` and the methods it calls | fields of the dialog | Add a field to the dialog of an inference provider (keep your data in the AI's `attributes`). |
+| `LoginCheckRoute` / `Main` | `proceedWithLogin(username)` | argument `username`; local `workspace` | Do something once per login, after the workspace was built. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Class</th>
+<th>Method</th>
+<th>Reached through</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>DesktopWorkspace</code></td>
+<td><code translate="no" v-pre>create()</code></td>
+<td>locals <code translate="no" v-pre>vl</code>, <code translate="no" v-pre>...TabHeader</code>, <code translate="no" v-pre>...Tab</code>; field <code translate="no" v-pre>tabs</code></td>
+<td>Add a tab (a <code translate="no" v-pre>WorkspaceComponent</code>) to the workspace; do the same on <code translate="no" v-pre>PhoneWorkspace</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguagePart</code></td>
+<td><code translate="no" v-pre>create()</code></td>
+<td>locals <code translate="no" v-pre>layout</code>, <code translate="no" v-pre>header</code>; fields <code translate="no" v-pre>languageCombo</code>, <code translate="no" v-pre>content</code></td>
+<td>Add a component next to the language selector. Runs once.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguagePart</code></td>
+<td><code translate="no" v-pre>selectLanguage(language, remember)</code></td>
+<td>arguments <code translate="no" v-pre>language</code>, <code translate="no" v-pre>remember</code>; field <code translate="no" v-pre>selectedLanguage</code></td>
+<td>React to the language profile the user picks (also when the first one is selected after login).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguagePart</code></td>
+<td><code translate="no" v-pre>showLanguage(language)</code></td>
+<td>argument <code translate="no" v-pre>language</code>; locals <code translate="no" v-pre>ui</code>, <code translate="no" v-pre>component</code>; field <code translate="no" v-pre>languageUI</code></td>
+<td>Wrap or extend the screen of a language after it was built.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>UserPart</code></td>
+<td><code translate="no" v-pre>refresh()</code> / <code translate="no" v-pre>save()</code></td>
+<td>fields <code translate="no" v-pre>extensionSettings</code>, <code translate="no" v-pre>userSetting</code></td>
+<td>Add a settings panel; save its values.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AIDialog</code></td>
+<td><code translate="no" v-pre>create()</code> and the methods it calls</td>
+<td>fields of the dialog</td>
+<td>Add a field to the dialog of an inference provider (keep your data in the AI&#x27;s <code translate="no" v-pre>attributes</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LoginCheckRoute</code> / <code translate="no" v-pre>Main</code></td>
+<td><code translate="no" v-pre>proceedWithLogin(username)</code></td>
+<td>argument <code translate="no" v-pre>username</code>; local <code translate="no" v-pre>workspace</code></td>
+<td>Do something once per login, after the workspace was built.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Inner classes reach their outer instance through the synthetic field <code translate="no" v-pre>this$0</code>.</p>
+<h3 id="the-phone-twins">The phone twins</h3>
+<p>The desktop and the phone layout are separate classes (<code translate="no" v-pre>DesktopWorkspace</code> and <code translate="no" v-pre>PhoneWorkspace</code> implement <code translate="no" v-pre>Workspace</code>;
+neither is a subclass of the other), so a decorator of one does not run in the other. A plugin that adds to the
+workspace registers the decorator a second time under the other class name. The tabs are shared where they can be:
+<code translate="no" v-pre>LanguagePart</code>, <code translate="no" v-pre>ResourcesPart</code> and <code translate="no" v-pre>UserPart</code> are the same classes in both layouts (<code translate="no" v-pre>PhoneSettingsPart</code> extends
+<code translate="no" v-pre>UserPart</code>, so a decorator of <code translate="no" v-pre>UserPart.refresh</code> also runs there, as methods inherited from a superclass are reported
+under the superclass). <code translate="no" v-pre>PhoneAIPart</code> and <code translate="no" v-pre>PhoneTrashPart</code> are separate classes from <code translate="no" v-pre>AIPart</code> and <code translate="no" v-pre>TrashPart</code>.</p>
+<h2 id="verification-before-loading">Verification before loading</h2>
+<p>Every name a decorator uses is unchecked at compile time, so LingoLLM checks them before it starts an extension:
+<code translate="no" v-pre>ExtensionService.verifyExtension(Bundle bundle, File jar)</code> (<code translate="no" v-pre>ExtensionVerifier</code> in <code translate="no" v-pre>instruct.verify</code>). It doesn&#x27;t run
+the extension, it reads its bytecode. The classes are listed by the JAR file and read from the installed bundle
+(<code translate="no" v-pre>Bundle.getEntry</code>), and everything they ask for is compared with the real classes of the running application.</p>
+<p><strong>What is followed.</strong> An ASM data-flow analysis (<code translate="no" v-pre>ContextInterpreter</code>) walks every method of every class of the
+extension and tracks constants, <code translate="no" v-pre>new</code> objects and the objects that come out of the context:</p>
+<ul>
+<li>
+<p>every <code translate="no" v-pre>registerDecorator(decorator, className, methodName)</code> call. The class and method name must be constants
+(<code translate="no" v-pre>static final String</code> constants are inlined by the compiler, so they are). The decorator is the class created with
+<code translate="no" v-pre>new</code> on the way to the call, directly, through a local variable or through a field of the extension that was
+assigned earlier - the usual <code translate="no" v-pre>decorator = new ExtensionDecorator() {...}; registerDecorator(decorator, ...)</code>;</p>
+</li>
+<li>
+<p>in the decorator class - <strong>all</strong> its methods, so lambdas and private helpers of the decorator count too - every call
+on an <code translate="no" v-pre>ExtendableMethodContext</code>.</p>
+</li>
+</ul>
+<p><strong>What is checked</strong>, against the application&#x27;s classes loaded without being initialized, the way
+<doc-anchor-trigger to="#the-method-context">the context</doc-anchor-trigger> checks them when the decorated method runs:</p>
+<retype-table copy-text="| Request | Error when | Warning when |
+|---|---|---|
+| `registerDecorator(d, cls, method)` | The class doesn't exist, isn't `@Extendable`, or declares no instrumented method of that name (static, constructor and synthetic methods are not; a method of a superclass is reported with the class that declares it). | The names are not constants, or the decorator class can't be found. |
+| `getMethodArgument(name, type)` | No overload has an argument of that name, or its declared type is not the same as `type` or a subtype of it (`int.class`, not `Integer.class`). | |
+| `hasMethodArgument(name[, type])` | | The same problems: the access is optional. |
+| `registerMethodArgument(name, value, type)` | No overload has an argument of that name. | `type` is not the declared type. |
+| `getLocalVariable(name, type)` | No overload stores an object local of that name (primitives are not recorded), or its type doesn't fit, or it's asked in `onMethodEnter`, where there are no locals. | The declared type is a supertype of `type`: works only if the value is of that type at run time. |
+| `hasLocalVariable(name[, type])` | | The same problems. |
+| `getOriginalReturn(type)`, `getCurrentReturn(type)` | No overload of the method returns a value (all are `void`), or the declared return type is not `type` or a subtype of it (`int.class`, not `Integer.class`), or it is asked in `onMethodEnter`. | The return type could not be loaded. |
+| `setCurrentReturn(value)` | No overload of the method returns a value, or it is called in `onMethodEnter`. The value itself is not checked. | |
+| `getReflectiveFieldValue`, `setReflectiveFieldValue` | The object's class or its superclasses have no field of that name, or the field's type is not `type` or a subtype. | The object can't be determined. |
+| `callReflectiveMethod` | No method of that name and exact parameter types, or its return type doesn't fit. | The parameter types are not constants (the name alone is checked). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Request</th>
+<th>Error when</th>
+<th>Warning when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>registerDecorator(d, cls, method)</code></td>
+<td>The class doesn&#x27;t exist, isn&#x27;t <code translate="no" v-pre>@Extendable</code>, or declares no instrumented method of that name (static, constructor and synthetic methods are not; a method of a superclass is reported with the class that declares it).</td>
+<td>The names are not constants, or the decorator class can&#x27;t be found.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getMethodArgument(name, type)</code></td>
+<td>No overload has an argument of that name, or its declared type is not the same as <code translate="no" v-pre>type</code> or a subtype of it (<code translate="no" v-pre>int.class</code>, not <code translate="no" v-pre>Integer.class</code>).</td>
+<td> </td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hasMethodArgument(name[, type])</code></td>
+<td> </td>
+<td>The same problems: the access is optional.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>registerMethodArgument(name, value, type)</code></td>
+<td>No overload has an argument of that name.</td>
+<td><code translate="no" v-pre>type</code> is not the declared type.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getLocalVariable(name, type)</code></td>
+<td>No overload stores an object local of that name (primitives are not recorded), or its type doesn&#x27;t fit, or it&#x27;s asked in <code translate="no" v-pre>onMethodEnter</code>, where there are no locals.</td>
+<td>The declared type is a supertype of <code translate="no" v-pre>type</code>: works only if the value is of that type at run time.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hasLocalVariable(name[, type])</code></td>
+<td> </td>
+<td>The same problems.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getOriginalReturn(type)</code>, <code translate="no" v-pre>getCurrentReturn(type)</code></td>
+<td>No overload of the method returns a value (all are <code translate="no" v-pre>void</code>), or the declared return type is not <code translate="no" v-pre>type</code> or a subtype of it (<code translate="no" v-pre>int.class</code>, not <code translate="no" v-pre>Integer.class</code>), or it is asked in <code translate="no" v-pre>onMethodEnter</code>.</td>
+<td>The return type could not be loaded.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>setCurrentReturn(value)</code></td>
+<td>No overload of the method returns a value, or it is called in <code translate="no" v-pre>onMethodEnter</code>. The value itself is not checked.</td>
+<td> </td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getReflectiveFieldValue</code>, <code translate="no" v-pre>setReflectiveFieldValue</code></td>
+<td>The object&#x27;s class or its superclasses have no field of that name, or the field&#x27;s type is not <code translate="no" v-pre>type</code> or a subtype.</td>
+<td>The object can&#x27;t be determined.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>callReflectiveMethod</code></td>
+<td>No method of that name and exact parameter types, or its return type doesn&#x27;t fit.</td>
+<td>The parameter types are not constants (the name alone is checked).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The object of a reflective access is followed: <code translate="no" v-pre>instrumented</code> (of <code translate="no" v-pre>onMethodEnter</code> / <code translate="no" v-pre>onMethodLeave</code>) is the decorated
+class; the result of <code translate="no" v-pre>getReflectiveFieldValue</code> / <code translate="no" v-pre>callReflectiveMethod</code> (also through a cast and a local variable) is
+an object of the field&#x27;s type / the method&#x27;s return type; an object from <code translate="no" v-pre>getMethodArgument</code> / <code translate="no" v-pre>getLocalVariable</code> is
+of the requested type. So the usual way to reach the outer instance of an inner class is verified in both steps:</p>
+<div id="verification-before-loading-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">Outer parent = context.getReflectiveFieldValue(instrumented, &quot;this$0&quot;, Outer.class);   // Outer$Inner is a nested class
+context.getReflectiveFieldValue(parent, &quot;someField&quot;, VerticalLayout.class);            // a field of Outer</code></pre>
+</doc-codeblock></div>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Only the decorators themselves are scanned</h5>
+<p>Nothing is followed into another class. If a decorator passes its context (or <code translate="no" v-pre>instrumented</code>, or an object taken out of
+the context) to a method of another class, or builds names at run time, what that code asks for is <strong>not checked</strong> -
+checking it is up to the developer of the extension. Keep the context calls in the decorator class if you want them
+verified.</p>
+        </div>
+    </div>
+</div>
+<p><strong>The report.</strong> The result is written next to the JAR, named after it: <code translate="no" v-pre>myplugin.jar</code> gets
+<code translate="no" v-pre>myplugin.valid</code> or <code translate="no" v-pre>myplugin.invalid</code> (the one of the opposite result is deleted). It is plain text: the
+extension, the bundle, the time, <code translate="no" v-pre>Result: VALID</code> / <code translate="no" v-pre>INVALID</code>, the errors, the warnings and the decorators that were
+checked:</p>
+<div id="verification-before-loading-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">Extension: myplugin.jar
+Bundle: myplugin 1.0.0
+Verified: 2026-10-10T18:18:31.781673Z
+Result: INVALID
+
+Errors (1):
+  - MyExtension$1.onMethodLeave line 55 (LanguagePart.showLanguage): com...LanguagePart has no local variable &quot;componentt&quot; of type com...Component
+
+Checked decorators (2):
+  - LanguagePart.showLanguage &lt;- MyExtension$1
+  - UserPart.save &lt;- MyExtension$2</code></pre>
+</doc-codeblock></div>
+<p><strong>When it runs.</strong> <code translate="no" v-pre>OsgiServiceImpl</code> verifies a bundle before starting it, at startup and when it is uploaded:</p>
+<ul>
+<li>
+<p>A report is reused only while it is <strong>newer than the JAR and newer than the application</strong> (the later of the creation
+and modification time of the WAR; of the folder it is unpacked to or of the classes when it runs unpacked or from the
+IDE). An older report is deleted and the extension is verified again: a new version of LingoLLM can break
+extensions that were fine, and this catches them all at the first start. Both reports at once are treated as none.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>.valid</code>: the extension is started. <code translate="no" v-pre>.invalid</code>: it is not - at startup the bundle stays installed, not started (state
+<em>Installed</em> or <em>Resolved</em>), the report is logged as an error and <em>Admin → Extensions</em> shows an <em>Invalid</em> button that
+opens it. An upload that is invalid is rejected like one that fails to start: its JAR is deleted, the replaced version
+is put back and the report is shown to the administrator. A verification that can&#x27;t be done (an unreadable JAR) fails
+the extension too.</p>
+</li>
+<li>
+<p>Unloading an extension deletes its reports with the JAR.</p>
+</li>
+</ul>
+<p>Verification can&#x27;t know about everything: a warning is not a failure, and an extension with no errors can still break
+at run time (for example through a context handed to another class). Watch the log of the decorated methods as before.</p>
+<h2 id="keeping-hooks-working">Keeping hooks working</h2>
+<p>Everything a decorator uses is a name: the class, the method, the argument, the local, the field. None of it is
+checked at compile time. To keep the damage small:</p>
+<ul>
+<li>
+<p>Prefer arguments and fields over locals, and locals over walking the component tree.</p>
+</li>
+<li>
+<p>Use <code translate="no" v-pre>hasLocalVariable</code> / <code translate="no" v-pre>hasMethodArgument</code> and fall back gracefully when a name
+isn&#x27;t found (a plugin of Marginalia takes the last button of a list when the local it wanted is missing).</p>
+</li>
+<li>
+<p>Keep all names in constants in one place, so a rename in the application is a one-line change in the plugin
+(the compiler inlines <code translate="no" v-pre>static final String</code> constants, so <doc-anchor-trigger to="#verification-before-loading">verification</doc-anchor-trigger> still sees them).</p>
+</li>
+<li>
+<p>Use the application&#x27;s public methods where they exist (for example a public getter of the part) instead of reading
+the field.</p>
+</li>
+</ul>
+<p>When you change the application, the other side applies: renaming or restructuring an <code translate="no" v-pre>@Extendable</code> method can break
+plugins. <code translate="no" v-pre>PublicAPISignatureTest</code> fails until the <doc-anchor-trigger to="#the-public-api"><code translate="no" v-pre>@PublicAPI</code></doc-anchor-trigger> of the method says what the method
+is now - treat that as the prompt to check the plugins you know of (a search for the method or variable name is usually
+enough) and to mention the change in the release notes. Do not make the test pass by editing the annotation alone.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/overview/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Plugin basics</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/example/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Example plugin</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "@Extendable hooks", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/plugins/extendable.md" }</script>
+</body>
+</html>

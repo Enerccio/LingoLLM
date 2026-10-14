@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Inference providers</title>
+    <meta name="title" content="Inference providers">
+    <meta name="description" content="An inference provider is a connection to a model: the API address, the API key, the model and its limits. You can have as many as you like, for example a large cloud model and a small local one for experiments, and pick one as your default in Settings.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/user/inference-providers/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/user/inference-providers/">
+    <meta property="og:title" content="Inference providers">
+    <meta property="og:description" content="An inference provider is a connection to a model: the API address, the API key, the model and its limits. You can have as many as you like, for example a large cloud model and a small local one for experiments, and pick one as your default in Settings.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/user/inference-providers/">
+    <meta name="twitter:title" content="Inference providers">
+    <meta name="twitter:description" content="An inference provider is a connection to a model: the API address, the API key, the model and its limits. You can have as many as you like, for example a large cloud model and a small local one for experiments, and pick one as your default in Settings.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/user/inference-providers.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="inference-providers">Inference providers</h1>
+<p>An inference provider is a connection to a model: the API address, the API key, the model and its limits. You can have
+as many as you like, for example a large cloud model and a small local one for experiments, and pick one as your
+default in <a href="../account/#settings">Settings</a>.</p>
+<p>Providers belong to your account. Other users don&#x27;t see them or their API keys. API keys are stored encrypted (see
+<a href="../administration/#the-data-folder">The data folder</a>).</p>
+<h2 id="supported-apis">Supported APIs</h2>
+<p>LingoLLM works with any API that implements the <strong>OpenAI Chat Completions</strong> interface (<code translate="no" v-pre>/v1/chat/completions</code>)
+and lists its models on <code translate="no" v-pre>/v1/models</code>. Most services and local servers do:</p>
+<retype-table copy-text="| Service | OpenAI URL |
+|---|---|
+| OpenAI | `https://api.openai.com/v1` |
+| OpenRouter | `https://openrouter.ai/api/v1` |
+| LiteLLM proxy | `http://localhost:4000/v1` |
+| llama.cpp (`llama-server`) | `http://localhost:8080/v1` |
+| LM Studio | `http://localhost:1234/v1` |
+| Ollama | `http://localhost:11434/v1` |
+| vLLM | `http://localhost:8000/v1` |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Service</th>
+<th>OpenAI URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI</td>
+<td><code translate="no" v-pre>https://api.openai.com/v1</code></td>
+</tr>
+<tr>
+<td>OpenRouter</td>
+<td><code translate="no" v-pre>https://openrouter.ai/api/v1</code></td>
+</tr>
+<tr>
+<td>LiteLLM proxy</td>
+<td><code translate="no" v-pre>http://localhost:4000/v1</code></td>
+</tr>
+<tr>
+<td>llama.cpp (<code translate="no" v-pre>llama-server</code>)</td>
+<td><code translate="no" v-pre>http://localhost:8080/v1</code></td>
+</tr>
+<tr>
+<td>LM Studio</td>
+<td><code translate="no" v-pre>http://localhost:1234/v1</code></td>
+</tr>
+<tr>
+<td>Ollama</td>
+<td><code translate="no" v-pre>http://localhost:11434/v1</code></td>
+</tr>
+<tr>
+<td>vLLM</td>
+<td><code translate="no" v-pre>http://localhost:8000/v1</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The ports are the defaults of each server; use the ones your server actually runs on.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Port 8080</h5>
+<p>The Docker version of LingoLLM uses port 8080 as well. If you run llama.cpp on the same machine, start it on another
+port (<code translate="no" v-pre>llama-server --port 8081</code>).</p>
+        </div>
+    </div>
+</div>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>With the <a href="../getting-started/docker-server/">Docker version</a>, <code translate="no" v-pre>localhost</code> means the LingoLLM container. Use
+<code translate="no" v-pre>http://host.docker.internal:&lt;port&gt;/v1</code> for a model server on the same machine, see
+<a href="../getting-started/docker-server/#models-on-the-same-machine">Models on the same machine</a>.</p>
+        </div>
+    </div>
+</div>
+<h2 id="adding-a-provider">Adding a provider</h2>
+<p>Open the <strong>Inference Providers</strong> tab and click <strong>Add Inference Provider</strong>. Existing providers are edited with the pen
+button and deleted with the trash button.</p>
+<p>At the top of the dialog:</p>
+<retype-table copy-text="| Field | |
+|---|---|
+| **Name** | Your name for the provider, shown when you pick a model. Include the model, e.g. `OpenRouter - Claude Sonnet`. |
+| **Type** | The kind of API. Currently only **OpenAI Compatible**. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td>Your name for the provider, shown when you pick a model. Include the model, e.g. <code translate="no" v-pre>OpenRouter - Claude Sonnet</code>.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>The kind of API. Currently only <strong>OpenAI Compatible</strong>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="per-type-settings">Per Type Settings</h3>
+<p>The tab is taller than the dialog and scrolls. The lower fields:</p>
+<retype-table copy-text="| Field | |
+|---|---|
+| **OpenAI URL (ends with /v1)** | The base address of the API, see [the table above](#supported-apis). Without `/chat/completions`. |
+| **Api Key** | The key of the service. Local servers usually don't need one; leave it empty. |
+| **Model** | The model to use. Click **Refresh** to load the list of models from the API, or type the model ID yourself (e.g. `anthropic/claude-sonnet-4.5` on OpenRouter). |
+| **Timeout (seconds)** | How long to wait for the API to answer, and for more text once it started writing. The default is 300. Reasoning models may need minutes before the first text; a request that hears nothing for this long fails with a timeout message. |
+| **Retries** | How often a request is repeated when the API answers with a rate limit (429) or a server error (5xx), or cannot be reached. The wait between attempts grows, and a `Retry-After` header of the API is respected. The default is 2, 0 turns retrying off. Only the start of a request is retried, text that already arrived is never written twice. |
+| **Additional Parameters** | A JSON object with extra fields for every request to this provider, e.g. `{&quot;top_k&quot;: 40, &quot;min_p&quot;: 0.05}` for a local server, or `{&quot;provider&quot;: {&quot;order&quot;: [&quot;anthropic&quot;]}}` for OpenRouter. A field set here wins over the response limit (`max_completion_tokens`) and other settings LingoLLM sends. Must be a valid JSON object or empty. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenAI URL (ends with /v1)</strong></td>
+<td>The base address of the API, see <doc-anchor-trigger to="#supported-apis">the table above</doc-anchor-trigger>. Without <code translate="no" v-pre>/chat/completions</code>.</td>
+</tr>
+<tr>
+<td><strong>Api Key</strong></td>
+<td>The key of the service. Local servers usually don&#x27;t need one; leave it empty.</td>
+</tr>
+<tr>
+<td><strong>Model</strong></td>
+<td>The model to use. Click <strong>Refresh</strong> to load the list of models from the API, or type the model ID yourself (e.g. <code translate="no" v-pre>anthropic/claude-sonnet-4.5</code> on OpenRouter).</td>
+</tr>
+<tr>
+<td><strong>Timeout (seconds)</strong></td>
+<td>How long to wait for the API to answer, and for more text once it started writing. The default is 300. Reasoning models may need minutes before the first text; a request that hears nothing for this long fails with a timeout message.</td>
+</tr>
+<tr>
+<td><strong>Retries</strong></td>
+<td>How often a request is repeated when the API answers with a rate limit (429) or a server error (5xx), or cannot be reached. The wait between attempts grows, and a <code translate="no" v-pre>Retry-After</code> header of the API is respected. The default is 2, 0 turns retrying off. Only the start of a request is retried, text that already arrived is never written twice.</td>
+</tr>
+<tr>
+<td><strong>Additional Parameters</strong></td>
+<td>A JSON object with extra fields for every request to this provider, e.g. <code translate="no" v-pre>{&quot;top_k&quot;: 40, &quot;min_p&quot;: 0.05}</code> for a local server, or <code translate="no" v-pre>{&quot;provider&quot;: {&quot;order&quot;: [&quot;anthropic&quot;]}}</code> for OpenRouter. A field set here wins over the response limit (<code translate="no" v-pre>max_completion_tokens</code>) and other settings LingoLLM sends. Must be a valid JSON object or empty.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>When you edit an existing provider, the API key is not shown again. It is kept as it is unless you click
+<strong>Reset Api Key</strong> and enter a new one.</p>
+<p><strong>Refresh</strong> asks the API for its model list (<code translate="no" v-pre>/v1/models</code>) with the URL and key from the form. If it fails with
+<em>Failed to download model list</em>, check the URL (it must end with <code translate="no" v-pre>/v1</code>), the key, and that the server is running.
+Some services don&#x27;t list models; type the model ID instead.</p>
+<p><strong>Test Connection</strong> checks the values in the form without saving: it asks the API for its model list and then for a
+one-token answer from the selected <strong>Model</strong>, without retries. A success message means the URL, key and model work
+together. A failure names the cause (see <doc-anchor-trigger to="#error-messages">Error messages</doc-anchor-trigger>). Some services have no model list; the
+test then only needs the one-token answer.</p>
+<h3 id="general-settings">General Settings</h3>
+<retype-table copy-text="| Field | |
+|---|---|
+| **Max Context Size** | Required. How many tokens the model accepts in total, prompt and response together. |
+| **Max Response Tokens** | Required. The longest response the model may write. Sent to the API as `max_completion_tokens`, and this much of the context is kept free for the response. Must be lower than *Max Context Size*. |
+| **Needs Jailbreak**, **Jailbreak Prompt** | An extra prompt for models that refuse to write some content. When checked, the jailbreak prompt is put at the very beginning of the prompt. |
+| **Enable Reasoning**, **Reasoning Effort** | For reasoning (&quot;thinking&quot;) models, see [Reasoning models](#reasoning-models). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Max Context Size</strong></td>
+<td>Required. How many tokens the model accepts in total, prompt and response together.</td>
+</tr>
+<tr>
+<td><strong>Max Response Tokens</strong></td>
+<td>Required. The longest response the model may write. Sent to the API as <code translate="no" v-pre>max_completion_tokens</code>, and this much of the context is kept free for the response. Must be lower than <em>Max Context Size</em>.</td>
+</tr>
+<tr>
+<td><strong>Needs Jailbreak</strong>, <strong>Jailbreak Prompt</strong></td>
+<td>An extra prompt for models that refuse to write some content. When checked, the jailbreak prompt is put at the very beginning of the prompt.</td>
+</tr>
+<tr>
+<td><strong>Enable Reasoning</strong>, <strong>Reasoning Effort</strong></td>
+<td>For reasoning (&quot;thinking&quot;) models, see <doc-anchor-trigger to="#reasoning-models">Reasoning models</doc-anchor-trigger>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><strong>Max Response Tokens</strong> of the context is kept free for the response, the rest is for the prompt: with a context of
+32 000 tokens and responses of up to 2 000 tokens, the prompt gets 30 000 tokens.</p>
+<p>Take <strong>Max Context Size</strong> from the documentation of the service, and set it a little lower: token counts are not
+always exact, and a request that exceeds the real limit fails.</p>
+<h2 id="error-messages">Error messages</h2>
+<p>When the API refuses a request, LingoLLM says what to fix instead of showing an internal error, followed by what the
+API itself said:</p>
+<retype-table copy-text="| Message | Cause |
+|---|---|
+| *The provider rejected the API key.* | Wrong, expired or missing **Api Key**. |
+| *The API key is not allowed to use this model or endpoint.* | The key is valid but has no access to the model. |
+| *The provider does not know the configured model.* | Wrong **Model**; use **Refresh** to see the names the API knows. |
+| *Nothing was found at the configured URL.* | Wrong **OpenAI URL**; it usually ends with `/v1`. |
+| *The prompt does not fit into the context of the model.* | **Max Context Size** is higher than what the model really accepts. Lower it. |
+| *The provider is limiting requests.* | Rate limit or exhausted quota, even after the retries. |
+| *The provider failed to process the request.* | The service has a problem (5xx), even after the retries. |
+| *The provider did not answer in time.* | Raise **Timeout (seconds)**, or check the server. |
+| *Cannot connect to the provider.* | The server is not running or not reachable from LingoLLM, or the URL has a typo. |
+| *The provider rejected the request.* | Another refusal, often an unsupported field in **Additional Parameters** or reasoning that the model doesn't support. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>The provider rejected the API key.</em></td>
+<td>Wrong, expired or missing <strong>Api Key</strong>.</td>
+</tr>
+<tr>
+<td><em>The API key is not allowed to use this model or endpoint.</em></td>
+<td>The key is valid but has no access to the model.</td>
+</tr>
+<tr>
+<td><em>The provider does not know the configured model.</em></td>
+<td>Wrong <strong>Model</strong>; use <strong>Refresh</strong> to see the names the API knows.</td>
+</tr>
+<tr>
+<td><em>Nothing was found at the configured URL.</em></td>
+<td>Wrong <strong>OpenAI URL</strong>; it usually ends with <code translate="no" v-pre>/v1</code>.</td>
+</tr>
+<tr>
+<td><em>The prompt does not fit into the context of the model.</em></td>
+<td><strong>Max Context Size</strong> is higher than what the model really accepts. Lower it.</td>
+</tr>
+<tr>
+<td><em>The provider is limiting requests.</em></td>
+<td>Rate limit or exhausted quota, even after the retries.</td>
+</tr>
+<tr>
+<td><em>The provider failed to process the request.</em></td>
+<td>The service has a problem (5xx), even after the retries.</td>
+</tr>
+<tr>
+<td><em>The provider did not answer in time.</em></td>
+<td>Raise <strong>Timeout (seconds)</strong>, or check the server.</td>
+</tr>
+<tr>
+<td><em>Cannot connect to the provider.</em></td>
+<td>The server is not running or not reachable from LingoLLM, or the URL has a typo.</td>
+</tr>
+<tr>
+<td><em>The provider rejected the request.</em></td>
+<td>Another refusal, often an unsupported field in <strong>Additional Parameters</strong> or reasoning that the model doesn&#x27;t support.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="reasoning-models">Reasoning models</h2>
+<p>Reasoning models think before they answer. With <strong>Enable Reasoning</strong> checked, LingoLLM sends the chosen
+<strong>Reasoning Effort</strong> (<em>None</em>, <em>Low</em>, <em>Medium</em> or <em>High</em>) to the API as <code translate="no" v-pre>reasoning_effort</code>. More effort usually means
+better planned text, but slower and more expensive responses. Not every API supports the parameter; if requests
+fail with reasoning enabled, turn it off.</p>
+<p>Reasoning counts toward the response: give reasoning models a larger <strong>Max Response Tokens</strong>, or the text may be cut
+off after a long reasoning.</p>
+<h2 id="shared-providers">Shared providers</h2>
+<p>On an installation with several users, an administrator can <strong>share</strong> a provider: check <strong>Shared with all users</strong> in
+the provider&#x27;s dialog (the checkbox is only there for administrators). Every user then finds it in in their <strong>Inference Providers</strong> tab, marked <em>Shared</em> <strong>Yes</strong>. They can use it, but they can&#x27;t open
+it, see its address or API key, change it or delete it; only its owner can.</p>
+<p>Sharing a provider lets the other users spend the owner&#x27;s quota with the service. To stop users from adding providers
+of their own, so that they can only use the shared ones, see
+<a href="../administration/users/#users-and-providers">Users and providers</a>.</p>
+<h2 id="limits-of-shared-providers">Limits of shared providers</h2>
+<p>An administrator can limit what each user may do with a shared provider. In the <strong>Inference Providers</strong> tab, the
+administrator who owns a shared provider has a <strong>Limits</strong> button (a user with a lock) in its row, which opens a table with
+the limits that were set. <strong>Add limit</strong> creates a new one: pick the user and a limit type.</p>
+<retype-table copy-text="| Limit type | Meaning |
+|---|---|
+| Unlimited | No limit (the same as having none). |
+| Token limit | The user can use up to the given number of tokens per period. |
+| Not available | The user can not use the provider; anything that would send a request to it fails. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Limit type</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unlimited</td>
+<td>No limit (the same as having none).</td>
+</tr>
+<tr>
+<td>Token limit</td>
+<td>The user can use up to the given number of tokens per period.</td>
+</tr>
+<tr>
+<td>Not available</td>
+<td>The user can not use the provider; anything that would send a request to it fails.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>A <strong>token limit</strong> has a <strong>reset</strong> (daily, weekly from Monday, or monthly; calendar periods in the time zone of the
+server) and three limits that can each be left empty for no limit: the tokens <strong>sent</strong>, the tokens <strong>generated</strong>, and
+both together (<strong>in total</strong>). Whichever is reached first stops the user until the next reset. If all three are set, the
+sent plus the generated limit must not be below the total (the total could then never be reached), otherwise the dialog
+refuses to save. For example a total of 100,000 with 100,000 sent and 20,000 generated is fine, a total of 100,000 with
+20,000 sent and 10,000 generated is not.</p>
+<p>Nothing is reset on a timer: the tokens used start from zero when the user uses the provider (or looks at their limits)
+for the first time in a new period. The size of a request is known before it is sent, so a request whose prompt would
+take the user over the <strong>sent</strong> or <strong>in total</strong> limit is refused (the prompt is measured with LingoLLM&#x27;s own estimate,
+which can differ a little from the service&#x27;s count). The tokens <strong>generated</strong> are not known in advance: they are counted
+when the request ends, so the user is stopped only once the limit is reached and the last response can go over it. Users
+without a limit in the table are not limited.</p>
+<p>To keep the generated tokens from going over, check <strong>Hard limit</strong> (only available with a limit of the generated tokens).
+A request reserves room for the largest response it allows (the <strong>Max Response Size</strong> of the provider), and with a hard limit it is refused when that reserve does not fit into what is left of the generated
+limit. So a hard limit lower than the response size of the provider refuses every request; the table and the user&#x27;s
+info show <em>hard</em> next to such a limit. The hard limit only covers the generated tokens, the <strong>in total</strong> limit can still be
+gone over by the last response.</p>
+<p>Every user sees the shared providers in their tab as read-only rows. The <strong>info</strong> button (the circle with an <em>i</em>) of a
+shared provider shows their own limit: what they used in this period, the limits and when they reset. When a limit is
+reached, anything that would send a request to the provider shows an error instead.</p>
+<h2 id="usage">Usage</h2>
+<p>The <strong>Inference Providers</strong> tab shows, per provider, the <strong>Tokens sent</strong> (the prompt, &quot;prefill&quot;) and <strong>Tokens generated</strong>
+(the response, reasoning included) you have used with it. A shared provider has a count of its own for each user, so you
+see only your part. Administrators also get a <strong>Usage per user</strong> button on the tab, which opens a table with what every
+user has used of every provider (tokens sent, tokens generated, requests and the time of the last one).</p>
+<p>The numbers are what the service reports; a service that doesn&#x27;t report them (or a request that is stopped in the
+middle) is counted with a local estimate, so those numbers are approximate. A request that fails before any text
+arrived isn&#x27;t counted, and neither is <em>Test Connection</em>. The numbers stay at zero until a screen that talks to the
+model (a chat, a lesson) is used. Unless an administrator has set a
+<doc-anchor-trigger to="#limits-of-shared-providers">limit</doc-anchor-trigger> for you on a shared provider, the counts are only informational.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<retype-table copy-text="| Problem | What to check |
+|---|---|
+| *Failed to download model list* | URL ends with `/v1`, API key, the server is running and reachable from LingoLLM. Type the model ID if the service has no model list. |
+| *The provider did not answer in time.* | Raise **Timeout (seconds)** of the provider; reasoning models may need minutes. |
+| *The provider is limiting requests.* | Wait, or raise **Retries**. |
+| Errors from the API with reasoning on | The API doesn't support `reasoning_effort`. Turn off **Enable Reasoning**. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Problem</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>Failed to download model list</em></td>
+<td>URL ends with <code translate="no" v-pre>/v1</code>, API key, the server is running and reachable from LingoLLM. Type the model ID if the service has no model list.</td>
+</tr>
+<tr>
+<td><em>The provider did not answer in time.</em></td>
+<td>Raise <strong>Timeout (seconds)</strong> of the provider; reasoning models may need minutes.</td>
+</tr>
+<tr>
+<td><em>The provider is limiting requests.</em></td>
+<td>Wait, or raise <strong>Retries</strong>.</td>
+</tr>
+<tr>
+<td>Errors from the API with reasoning on</td>
+<td>The API doesn&#x27;t support <code translate="no" v-pre>reasoning_effort</code>. Turn off <strong>Enable Reasoning</strong>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>Today the provider is only used to list models and to test the connection from the screens; the chats and lessons that
+talk to the model are still to come, and the token counts and limits above apply to them.</p>
+        </div>
+    </div>
+</div>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../user/phone/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Using Lingo​LLM on a phone</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../user/resources/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Resources</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Inference providers", level: 2, icon: "file", hasPrism: false, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/user/inference-providers.md" }</script>
+</body>
+</html>

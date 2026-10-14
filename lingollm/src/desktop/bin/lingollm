@@ -1,0 +1,10 @@
+#!/bin/sh
+# Starts LingoLLM on the bundled Java runtime. Options: lingollm --help
+# Extra JVM options can be passed in LINGOLLM_JAVA_OPTS (e.g. -Xmx2g).
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# LINGOLLM_JAVA_OPTS is split into separate JVM options on purpose
+# shellcheck disable=SC2086
+exec "$DIR/runtime/bin/java" \
+  -Djdk.attach.allowAttachSelf=true -XX:+EnableDynamicAgentLoading --enable-native-access=ALL-UNNAMED \
+  $LINGOLLM_JAVA_OPTS \
+  -jar "$DIR/app/lingollm-launcher.jar" "$@"

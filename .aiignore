@@ -1,0 +1,5 @@
+/.idea/
+/lingollm/src/main/frontend/generated/
+/lingollm/src/main/frontend/index.html
+/lingollm/src/main/resources/META-INF/VAADIN/config/flow-build-info.json
+/lingollm/target/

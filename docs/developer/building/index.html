@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Building from source</title>
+    <meta name="title" content="Building from source">
+    <meta name="description" content="This page shows how to build LingoLLM, run it on your machine while you work on it, and build a plugin and this manual. Packaging for release (the Docker image, the desktop app, CI) is covered in Packaging & releases.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/building/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/building/">
+    <meta property="og:title" content="Building from source">
+    <meta property="og:description" content="This page shows how to build LingoLLM, run it on your machine while you work on it, and build a plugin and this manual. Packaging for release (the Docker image, the desktop app, CI) is covered in Packaging & releases.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/building/">
+    <meta name="twitter:title" content="Building from source">
+    <meta name="twitter:description" content="This page shows how to build LingoLLM, run it on your machine while you work on it, and build a plugin and this manual. Packaging for release (the Docker image, the desktop app, CI) is covered in Packaging & releases.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/building.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="building-from-source">Building from source</h1>
+<p>This page shows how to build LingoLLM, run it on your machine while you work on it, and build a plugin and
+this manual. Packaging for release (the Docker image, the desktop app, CI) is covered in
+<a href="../packaging/">Packaging &amp; releases</a>.</p>
+<h2 id="requirements">Requirements</h2>
+<retype-table copy-text="| Tool | Version | Notes |
+|---|---|---|
+| JDK | 25 or newer | A full JDK, not a JRE: the extension mechanism attaches a Java agent at runtime (`jdk.attach`), and the desktop build uses `jlink` / `jpackage`. |
+| Maven | 3.9 or newer | |
+| Git | any | The build reads the commit id and closest tag (`git-commit-id-plugin`), so build from a clone, not from a source archive. |
+| Node.js | - | Not needed: the Vaadin Maven plugin downloads its own Node.js into `~/.vaadin` on the first build. |
+| Servlet container | Tomcat 11 or Jetty 12 | Only for running the WAR outside Docker. Must support Servlet 6.1 (Jakarta EE 11). |
+| Docker | optional | For `docker compose`. |
+| Retype | optional | For building the manual. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK</td>
+<td>25 or newer</td>
+<td>A full JDK, not a JRE: the extension mechanism attaches a Java agent at runtime (<code translate="no" v-pre>jdk.attach</code>), and the desktop build uses <code translate="no" v-pre>jlink</code> / <code translate="no" v-pre>jpackage</code>.</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>3.9 or newer</td>
+<td> </td>
+</tr>
+<tr>
+<td>Git</td>
+<td>any</td>
+<td>The build reads the commit id and closest tag (<code translate="no" v-pre>git-commit-id-plugin</code>), so build from a clone, not from a source archive.</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>-</td>
+<td>Not needed: the Vaadin Maven plugin downloads its own Node.js into <code translate="no" v-pre>~/.vaadin</code> on the first build.</td>
+</tr>
+<tr>
+<td>Servlet container</td>
+<td>Tomcat 11 or Jetty 12</td>
+<td>Only for running the WAR outside Docker. Must support Servlet 6.1 (Jakarta EE 11).</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>optional</td>
+<td>For <code translate="no" v-pre>docker compose</code>.</td>
+</tr>
+<tr>
+<td>Retype</td>
+<td>optional</td>
+<td>For building the manual.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The first build downloads a lot (Maven dependencies, Node.js, npm packages) and takes several minutes. Later builds
+are faster.</p>
+<h2 id="building-the-application">Building the application</h2>
+<p>The repository root holds the parent POM (<code translate="no" v-pre>pom.xml</code>): it carries the version, which the application and any plugin
+inherit, and lists them as modules, so <code translate="no" v-pre>mvn package</code> there builds the application and every plugin in the repository. The
+application is the Maven project in <code translate="no" v-pre>lingollm/</code>:</p>
+<div id="building-the-application-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">cd lingollm
+mvn package                  # builds and tests, WAR in target/lingollm-1.0.0.war
+mvn package -DskipTests      # the same without tests
+mvn install -DskipTests      # also installs the WAR and the classes JAR into ~/.m2 (needed by plugins)
+mvn -N install                                # (repository root, once) installs the parent POM, the installed POMs refer to it
+mvn install -DskipTests -Dvaadin.skip=true   # plugins only need the classes JAR: no frontend build, not a deployable WAR</code></pre>
+</doc-codeblock></div>
+<p>What a build does, in order:</p>
+<ol>
+<li>
+<p><code translate="no" v-pre>git-commit-id-plugin</code> writes <code translate="no" v-pre>git.properties</code> (commit id, time, closest tag) into the classes.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>vaadin-maven-plugin</code> prepares the frontend (<code translate="no" v-pre>prepare-frontend</code>): it generates <code translate="no" v-pre>package.json</code>, <code translate="no" v-pre>vite</code> config and
+the files in <code translate="no" v-pre>src/main/frontend/generated/</code> (ignored by Git) and downloads Node.js if needed.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>maven-compiler-plugin</code> compiles the sources, then <code translate="no" v-pre>aspectj-maven-plugin</code> compiles them again with the AspectJ
+compiler and weaves the Spring aspects in (see <doc-anchor-trigger to="#aspectj-weaving">AspectJ weaving</doc-anchor-trigger> below). The woven classes in
+<code translate="no" v-pre>target/classes</code> are the ones that get packaged.</p>
+</li>
+<li>
+<p>Tests run (<code translate="no" v-pre>maven-surefire-plugin</code>), see <doc-anchor-trigger to="#running-the-tests">Running the tests</doc-anchor-trigger>.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>vaadin-maven-plugin</code> builds the frontend bundle (<code translate="no" v-pre>build-frontend</code>).</p>
+</li>
+<li>
+<p><code translate="no" v-pre>maven-war-plugin</code> packages <code translate="no" v-pre>target/lingollm-1.2.0.war</code> (about 185 MB) and, because of <code translate="no" v-pre>attachClasses</code>, also
+<code translate="no" v-pre>target/lingollm-1.2.0-classes.jar</code> - the application classes that plugins compile against.</p>
+</li>
+</ol>
+<p>Outputs in <code translate="no" v-pre>lingollm/target/</code>:</p>
+<retype-table copy-text="| Path | |
+|---|---|
+| `lingollm-1.2.0.war` | The web application. |
+| `lingollm-1.2.0/` | The same WAR, exploded (production mode). |
+| `lingollm-1.2.0-classes.jar` | Application classes, the compile dependency of plugins. |
+| `surefire-reports/` | Test reports. |
+| `test-home/` | Data folders created by tests (safe to delete). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.2.0.war</code></td>
+<td>The web application.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.2.0/</code></td>
+<td>The same WAR, exploded (production mode).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.2.0-classes.jar</code></td>
+<td>Application classes, the compile dependency of plugins.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>surefire-reports/</code></td>
+<td>Test reports.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>test-home/</code></td>
+<td>Data folders created by tests (safe to delete).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="development-and-production-mode">Development and production mode</h3>
+<p>Vaadin runs either in <em>development mode</em> (frontend served from a development bundle that Vaadin builds into
+<code translate="no" v-pre>src/main/bundles/</code>, ignored by Git; Vaadin&#x27;s dev tools available, more checks) or in <em>production mode</em> (optimized frontend
+bundle, no dev tools). The mode is decided by <code translate="no" v-pre>META-INF/VAADIN/config/flow-build-info.json</code>, the build info that
+<code translate="no" v-pre>vaadin-maven-plugin</code> writes:</p>
+<ul>
+<li>
+<p><code translate="no" v-pre>prepare-frontend</code> (every build, also <code translate="no" v-pre>mvn compile</code> and <code translate="no" v-pre>mvn jetty:run</code>) writes a <strong>development</strong> build info with
+the absolute paths of your checkout into <code translate="no" v-pre>target/classes</code>;</p>
+</li>
+<li>
+<p><code translate="no" v-pre>build-frontend</code> (in <code translate="no" v-pre>prepare-package</code>, so only <code translate="no" v-pre>mvn package</code> / <code translate="no" v-pre>install</code>) builds the optimized bundle, writes a
+<strong>production</strong> build info into the WAR and removes the development one from <code translate="no" v-pre>target/classes</code>.</p>
+</li>
+</ul>
+<p>By default Vaadin scans the bytecode of the app and puts only the components it finds referenced into the production
+bundle. Extensions are loaded at runtime and may use any Vaadin component, so the plugin is configured with
+<code translate="no" v-pre>&lt;optimizeBundle&gt;false&lt;/optimizeBundle&gt;</code> (<code translate="no" v-pre>-Dvaadin.devmode.optimizeBundle=false</code> on the command line): the bundle
+contains every component on the classpath, at the price of a bigger bundle and a slower frontend build.</p>
+<p>So <code translate="no" v-pre>mvn package</code> always produces a <strong>production</strong> WAR - the one the Dockerfile, the <code translate="no" v-pre>desktop</code> profile and CI use, and
+the one to deploy. Nothing has to be copied around. A build info in <code translate="no" v-pre>src/main/resources</code> is never packaged into the
+WAR (<code translate="no" v-pre>maven-war-plugin</code> excludes <code translate="no" v-pre>META-INF/VAADIN/config/flow-build-info.json*</code>).</p>
+<p>Development mode is for running from the IDE (see <doc-anchor-trigger to="#intellij-idea">IntelliJ IDEA</doc-anchor-trigger>) or <code translate="no" v-pre>mvn jetty:run</code>. Without a build
+info Vaadin also starts in development mode and finds the project by the <code translate="no" v-pre>vaadin.project.basedir</code> system property,
+the classpath or the working directory.</p>
+<p>To check a WAR:</p>
+<div id="development-and-production-mode-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">unzip -p target/lingollm-1.2.0.war WEB-INF/classes/META-INF/VAADIN/config/flow-build-info.json   # &quot;productionMode&quot; : true</code></pre>
+</doc-codeblock></div>
+<h3 id="aspectj-weaving">AspectJ weaving</h3>
+<p>LingoLLM relies on <strong>compile-time</strong> AspectJ weaving with the <code translate="no" v-pre>spring-aspects</code> library: Vaadin components are
+created with <code translate="no" v-pre>new</code>, not by Spring, so classes annotated <code translate="no" v-pre>@Configurable</code> (all routes, the workspace, dialogs, parts...)
+get their <code translate="no" v-pre>@Autowired</code> fields injected by the woven <code translate="no" v-pre>AnnotationBeanConfigurerAspect</code>.</p>
+<p>Transactions are <em>not</em> woven: <code translate="no" v-pre>@CommonTx</code>, <code translate="no" v-pre>@CommonTxReadOnly</code> and <code translate="no" v-pre>@NoTx</code> are applied by Spring&#x27;s class-based
+proxies around the service beans (see <a href="../services/#transactions">Services</a>).</p>
+<p>If the classes are compiled by plain <code translate="no" v-pre>javac</code>, nothing fails at build time, but at runtime every <code translate="no" v-pre>@Autowired</code> field of a
+UI class is <code translate="no" v-pre>null</code> and the first screen fails with a <code translate="no" v-pre>NullPointerException</code>. Maven always uses <code translate="no" v-pre>ajc</code>; in your IDE,
+make sure the AspectJ compiler is used too (see <doc-anchor-trigger to="#intellij-idea">IntelliJ IDEA</doc-anchor-trigger>).</p>
+<p>The compiler also keeps parameter names (<code translate="no" v-pre>-parameters</code>) and all local variables (<code translate="no" v-pre>preserveAllLocals</code>): extensions
+read method arguments and local variables of <code translate="no" v-pre>@Extendable</code> methods by name, so don&#x27;t remove these options.</p>
+<h2 id="running-locally">Running locally</h2>
+<p>LingoLLM is a plain WAR without an embedded server, so you run it in a servlet container: from the IDE, with
+<code translate="no" v-pre>mvn jetty:run</code>, in a local Jetty, or in Docker.</p>
+<h3 id="keep-your-development-data-separate">Keep your development data separate</h3>
+<p>LingoLLM keeps everything in <code translate="no" v-pre>~/.lingollm</code> (<code translate="no" v-pre>System.getProperty(&quot;user.home&quot;)</code> + <code translate="no" v-pre>.lingollm</code>), the same folder
+the desktop app uses. To keep test data away from your real data, start the container with another home folder:</p>
+<div id="keep-your-development-data-separate-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">-Duser.home=/path/to/dev-home</code></pre>
+</doc-codeblock></div>
+<p>The folder <code translate="no" v-pre>/path/to/dev-home/.lingollm</code> is created on the first start. Delete it to start over with an empty
+installation (you&#x27;ll be asked to create the administrator again).</p>
+<h3 id="jvm-options">JVM options</h3>
+<p>The extension mechanism installs a ByteBuddy agent into the running JVM when the application starts. On a JDK this
+works without options, but recent JDKs print a warning about dynamically loaded agents. To silence it and allow the
+agent to attach to its own process, add:</p>
+<div id="jvm-options-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true</code></pre>
+</doc-codeblock></div>
+<p>These are the options the desktop app and the tests use.</p>
+<h3 id="intellij-idea">IntelliJ IDEA</h3>
+<ol>
+<li>
+<p>Open the repository root; IntelliJ imports <code translate="no" v-pre>lingollm/pom.xml</code> (and the plugin POMs, if you add them as Maven
+projects).</p>
+</li>
+<li>
+<p><strong>Settings → Build, Execution, Deployment → Compiler → Java Compiler</strong>: set <em>Use compiler</em> to <strong>Ajc</strong>, with the
+path to <code translate="no" v-pre>aspectjtools-1.9.25.1.jar</code> from your Maven repository, and <em>Delegate to Javac</em> checked (javac is then
+used only for modules without aspects). <code translate="no" v-pre>spring-aspects</code> must be on the aspect path of the <code translate="no" v-pre>lingollm</code> module
+(its AspectJ facet). Add <code translate="no" v-pre>-parameters</code> to the additional command line parameters of the module.</p>
+</li>
+<li>
+<p>Add a <strong>Tomcat Server → Local</strong> run configuration (Tomcat 11), deploy the artifact <code translate="no" v-pre>lingollm:war exploded</code>,
+and add the <doc-anchor-trigger to="#jvm-options">JVM options</doc-anchor-trigger> and <code translate="no" v-pre>-Duser.home=...</code> to <em>VM options</em>.</p>
+</li>
+<li>
+<p>Run it and open the URL shown in the run configuration, e.g. <code translate="no" v-pre>http://localhost:8080/lingollm/</code> when the
+application context is <code translate="no" v-pre>/lingollm</code>.</p>
+</li>
+</ol>
+<p>IntelliJ builds the exploded WAR itself, without the Vaadin plugin, so the application runs in
+<doc-anchor-trigger to="#development-and-production-mode">development mode</doc-anchor-trigger>. It needs to know where the project is - either:</p>
+<ul>
+<li>add <code translate="no" v-pre>-Dvaadin.project.basedir=/path/to/LingoLLM/lingollm</code> to <em>VM options</em> (simplest, survives <em>Rebuild Project</em>), or</li>
+<li>run <code translate="no" v-pre>mvn vaadin:prepare-frontend</code> in <code translate="no" v-pre>lingollm/</code> and copy the generated
+<code translate="no" v-pre>target/classes/META-INF/VAADIN/config/flow-build-info.json</code> to the same path under <code translate="no" v-pre>src/main/resources/</code>
+(ignored by Git and never packaged into the WAR, but IntelliJ copies it into the exploded WAR on every build).</li>
+</ul>
+<p>Don&#x27;t deploy <code translate="no" v-pre>target/lingollm-1.2.0/</code> (the exploded WAR from <code translate="no" v-pre>mvn package</code>) from the IDE - it is a production build.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>LingoLLM works under any context path. Login cookies are named after the context, so a login saved under
+<code translate="no" v-pre>/lingollm</code> is separate from one saved under <code translate="no" v-pre>/</code>.</p>
+        </div>
+    </div>
+</div>
+<p>Java changes need a redeploy (<em>Update application → Restart server</em>).</p>
+<h3 id="local-jetty">Local Jetty</h3>
+<p>To run the built WAR the way the Docker image does, download <a href="https://jetty.org/download.html">Jetty 12</a>
+(<code translate="no" v-pre>jetty-home</code>), create a Jetty base with the same modules and drop the WAR in:</p>
+<div id="local-jetty-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">export JETTY_HOME=/path/to/jetty-home-12.1.10
+mkdir -p ~/jetty-lingollm &amp;&amp; cd ~/jetty-lingollm
+java -jar $JETTY_HOME/start.jar --create-startd \
+     --add-modules=server,http,ee11-deploy,ee11-websocket-jakarta,ee11-webapp,ee11-jsp
+cp /path/to/LingoLLM/lingollm/target/lingollm-1.2.0.war webapps/ROOT.war
+java -XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true -Duser.home=/path/to/dev-home \
+     -jar $JETTY_HOME/start.jar jetty.http.port=8080</code></pre>
+</doc-codeblock></div>
+<p>LingoLLM is then at <code translate="no" v-pre>http://localhost:8080/</code>. <code translate="no" v-pre>ee11-websocket-jakarta</code> is required: the UI is updated through a
+push WebSocket.</p>
+<h3 id="mvn-jettyrun"><code translate="no" v-pre>mvn jetty:run</code></h3>
+<p>The quickest way to run from the sources, without an IDE or a server installation. The Jetty 12 Maven plugin
+(<code translate="no" v-pre>jetty-ee11-maven-plugin</code>) runs the application from <code translate="no" v-pre>target/classes</code> and <code translate="no" v-pre>src/main/webapp</code> inside the Maven JVM, so
+the <doc-anchor-trigger to="#jvm-options">JVM options</doc-anchor-trigger> go into <code translate="no" v-pre>MAVEN_OPTS</code>:</p>
+<div id="mvn-jettyrun-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">cd lingollm
+export MAVEN_OPTS=&quot;-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true&quot;
+mvn -DskipTests jetty:run                       # http://localhost:8080/
+mvn -DskipTests -Djetty.http.port=9090 jetty:run   # another port</code></pre>
+</doc-codeblock></div>
+<p>The application runs in <doc-anchor-trigger to="#development-and-production-mode">development mode</doc-anchor-trigger> with the development logging (see
+<doc-anchor-trigger to="#logs">Logs</doc-anchor-trigger>). Stop it with <code translate="no" v-pre>Ctrl+C</code>. Java changes need a restart.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Development data</h5>
+<p>To <doc-anchor-trigger to="#keep-your-development-data-separate">keep your development data separate</doc-anchor-trigger>, add <code translate="no" v-pre>-Duser.home=...</code> to
+<code translate="no" v-pre>MAVEN_OPTS</code> together with <code translate="no" v-pre>-Dmaven.repo.local=$HOME/.m2/repository</code> - <code translate="no" v-pre>user.home</code> also moves Maven&#x27;s own local
+repository, which would otherwise be downloaded again into the development home.</p>
+        </div>
+    </div>
+</div>
+<h3 id="docker">Docker</h3>
+<p>From the repository root:</p>
+<div id="docker-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">docker compose up --build</code></pre>
+</doc-codeblock></div>
+<p>The image is built from the sources in <code translate="no" v-pre>lingollm/</code> (tests skipped) and the data is kept in <code translate="no" v-pre>./data</code> in the
+repository. See <a href="../../user/getting-started/docker-server/">Server (Docker)</a> for the configuration and
+<a href="../packaging/">Packaging &amp; releases</a> for how the image is built.</p>
+<h3 id="logs">Logs</h3>
+<p>LingoLLM logs to standard output with log4j 1.x (reload4j). There are two configurations:</p>
+<ul>
+<li>
+<p><code translate="no" v-pre>src/main/resources/log4j.properties</code> - <strong>development</strong>, used from <code translate="no" v-pre>target/classes</code> by IDE runs and
+<code translate="no" v-pre>mvn jetty:run</code>. The <code translate="no" v-pre>com.github.enerccio</code> loggers are at <code translate="no" v-pre>DEBUG</code>.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>src/main/resources-release/log4j.properties</code> - <strong>release</strong>, everything at <code translate="no" v-pre>INFO</code>. <code translate="no" v-pre>mvn package</code> puts it into the
+WAR in place of the development one, so the Docker image, the desktop app and any other deployed WAR log no chat
+content (see <a href="../packaging/#the-war">Packaging &amp; releases</a>).</p>
+</li>
+</ul>
+<p>In the desktop app the output goes to <code translate="no" v-pre>~/.lingollm/desktop/logs/</code>.</p>
+<h2 id="running-the-tests">Running the tests</h2>
+<div id="running-the-tests-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">mvn test                                     # all tests
+mvn test -Dtest=LanguageCrudTest             # one class
+mvn test -Dtest='*CrudTest'                  # a pattern
+mvn test -Dtest='LocalizationTest#name'      # one method</code></pre>
+</doc-codeblock></div>
+<p>The tests start the real Spring XML configuration (without OSGi and the instrumentation agent) against a SQLite
+database in <code translate="no" v-pre>target/test-home/ctx-*</code>, and talk to a fake OpenAI-compatible server, so no network, model or API key is
+needed. <code translate="no" v-pre>RuntimeInstrumentationTest</code> installs the ByteBuddy agent into the test JVM; Surefire passes the needed JVM
+options. <a href="../testing/">Testing</a> describes the test base and how to write tests.</p>
+<h2 id="building-a-plugin">Building a plugin</h2>
+<p>The only plugin in this repository is <code translate="no" v-pre>lingollm/plugins/gemma4toolsfix</code> (a module of the root POM). A plugin is a separate Maven project (OSGi bundle) that compiles against the
+classes JAR of the application, so install the parent POM and the application first:</p>
+<div id="building-a-plugin-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">mvn -N install                    # in the repository root
+cd lingollm
+mvn install -DskipTests -Dvaadin.skip=true   # the classes JAR only: no frontend build, not a deployable WAR
+
+cd /path/to/your/plugin
+mvn package                       # target/&lt;plugin&gt;-1.0.0.jar</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>-Dvaadin.skip=true</code> turns off every goal of <code translate="no" v-pre>vaadin-maven-plugin</code>, so the frontend (Node.js download, npm, Vite
+bundle) is not built; a plugin needs only the classes JAR. The WAR of such a build has no frontend bundle and must not
+be deployed.</p>
+<p>Load the JAR in <em>Admin → Extensions</em> of your running instance, or copy it into <code translate="no" v-pre>.lingollm/extensions</code> of your
+development home before starting. Rebuild the plugin whenever you change classes it uses - it is built for one exact
+version of the application. See <a href="../plugins/">Plugin development</a>.</p>
+<h2 id="database-schema-changes">Database schema changes</h2>
+<p>The schema is created and upgraded by Flyway from <code translate="no" v-pre>src/main/resources/migration/V&lt;n&gt;__&lt;name&gt;.sql</code>; Hibernate only
+validates it (<code translate="no" v-pre>hibernate.hbm2ddl.auto=validate</code>), so an entity change without a migration makes the application fail
+on start.</p>
+<p><code translate="no" v-pre>com.github.enerccio.tools.GenerateFlywayDiff</code> (in <code translate="no" v-pre>src/main/java/com/github/enerccio/tools/</code>) helps write the
+migration: it compares the entities listed in <code translate="no" v-pre>persistence.xml</code> with an existing database and prints the SQL Hibernate
+would run to update it. Run it from the repository root (it reads <code translate="no" v-pre>lingollm/src/main/webapp/config/persistence.xml</code>)
+with the same <code translate="no" v-pre>-Duser.home</code> as your development instance - it uses the database in <code translate="no" v-pre>&lt;user.home&gt;/.lingollm</code>. Review
+the output before using it: Hibernate&#x27;s SQLite updates are a starting point, not a finished migration.
+<a href="../database/">Database &amp; migrations</a> explains the rules for migrations.</p>
+<h2 id="building-the-manual">Building the manual</h2>
+<p>The manual is a <a href="https://retype.com">Retype</a> site. Sources are in <code translate="no" v-pre>manual/</code>, the configuration is <code translate="no" v-pre>retype.yml</code> in the
+repository root, and the generated site is written to <code translate="no" v-pre>docs/</code> and served by GitHub Pages from the <code translate="no" v-pre>master</code> branch.</p>
+<div id="building-the-manual-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">npm install --global retypeapp     # or: dotnet tool install retypeapp --global
+retype start                       # live preview at http://localhost:5000
+retype build                       # writes docs/</code></pre>
+</doc-codeblock></div>
+<p>Commit <code translate="no" v-pre>docs/</code> together with the changed sources. Images go into <code translate="no" v-pre>manual/images/</code> (there are none yet).</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<retype-table copy-text="| Problem | Cause and fix |
+|---|---|
+| `NullPointerException` on an `@Autowired` field of a UI class | The classes were compiled without AspectJ weaving. Build with Maven or set up the Ajc compiler in the IDE ([AspectJ weaving](#aspectj-weaving)). |
+| `couldn't find aspectjrt.jar on classpath` warning | Printed by the AspectJ plugin on every build; harmless. |
+| `Schema-validation: missing column ...` on start | An entity was changed without a Flyway migration. Add one ([Database schema changes](#database-schema-changes)). |
+| The frontend build fails downloading Node.js or npm packages | It needs internet access on the first build. Behind a proxy, configure it for Maven and npm, or delete `~/.vaadin` and `node_modules` and try again. |
+| A plugin fails with `NoSuchMethodError` / `ClassNotFoundException` | It was built against another version of the application. Run `mvn install` in `lingollm/` (and `mvn -N install` in the root) and rebuild the plugin. |
+| `WARNING: A Java agent has been loaded dynamically` | Add the [JVM options](#jvm-options). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>NullPointerException</code> on an <code translate="no" v-pre>@Autowired</code> field of a UI class</td>
+<td>The classes were compiled without AspectJ weaving. Build with Maven or set up the Ajc compiler in the IDE (<doc-anchor-trigger to="#aspectj-weaving">AspectJ weaving</doc-anchor-trigger>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>couldn't find aspectjrt.jar on classpath</code> warning</td>
+<td>Printed by the AspectJ plugin on every build; harmless.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Schema-validation: missing column ...</code> on start</td>
+<td>An entity was changed without a Flyway migration. Add one (<doc-anchor-trigger to="#database-schema-changes">Database schema changes</doc-anchor-trigger>).</td>
+</tr>
+<tr>
+<td>The frontend build fails downloading Node.js or npm packages</td>
+<td>It needs internet access on the first build. Behind a proxy, configure it for Maven and npm, or delete <code translate="no" v-pre>~/.vaadin</code> and <code translate="no" v-pre>node_modules</code> and try again.</td>
+</tr>
+<tr>
+<td>A plugin fails with <code translate="no" v-pre>NoSuchMethodError</code> / <code translate="no" v-pre>ClassNotFoundException</code></td>
+<td>It was built against another version of the application. Run <code translate="no" v-pre>mvn install</code> in <code translate="no" v-pre>lingollm/</code> (and <code translate="no" v-pre>mvn -N install</code> in the root) and rebuild the plugin.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>WARNING: A Java agent has been loaded dynamically</code></td>
+<td>Add the <doc-anchor-trigger to="#jvm-options">JVM options</doc-anchor-trigger>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Developer guide</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/architecture/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Architecture</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Building from source", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/developer/building.md" }</script>
+</body>
+</html>

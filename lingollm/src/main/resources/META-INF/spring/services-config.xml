@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="userRepository" class="com.github.enerccio.lingollm.domain.security.repository.impl.JpaUserRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.security.AdminGuard" />
+
+    <bean class="com.github.enerccio.lingollm.domain.security.service.impl.UserServiceImpl">
+        <property name="repository" ref="userRepository" />
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.InferenceServicesImpl">
+        <property name="inferenceProviders">
+            <list>
+                <value>com.github.enerccio.lingollm.domain.service.impl.inference.OpenAICompatibleInferenceService</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="settingRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaSettingRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.SettingServiceImpl">
+        <property name="repository" ref="settingRepository" />
+    </bean>
+
+    <bean id="resourceRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaResourceRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.ResourceServiceImpl">
+        <property name="repository" ref="resourceRepository" />
+    </bean>
+
+    <bean id="aiRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaAIRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.AIServiceImpl">
+        <property name="repository" ref="aiRepository" />
+    </bean>
+
+    <bean id="usageRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaUsageRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.UsageServiceImpl">
+        <property name="repository" ref="usageRepository" />
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.AILimitServiceImpl" />
+
+    <bean id="languageRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaLanguageRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.LanguageServiceImpl">
+        <property name="repository" ref="languageRepository" />
+    </bean>
+
+    <bean id="freeChatRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaFreeChatRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.FreeChatServiceImpl">
+        <property name="repository" ref="freeChatRepository" />
+    </bean>
+
+    <bean id="freeChatMessageRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaFreeChatMessageRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.FreeChatMessageServiceImpl">
+        <property name="repository" ref="freeChatMessageRepository" />
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.DatabaseBackupServiceImpl" />
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.OsgiServiceImpl" />
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.ExtensionServiceImpl" />
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.CleanupServiceImpl">
+        <property name="entityManager" ref="em" />
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.instruct.RuntimeInstrumentationInitializer" />
+</beans>

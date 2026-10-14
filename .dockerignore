@@ -1,0 +1,4 @@
+lingollm/target/
+.idea/
+/data/
+/lingollm/node_modules/

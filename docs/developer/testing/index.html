@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Testing</title>
+    <meta name="title" content="Testing">
+    <meta name="description" content="LingoLLM's tests are integration tests first: most of them start the real Spring XML configuration against a throwaway SQLite database and talk to a fake OpenAI-compatible server.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/testing/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/testing/">
+    <meta property="og:title" content="Testing">
+    <meta property="og:description" content="LingoLLM's tests are integration tests first: most of them start the real Spring XML configuration against a throwaway SQLite database and talk to a fake OpenAI-compatible server.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/testing/">
+    <meta name="twitter:title" content="Testing">
+    <meta name="twitter:description" content="LingoLLM's tests are integration tests first: most of them start the real Spring XML configuration against a throwaway SQLite database and talk to a fake OpenAI-compatible server.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/testing.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="testing">Testing</h1>
+<p>LingoLLM&#x27;s tests are integration tests first: most of them start the real Spring XML configuration against a
+throwaway SQLite database and talk to a fake OpenAI-compatible server. They need no network, no model and no API key,
+and they run in CI on every push and pull request. This page explains the test infrastructure and how to add tests.</p>
+<p>All test code is in <code translate="no" v-pre>lingollm/src/test/java/com/github/enerccio/lingollm/</code>; paths below are relative to it.</p>
+<h2 id="running-the-tests">Running the tests</h2>
+<p>From <code translate="no" v-pre>lingollm/</code>:</p>
+<div id="running-the-tests-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">mvn test                                     # all tests
+mvn test -Dtest=LanguageCrudTest             # one class
+mvn test -Dtest='*CrudTest'                  # a pattern
+mvn test -Dtest='LocalizationTest#name'      # one method</code></pre>
+</doc-codeblock></div>
+<p>Surefire is configured in <code translate="no" v-pre>pom.xml</code> with:</p>
+<retype-table copy-text="| Setting | Why |
+|---|---|
+| `-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true` | `RuntimeInstrumentationTest` installs the ByteBuddy agent into the test JVM. |
+| `lingollm.test.home=target/test-home` | Folder for the test databases (see [The application folder](#the-application-folder)). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Setting</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true</code></td>
+<td><code translate="no" v-pre>RuntimeInstrumentationTest</code> installs the ByteBuddy agent into the test JVM.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm.test.home=target/test-home</code></td>
+<td>Folder for the test databases (see <doc-anchor-trigger to="#the-application-folder">The application folder</doc-anchor-trigger>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Reports are written to <code translate="no" v-pre>target/surefire-reports/</code>; the CI job uploads them as an artifact when a test fails.</p>
+<h3 id="in-the-ide">In the IDE</h3>
+<p>Tests run from IntelliJ IDEA like any JUnit test, with two conditions:</p>
+<ul>
+<li>
+<p>the classes must be compiled with AspectJ (see <a href="../building/#aspectj-weaving">Building from source</a>), otherwise
+UI classes and <code translate="no" v-pre>@Configurable</code> beans miss their dependencies;</p>
+</li>
+<li>
+<p>add <code translate="no" v-pre>-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true</code> to the VM options of the JUnit run
+configuration template if you run <code translate="no" v-pre>RuntimeInstrumentationTest</code>.</p>
+</li>
+</ul>
+<p>Without <code translate="no" v-pre>lingollm.test.home</code> the tests fall back to <code translate="no" v-pre>target/test-home</code> relative to the working directory, so run
+them with <code translate="no" v-pre>lingollm/</code> as the working directory (IntelliJ&#x27;s default for the module).</p>
+<h2 id="libraries">Libraries</h2>
+<retype-table copy-text="| Library | Used for |
+|---|---|
+| JUnit Jupiter 6 | Test engine, `@Test`, `@BeforeEach`, `@TempDir`... |
+| AssertJ | All assertions (`assertThat(...)`) - use it instead of JUnit's `Assertions`. |
+| Spring Test | `@SpringJUnitWebConfig`, context caching, `@DirtiesContext`. |
+| JDK `HttpServer` | The fake LLM server (`test/llm/MockLLMServer`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Library</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JUnit Jupiter 6</td>
+<td>Test engine, <code translate="no" v-pre>@Test</code>, <code translate="no" v-pre>@BeforeEach</code>, <code translate="no" v-pre>@TempDir</code>...</td>
+</tr>
+<tr>
+<td>AssertJ</td>
+<td>All assertions (<code translate="no" v-pre>assertThat(...)</code>) - use it instead of JUnit&#x27;s <code translate="no" v-pre>Assertions</code>.</td>
+</tr>
+<tr>
+<td>Spring Test</td>
+<td><code translate="no" v-pre>@SpringJUnitWebConfig</code>, context caching, <code translate="no" v-pre>@DirtiesContext</code>.</td>
+</tr>
+<tr>
+<td>JDK <code translate="no" v-pre>HttpServer</code></td>
+<td>The fake LLM server (<code translate="no" v-pre>test/llm/MockLLMServer</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>There is no mocking library. Services are tested through the real Spring beans and the real database; the only
+fake is the model server.</p>
+<h2 id="what-is-covered">What is covered</h2>
+<retype-table copy-text="| Package | Tests | What they check |
+|---|---|---|
+| `test` | `TestBaseSmokeTest` | The test infrastructure itself: isolated folder, session user, mock LLM wiring (model listing, streaming). |
+| `test/llm` | `MockLLMServerTest` | The fake OpenAI server against the real `openai-java` client. |
+| `crud` | `*CrudTest`, `OwnedCrudContract`, `ExtendableCrudContract` | Create, update, soft and hard delete, owner isolation and extended attributes of every entity; `FreeChatCrudTest` also checks that a new chat gets the language of the session; `LanguageCrudTest` the injected `languageSpecificData`; `FreeChatMessageCrudTest` the loose attachments and the parent chain. |
+| `db` | `DatabaseRestoreCheckTest`, `PreMigrationBackupTest` | The check of a database before a restore (no Spring context) and the copy `Configuration.resolveDb` saves before an existing database is migrated (no history table, nothing for a current or new database, only the newest three kept). |
+| `domain` | `ExtendableEntityListenerTest`, `AISharingTest`, `UsageServiceTest`, `AILimitServiceTest`, `CronScheduleTest` | Extended attribute serialization (strings, injected objects, loose attachments), the AIs shared by administrators (visible to all, read-only for others, only administrators share, the setting that stops users from creating AIs), the `Usage` of a user per AI, the limits of the users of a shared AI (the settings, the reset periods and the refusal of a request that is over the limit), cron parsing. |
+| `inference` | `InferTest`, `InferenceFunctionCallTest`, `InferenceRobustnessTest`, `InferenceAttachmentsTest`, `UsageInferenceTest` | `infer` (text, schema check, class), `stream` and the model calling functions (tools in the request, results sent back, several calls and rounds, calls answering from other threads, failed and refused calls, the round limit, cancelling while a call is pending, the tool role resolvers); timeouts, retries and the classification of provider errors; attachments as content parts of the request; the usage counted per user (reported or estimated, a failed request not counted). Built on `InferenceTestBase` and the mock server. |
+| `function` | `FunctionRegistryTest` | Interfaces become function schemas, arguments are parsed, methods run on the executor and answer through `FunctionContinuation`. |
+| `backup` | `DatabaseBackupScheduleTest` | Scheduled database backups. |
+| `security` | - | (Marginalia's API key encryption test checked the migration that encrypted plain keys; LingoLLM has none.) |
+| `utils` | `ClientAddressResolverTest` | The client address: the header is ignored without trusted proxies and from any other peer, chains of proxies, CIDR ranges, no host name lookups (no Spring context). |
+| `loc` | `LocalizationTest` | The language of the session selects the bundle, texts a bundle lacks come from the default language, a language can't be registered twice, the default one can't be removed, `UserSetting.language` is saved (Spring context). |
+| `ui.main` | `CssRegistryTest` | The CSS of extensions in the page. |
+| `cleanup` | `CleanupTrashTest` | The soft delete cascade (profile → chats → messages), the purge of profiles, chats, providers with their usage, weak references cleared, restore with and without the deleted parent, permanent delete of messages moving their children to the parent, the trash limited to the user's own objects. |
+| `instruct` | `ExtendableMethodVisitorTest`, `RuntimeInstrumentationTest`, `ExtensionVerifierTest`, `PublicAPISignatureTest` | The bytecode instrumentation of `@Extendable` methods and the runtime agent; the verification of extensions against the application; the `@PublicAPI` declarations of the `@Extendable` classes. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Tests</th>
+<th>What they check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>test</code></td>
+<td><code translate="no" v-pre>TestBaseSmokeTest</code></td>
+<td>The test infrastructure itself: isolated folder, session user, mock LLM wiring (model listing, streaming).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>test/llm</code></td>
+<td><code translate="no" v-pre>MockLLMServerTest</code></td>
+<td>The fake OpenAI server against the real <code translate="no" v-pre>openai-java</code> client.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>crud</code></td>
+<td><code translate="no" v-pre>*CrudTest</code>, <code translate="no" v-pre>OwnedCrudContract</code>, <code translate="no" v-pre>ExtendableCrudContract</code></td>
+<td>Create, update, soft and hard delete, owner isolation and extended attributes of every entity; <code translate="no" v-pre>FreeChatCrudTest</code> also checks that a new chat gets the language of the session; <code translate="no" v-pre>LanguageCrudTest</code> the injected <code translate="no" v-pre>languageSpecificData</code>; <code translate="no" v-pre>FreeChatMessageCrudTest</code> the loose attachments and the parent chain.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>db</code></td>
+<td><code translate="no" v-pre>DatabaseRestoreCheckTest</code>, <code translate="no" v-pre>PreMigrationBackupTest</code></td>
+<td>The check of a database before a restore (no Spring context) and the copy <code translate="no" v-pre>Configuration.resolveDb</code> saves before an existing database is migrated (no history table, nothing for a current or new database, only the newest three kept).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>domain</code></td>
+<td><code translate="no" v-pre>ExtendableEntityListenerTest</code>, <code translate="no" v-pre>AISharingTest</code>, <code translate="no" v-pre>UsageServiceTest</code>, <code translate="no" v-pre>AILimitServiceTest</code>, <code translate="no" v-pre>CronScheduleTest</code></td>
+<td>Extended attribute serialization (strings, injected objects, loose attachments), the AIs shared by administrators (visible to all, read-only for others, only administrators share, the setting that stops users from creating AIs), the <code translate="no" v-pre>Usage</code> of a user per AI, the limits of the users of a shared AI (the settings, the reset periods and the refusal of a request that is over the limit), cron parsing.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>inference</code></td>
+<td><code translate="no" v-pre>InferTest</code>, <code translate="no" v-pre>InferenceFunctionCallTest</code>, <code translate="no" v-pre>InferenceRobustnessTest</code>, <code translate="no" v-pre>InferenceAttachmentsTest</code>, <code translate="no" v-pre>UsageInferenceTest</code></td>
+<td><code translate="no" v-pre>infer</code> (text, schema check, class), <code translate="no" v-pre>stream</code> and the model calling functions (tools in the request, results sent back, several calls and rounds, calls answering from other threads, failed and refused calls, the round limit, cancelling while a call is pending, the tool role resolvers); timeouts, retries and the classification of provider errors; attachments as content parts of the request; the usage counted per user (reported or estimated, a failed request not counted). Built on <code translate="no" v-pre>InferenceTestBase</code> and the mock server.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>function</code></td>
+<td><code translate="no" v-pre>FunctionRegistryTest</code></td>
+<td>Interfaces become function schemas, arguments are parsed, methods run on the executor and answer through <code translate="no" v-pre>FunctionContinuation</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>backup</code></td>
+<td><code translate="no" v-pre>DatabaseBackupScheduleTest</code></td>
+<td>Scheduled database backups.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>security</code></td>
+<td>-</td>
+<td>(Marginalia&#x27;s API key encryption test checked the migration that encrypted plain keys; LingoLLM has none.)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>utils</code></td>
+<td><code translate="no" v-pre>ClientAddressResolverTest</code></td>
+<td>The client address: the header is ignored without trusted proxies and from any other peer, chains of proxies, CIDR ranges, no host name lookups (no Spring context).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>loc</code></td>
+<td><code translate="no" v-pre>LocalizationTest</code></td>
+<td>The language of the session selects the bundle, texts a bundle lacks come from the default language, a language can&#x27;t be registered twice, the default one can&#x27;t be removed, <code translate="no" v-pre>UserSetting.language</code> is saved (Spring context).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.main</code></td>
+<td><code translate="no" v-pre>CssRegistryTest</code></td>
+<td>The CSS of extensions in the page.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>cleanup</code></td>
+<td><code translate="no" v-pre>CleanupTrashTest</code></td>
+<td>The soft delete cascade (profile → chats → messages), the purge of profiles, chats, providers with their usage, weak references cleared, restore with and without the deleted parent, permanent delete of messages moving their children to the parent, the trash limited to the user&#x27;s own objects.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>instruct</code></td>
+<td><code translate="no" v-pre>ExtendableMethodVisitorTest</code>, <code translate="no" v-pre>RuntimeInstrumentationTest</code>, <code translate="no" v-pre>ExtensionVerifierTest</code>, <code translate="no" v-pre>PublicAPISignatureTest</code></td>
+<td>The bytecode instrumentation of <code translate="no" v-pre>@Extendable</code> methods and the runtime agent; the verification of extensions against the application; the <code translate="no" v-pre>@PublicAPI</code> declarations of the <code translate="no" v-pre>@Extendable</code> classes.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Not covered by automated tests: the Vaadin UI (<code translate="no" v-pre>LanguagePart</code>, <code translate="no" v-pre>LanguageCreationDialog</code> and the workspaces have no
+test; they build components that need a UI session), the extension loading on a real OSGi framework (Marginalia has
+<code translate="no" v-pre>OsgiServiceImplTest</code>, not ported), the full-text query, and the desktop launcher (the
+<a href="../packaging/#continuous-integration">CI smoke test</a> only checks that the packaged app starts).</p>
+<h2 id="test-bases">Test bases</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">classDiagram
+    LingoLLMTestBase &lt;|-- InferenceTestBase
+    LingoLLMTestBase &lt;|-- OwnedCrudContract
+    OwnedCrudContract &lt;|-- ExtendableCrudContract
+    ExtendableCrudContract &lt;|-- LanguageCrudTest
+    ExtendableCrudContract &lt;|-- FreeChatCrudTest
+    class LingoLLMTestBase {
+        +llm
+        +createUser()
+        +login()
+        +createAI()
+    }</pre></div>
+<p>Pick the lightest base that works:</p>
+<retype-table copy-text="| Base | Spring | Use for |
+|---|---|---|
+| none | no | Pure units (`CronScheduleTest`, `ClientAddressResolverTest`, `DatabaseRestoreCheckTest`). |
+| `LingoLLMTestBase` | yes | Services, repositories, cleanup. |
+| `InferenceTestBase` | yes | Anything that calls an `InferenceService`: a logged in user, an `ai` pointing to the mock server which answers `&quot;generated&quot;` by default. `test/InferenceCollector` is a callback that pulls the whole stream and waits for the end (it records the function calls too). |
+| `OwnedCrudContract` / `ExtendableCrudContract` | yes | The CRUD contract of a new entity. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Base</th>
+<th>Spring</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>no</td>
+<td>Pure units (<code translate="no" v-pre>CronScheduleTest</code>, <code translate="no" v-pre>ClientAddressResolverTest</code>, <code translate="no" v-pre>DatabaseRestoreCheckTest</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LingoLLMTestBase</code></td>
+<td>yes</td>
+<td>Services, repositories, cleanup.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>InferenceTestBase</code></td>
+<td>yes</td>
+<td>Anything that calls an <code translate="no" v-pre>InferenceService</code>: a logged in user, an <code translate="no" v-pre>ai</code> pointing to the mock server which answers <code translate="no" v-pre>&quot;generated&quot;</code> by default. <code translate="no" v-pre>test/InferenceCollector</code> is a callback that pulls the whole stream and waits for the end (it records the function calls too).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>OwnedCrudContract</code> / <code translate="no" v-pre>ExtendableCrudContract</code></td>
+<td>yes</td>
+<td>The CRUD contract of a new entity.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="lingollmtestbase">LingoLLMTestBase</h3>
+<p><code translate="no" v-pre>test/LingoLLMTestBase</code> starts the application context from
+<code translate="no" v-pre>src/test/resources/META-INF/spring/test-application-config.xml</code>. That file imports the production
+<code translate="no" v-pre>application-config.xml</code> and adds <code translate="no" v-pre>TestContextPostProcessor</code>, which</p>
+<ul>
+<li>removes the OSGi framework (<code translate="no" v-pre>OsgiServiceImpl</code>) and the instrumentation agent (<code translate="no" v-pre>RuntimeInstrumentationInitializer</code>),</li>
+<li>points <code translate="no" v-pre>Configuration</code> to a new folder <code translate="no" v-pre>target/test-home/ctx-&lt;random&gt;/</code> instead of <code translate="no" v-pre>~/.lingollm</code>.</li>
+</ul>
+<p>Everything else is the production wiring: the services, Hibernate, Flyway migrations, the session-scoped current
+user. The base class gives you:</p>
+<retype-table copy-text="| Member | |
+|---|---|
+| `userService`, `aiService`, `inferenceServices` | Autowired services; autowire any other bean in your test. |
+| `currentUser` | The session-scoped `User` bean - the &quot;logged in&quot; user of the test. |
+| `llm` | A [mock LLM scenario](#the-fake-llm-server) for this test method. |
+| `uniqueName(prefix)` | `prefix-1a2b3c4d`, for names that must not collide with other tests. |
+| `createUser()`, `createUser(login, password, admin)` | Saves a user. |
+| `loginAs(user)`, `login()`, `loginAdmin()` | Makes a user the current user, like a login in the UI (`login()` and `loginAdmin()` create one first). The services that only administrators can use (cleanup, database backups, user delete / unlock / clear password, extension install) need `loginAdmin()`. |
+| `createAI()` | Saves an OpenAI-compatible inference provider pointing to `llm`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Member</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>userService</code>, <code translate="no" v-pre>aiService</code>, <code translate="no" v-pre>inferenceServices</code></td>
+<td>Autowired services; autowire any other bean in your test.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>currentUser</code></td>
+<td>The session-scoped <code translate="no" v-pre>User</code> bean - the &quot;logged in&quot; user of the test.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>llm</code></td>
+<td>A <doc-anchor-trigger to="#the-fake-llm-server">mock LLM scenario</doc-anchor-trigger> for this test method.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>uniqueName(prefix)</code></td>
+<td><code translate="no" v-pre>prefix-1a2b3c4d</code>, for names that must not collide with other tests.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>createUser()</code>, <code translate="no" v-pre>createUser(login, password, admin)</code></td>
+<td>Saves a user.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>loginAs(user)</code>, <code translate="no" v-pre>login()</code>, <code translate="no" v-pre>loginAdmin()</code></td>
+<td>Makes a user the current user, like a login in the UI (<code translate="no" v-pre>login()</code> and <code translate="no" v-pre>loginAdmin()</code> create one first). The services that only administrators can use (cleanup, database backups, user delete / unlock / clear password, extension install) need <code translate="no" v-pre>loginAdmin()</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>createAI()</code></td>
+<td>Saves an OpenAI-compatible inference provider pointing to <code translate="no" v-pre>llm</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Each test method runs in its own mock HTTP request and session (<code translate="no" v-pre>@SpringJUnitWebConfig</code>), so session-scoped beans
+start empty: call <code translate="no" v-pre>login()</code> before using a service that needs the current user.</p>
+<h4 id="the-shared-database">The shared database</h4>
+<p>Spring caches the application context, and with it the database, for the whole test run. All test classes that use
+<code translate="no" v-pre>LingoLLMTestBase</code> share <strong>one</strong> SQLite database. Write tests so that they don&#x27;t depend on what else is in it:</p>
+<ul>
+<li>create the data a test needs in the test, with <code translate="no" v-pre>uniqueName(...)</code> for anything looked up by name;</li>
+<li>assert on the entities you created (<code translate="no" v-pre>contains</code>, <code translate="no" v-pre>doesNotContain</code>), not on totals (<code translate="no" v-pre>hasSize</code>);</li>
+<li>operations that work on the whole database (cleanup, database backups) must only assert on their own data - see
+<code translate="no" v-pre>CleanupServiceTest</code>.</li>
+</ul>
+<p>When a test really needs an empty database or changes global state, mark it with <code translate="no" v-pre>@DirtiesContext</code>. The next test
+then gets a new context with a new folder and database:</p>
+<div id="the-shared-database-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Test
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)   // starts on an empty database
+void lastAdminIsProtected() throws Exception { ... }
+
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)        // changes the shared backup schedule
+class DatabaseBackupScheduleTest extends LingoLLMTestBase { ... }</code></pre>
+</doc-codeblock></div>
+<p>A new context costs a few seconds (Spring, Hibernate, Flyway), so use it sparingly.</p>
+<h4 id="the-application-folder">The application folder</h4>
+<p>Each context gets its own folder under <code translate="no" v-pre>target/test-home/</code> with the database, data, backup and extension folders.
+They are not deleted after the run, so you can open a test database with any SQLite tool after a failure. <code translate="no" v-pre>mvn clean</code>
+or deleting <code translate="no" v-pre>target/test-home</code> removes them.</p>
+<h3 id="crud-contracts">CRUD contracts</h3>
+<p>Every entity that belongs to a user has a CRUD test built from <code translate="no" v-pre>crud/OwnedCrudContract</code>. The contract contains the
+tests; a subclass only says how to make and change an entity:</p>
+<retype-table copy-text="| Method | |
+|---|---|
+| `service()` | The entity's `OwnedService`. |
+| `newEntity()` | A new, unsaved, valid entity (referenced entities may be saved). |
+| `assertCreated(loaded)` | Checks the fields set by `newEntity()` after a reload. |
+| `modify(entity)` | Changes some fields. |
+| `assertModified(loaded)` | Checks the changes after a reload. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Method</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>service()</code></td>
+<td>The entity&#x27;s <code translate="no" v-pre>OwnedService</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>newEntity()</code></td>
+<td>A new, unsaved, valid entity (referenced entities may be saved).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>assertCreated(loaded)</code></td>
+<td>Checks the fields set by <code translate="no" v-pre>newEntity()</code> after a reload.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>modify(entity)</code></td>
+<td>Changes some fields.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>assertModified(loaded)</code></td>
+<td>Checks the changes after a reload.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The inherited tests check identity and owner on create, find by id / uuid / for user, update (creation date kept,
+modification date moved), soft delete (hidden from all <code translate="no" v-pre>find*ForUser</code> and <code translate="no" v-pre>findAll*</code> methods), hard delete, isolation
+between users, and that saving as another user keeps the owner.</p>
+<p>Entities extending <code translate="no" v-pre>ExtendableEntity</code> use <code translate="no" v-pre>crud/ExtendableCrudContract</code>, which adds the persistence of plugin
+attributes (<code translate="no" v-pre>getAttributes()</code>): nested JSON, changes and removals, unrelated updates, and <code translate="no" v-pre>saveWithoutEvent</code>
+(used by restore). Put at least one <code translate="no" v-pre>@ExtendedAttribute</code> field into <code translate="no" v-pre>newEntity()</code> and <code translate="no" v-pre>modify()</code>, so the inherited
+tests also cover the extended fields. <code translate="no" v-pre>crud/LanguageCrudTest</code> is a short, complete example.</p>
+<p>When you add an entity (see <a href="../database/">Database &amp; migrations</a>), add its <code translate="no" v-pre>&lt;Entity&gt;CrudTest</code>.</p>
+<h2 id="the-fake-llm-server">The fake LLM server</h2>
+<p><code translate="no" v-pre>test/llm/MockLLMServer</code> is a small OpenAI-compatible server on <code translate="no" v-pre>127.0.0.1</code> with a random port, built on the JDK&#x27;s
+<code translate="no" v-pre>HttpServer</code>. One shared server lives for the whole test JVM (<code translate="no" v-pre>MockLLMServer.shared()</code>); each test gets its own
+<strong>scenario</strong> with its own base URL, <code translate="no" v-pre>http://127.0.0.1:&lt;port&gt;/&lt;scenario-id&gt;/v1</code>. A provider created with
+<code translate="no" v-pre>createAI()</code> points to the test&#x27;s scenario, so tests never see each other&#x27;s requests or answers.</p>
+<p>It answers:</p>
+<retype-table copy-text="| Endpoint | |
+|---|---|
+| `GET /models` | The scenario's model list (default `mock-model`; change with `llm.models(...)`). |
+| `POST /chat/completions` | Streaming (server-sent events) and non-streaming chat completions. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Endpoint</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>GET /models</code></td>
+<td>The scenario&#x27;s model list (default <code translate="no" v-pre>mock-model</code>; change with <code translate="no" v-pre>llm.models(...)</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>POST /chat/completions</code></td>
+<td>Streaming (server-sent events) and non-streaming chat completions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="programming-answers">Programming answers</h3>
+<p>Chat completions are answered in this order:</p>
+<ol>
+<li>queued responses - <code translate="no" v-pre>llm.enqueue(...)</code> or <code translate="no" v-pre>llm.reply(&quot;text&quot;)</code>, one per request;</li>
+<li>the responder function - <code translate="no" v-pre>llm.respondWith(request -&gt; ...)</code>, if set and it returns a response;</li>
+<li>the fallback - <code translate="no" v-pre>llm.fallback(...)</code>;</li>
+<li>otherwise HTTP 500 <em>no response programmed</em>.</li>
+</ol>
+<p><code translate="no" v-pre>MockLLMResponse</code> builds one answer:</p>
+<div id="programming-answers-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">MockLLMResponse.text(&quot;Hello world&quot;)                        // one content chunk
+MockLLMResponse.chunks(&quot;Hel&quot;, &quot;lo&quot;).chunkDelay(ofMillis(50))
+MockLLMResponse.split(longText, 20)                        // chunks of 20 characters
+MockLLMResponse.text(&quot;answer&quot;).withReasoning(&quot;thinking&quot;)   // reasoning chunks first
+MockLLMResponse.text(&quot;answer&quot;).withReasoning(&quot;...&quot;).reasoningField(&quot;reasoning&quot;)  // instead of reasoning_content
+MockLLMResponse.text(&quot;cut&quot;).finishReason(&quot;length&quot;)
+MockLLMResponse.error(429, &quot;slow down&quot;)                    // OpenAI-style error body
+MockLLMResponse.chunks(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;).disconnectAfter(2)   // stream ends abruptly
+MockLLMResponse.text(&quot;answer&quot;).usage(120, 8)               // token counts in the last chunk (only if asked for)
+MockLLMResponse.text(&quot;late&quot;).waitFor(latch)                // held until the latch is released
+MockLLMResponse.toolCall(&quot;add&quot;, &quot;{\&quot;a\&quot;:1}&quot;)               // the model calls a function; .andToolCall(...) adds one</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>waitFor(latch)</code> is the tool for &quot;while generating&quot; states: the request is received, the caller waits for the
+stream, and the test can cancel it or inspect the state before releasing the latch.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Retries</h5>
+<p>The <code translate="no" v-pre>openai-java</code> client retries 408, 409, 429 and 5xx responses. A queued error response is consumed once per
+attempt, so enqueue it several times (or use <code translate="no" v-pre>fallback</code>) when a test expects the error to reach LingoLLM. The server
+closes the connection after every response, so a retry never reuses a stale pooled connection.</p>
+        </div>
+    </div>
+</div>
+<h3 id="inspecting-requests">Inspecting requests</h3>
+<p>Every request, including model listing, is recorded:</p>
+<retype-table copy-text="| Method | |
+|---|---|
+| `llm.getRequests()`, `llm.getCompletionRequests()` | All requests / chat completions, in order. |
+| `llm.lastCompletionRequest()` | The last chat completion; fails the test if there was none. |
+| `llm.awaitCompletionRequests(n, timeout)` | Waits for `n` completions - for asynchronous callers. |
+| `request.getMessages()`, `getMessages(&quot;system&quot;)`, `getLastMessage()` | The chat messages (`role`, `content`). |
+| `request.getPromptText()` | All messages as `[role]\ncontent` - handy for `contains` assertions. |
+| `request.getBody()`, `getRawBody()`, `getModel()`, `isStream()`, `getApiKey()` | The raw payload. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Method</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>llm.getRequests()</code>, <code translate="no" v-pre>llm.getCompletionRequests()</code></td>
+<td>All requests / chat completions, in order.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>llm.lastCompletionRequest()</code></td>
+<td>The last chat completion; fails the test if there was none.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>llm.awaitCompletionRequests(n, timeout)</code></td>
+<td>Waits for <code translate="no" v-pre>n</code> completions - for asynchronous callers.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>request.getMessages()</code>, <code translate="no" v-pre>getMessages(&quot;system&quot;)</code>, <code translate="no" v-pre>getLastMessage()</code></td>
+<td>The chat messages (<code translate="no" v-pre>role</code>, <code translate="no" v-pre>content</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>request.getPromptText()</code></td>
+<td>All messages as <code translate="no" v-pre>[role]\ncontent</code> - handy for <code translate="no" v-pre>contains</code> assertions.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>request.getBody()</code>, <code translate="no" v-pre>getRawBody()</code>, <code translate="no" v-pre>getModel()</code>, <code translate="no" v-pre>isStream()</code>, <code translate="no" v-pre>getApiKey()</code></td>
+<td>The raw payload.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="expected-errors-in-the-log">Expected errors in the log</h2>
+<p>Tests of failure paths make the code log errors on purpose. To keep them out of the test output (where they look like
+real failures) and to assert on them, capture the logger with <code translate="no" v-pre>test/ExpectedLog</code>:</p>
+<div id="expected-errors-in-the-log-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">try (ExpectedLog log = ExpectedLog.capture(ExtensionServiceImpl.class)) {   // or capture(&quot;extension.my-plugin&quot;)
+    ...
+    assertThat(log.errors()).anyMatch(m -&gt; m.contains(&quot;broken&quot;));
+}</code></pre>
+</doc-codeblock></div>
+<p>While the capture is open, the logger&#x27;s events are recorded and not passed to the console; <code translate="no" v-pre>errors()</code>, <code translate="no" v-pre>warnings()</code>
+and <code translate="no" v-pre>atLeast(level)</code> return the messages, <code translate="no" v-pre>entries()</code> the full events with their exceptions.</p>
+<h2 id="instrumentation-tests">Instrumentation tests</h2>
+<p>The <code translate="no" v-pre>instruct</code> tests check the bytecode that makes <code translate="no" v-pre>@Extendable</code> methods extensible (see
+<a href="../plugins/extendable/">Plugin development</a>):</p>
+<ul>
+<li>
+<p><code translate="no" v-pre>ExtendableMethodVisitorTest</code> transforms fixture classes from <code translate="no" v-pre>instruct/fixture/</code> with <code translate="no" v-pre>instruct/Instrumenter</code> -
+the same transformation the agent applies, without an agent - and checks that the result verifies, keeps the class
+schema, behaves like the original and exposes arguments and locals to decorators.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>RuntimeInstrumentationTest</code> installs the real agent into the test JVM and checks classes loaded both before and
+after the installation (<code translate="no" v-pre>fixture/agent/</code>).</p>
+</li>
+<li>
+<p><code translate="no" v-pre>ExtensionVerifierTest</code> runs the <a href="../plugins/extendable/#verification-before-loading">extension verification</a> on
+the extensions of <code translate="no" v-pre>fixture/verify/VerifyFixtures</code> (decorators that are valid, ask for things that don&#x27;t exist, or
+can&#x27;t be followed) against the decorated <code translate="no" v-pre>VerifyTarget</code>. Their class files are packed into a JAR on the fly and
+served by a stand-in <code translate="no" v-pre>Bundle</code>. Decorators must be anonymous classes with the context calls inside them, as in a real
+extension - a decorator that delegates to a helper class would not be checked.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>PublicAPISignatureTest</code> checks the <a href="../plugins/extendable/#the-public-api"><code translate="no" v-pre>@PublicAPI</code></a> of every instrumented method
+of every <code translate="no" v-pre>@Extendable</code> class of the application against the compiled classes (<code translate="no" v-pre>target/classes</code>). It reads them with
+ByteBuddy&#x27;s type pool and the local variable table (<code translate="no" v-pre>PublicAPISignatures</code>), so the application classes are not
+loaded or initialized, and it needs the classes compiled by <code translate="no" v-pre>ajc</code> like the application. A failure names the method
+and prints the annotation the method needs.</p>
+</li>
+</ul>
+<p>The fixtures are compiled with the same <code translate="no" v-pre>-parameters</code> and <code translate="no" v-pre>preserveAllLocals</code> options as the application; if you
+change the compiler settings in <code translate="no" v-pre>pom.xml</code>, these tests tell you whether extensions still see names of arguments and
+locals.</p>
+<h2 id="checklist-for-a-new-test">Checklist for a new test</h2>
+<ul>
+<li>
+<p>Name it <code translate="no" v-pre>&lt;Subject&gt;Test</code> and put it in the package of the area it tests; Surefire runs every <code translate="no" v-pre>*Test</code> class.</p>
+</li>
+<li>
+<p>Extend the lightest base that works (<doc-anchor-trigger to="#test-bases">Test bases</doc-anchor-trigger>).</p>
+</li>
+<li>
+<p>Create your own data with unique names; don&#x27;t depend on what other tests left in the shared database.</p>
+</li>
+<li>
+<p>Don&#x27;t call real models or other network services - program <code translate="no" v-pre>llm</code> instead.</p>
+</li>
+<li>
+<p>Assert with AssertJ, with <code translate="no" v-pre>.as(&quot;...&quot;)</code> where the failure message would otherwise be unclear.</p>
+</li>
+<li>
+<p>Capture expected error logs with <code translate="no" v-pre>ExpectedLog</code>.</p>
+</li>
+<li>
+<p>A new entity gets a CRUD contract test; a new migration is covered by <code translate="no" v-pre>FlywayMigrationTest</code> automatically (it runs
+all migrations and validates the schema against the entities).</p>
+</li>
+<li>
+<p>A bug fix comes with a test that fails without the fix, where the area is testable without the UI.</p>
+</li>
+<li>
+<p>Run <code translate="no" v-pre>mvn test</code> before opening a pull request - CI runs the same command.</p>
+</li>
+</ul>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/plugins/ui-extensions/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Extending the UI</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/packaging/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Packaging &amp; releases</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Testing", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/testing.md" }</script>
+</body>
+</html>

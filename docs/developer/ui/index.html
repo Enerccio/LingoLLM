@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>User interface</title>
+    <meta name="title" content="User interface">
+    <meta name="description" content="LingoLLM's UI is written in Java with Vaadin Flow 25: the component tree lives on the server, the browser renders it with Vaadin's web components (Lumo theme, dark color scheme) and sends events back over HTTP and a push WebSocket.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/ui/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/ui/">
+    <meta property="og:title" content="User interface">
+    <meta property="og:description" content="LingoLLM's UI is written in Java with Vaadin Flow 25: the component tree lives on the server, the browser renders it with Vaadin's web components (Lumo theme, dark color scheme) and sends events back over HTTP and a push WebSocket.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/ui/">
+    <meta name="twitter:title" content="User interface">
+    <meta name="twitter:description" content="LingoLLM's UI is written in Java with Vaadin Flow 25: the component tree lives on the server, the browser renders it with Vaadin's web components (Lumo theme, dark color scheme) and sends events back over HTTP and a push WebSocket.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/ui.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="user-interface">User interface</h1>
+<p>LingoLLM&#x27;s UI is written in Java with <a href="https://vaadin.com/docs/latest/flow">Vaadin Flow</a> 25: the component tree
+lives on the server, the browser renders it with Vaadin&#x27;s web components (Lumo theme, dark color scheme) and sends
+events back over HTTP and a push WebSocket. There is no hand-written frontend code apart from one CSS file. This page
+explains how the UI code is organized and the conventions to follow when you change it. The code is in <code translate="no" v-pre>ui/</code>.</p>
+<h2 id="structure">Structure</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart TB
+    subgraph routes[&quot;Route&quot;]
+        Main[&quot;Main  /&quot;]
+    end
+    Main --&gt; WS[&quot;Workspace&lt;br/&gt;DesktopWorkspace / PhoneWorkspace&quot;]
+    WS --&gt; LP[&quot;LanguagePart - Learning&quot;]
+    WS --&gt; UP[&quot;UserPart - Settings&quot;]
+    WS --&gt; AP[&quot;AIPart - Inference Providers&quot;]
+    WS --&gt; RP[&quot;ResourcesPart - Resources&quot;]
+    WS --&gt; TP[&quot;TrashPart - Trash&quot;]
+    WS --&gt; AdP[&quot;AdminPart&quot;]
+    LP --&gt; LUI[&quot;LanguageUI&lt;br/&gt;(Japanese, German)&quot;]
+    LP --&gt; LCD[&quot;LanguageCreationDialog&quot;]
+    AP --&gt; AD[&quot;AIDialog&quot;]
+    AdP --&gt; Users[&quot;Users tab&lt;br/&gt;UserDialog&quot;]
+    AdP --&gt; DB[&quot;DatabaseBackupPanel&quot;]
+    AdP --&gt; Cl[&quot;CleanupPanel&quot;]
+    AdP --&gt; Ext[&quot;Extensions tab&quot;]</pre></div>
+<retype-table copy-text="| Package | Contents |
+|---|---|
+| `ui.main` | `AppShellConfig`, `LingoLLMServlet`, `WebappApplicationInitializer`, `LoginCheckRoute`, `Main`, `CssRegistry`. |
+| `ui.workspace` | `Workspace` (interface), `DesktopWorkspace`, `WorkspaceComponent` (a tab), `LanguageUI` / `LanguageUIBase`. |
+| `ui.workspace.parts`, `.admin` | One class per tab, and the admin panels. |
+| `ui.workspace.phone`, `.parts` | `PhoneWorkspace` and the phone specific tabs. |
+| `ui.lang`, `ui.lang.languages` | The learnable languages: defaults, flags, one `LanguageUI` each. |
+| `ui.dialogs` | Entity dialogs and generic dialogs. |
+| `ui.components` | `MessageImages`, `ThreadCopyRequestAttributes`. |
+| `ui.widgets` | Small reusable widgets, among them `TrashGrid` (see [Trash](#trash)) and `LanguageItem`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>ui.main</code></td>
+<td><code translate="no" v-pre>AppShellConfig</code>, <code translate="no" v-pre>LingoLLMServlet</code>, <code translate="no" v-pre>WebappApplicationInitializer</code>, <code translate="no" v-pre>LoginCheckRoute</code>, <code translate="no" v-pre>Main</code>, <code translate="no" v-pre>CssRegistry</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace</code></td>
+<td><code translate="no" v-pre>Workspace</code> (interface), <code translate="no" v-pre>DesktopWorkspace</code>, <code translate="no" v-pre>WorkspaceComponent</code> (a tab), <code translate="no" v-pre>LanguageUI</code> / <code translate="no" v-pre>LanguageUIBase</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace.parts</code>, <code translate="no" v-pre>.admin</code></td>
+<td>One class per tab, and the admin panels.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace.phone</code>, <code translate="no" v-pre>.parts</code></td>
+<td><code translate="no" v-pre>PhoneWorkspace</code> and the phone specific tabs.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.lang</code>, <code translate="no" v-pre>ui.lang.languages</code></td>
+<td>The learnable languages: defaults, flags, one <code translate="no" v-pre>LanguageUI</code> each.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.dialogs</code></td>
+<td>Entity dialogs and generic dialogs.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.components</code></td>
+<td><code translate="no" v-pre>MessageImages</code>, <code translate="no" v-pre>ThreadCopyRequestAttributes</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.widgets</code></td>
+<td>Small reusable widgets, among them <code translate="no" v-pre>TrashGrid</code> (see <doc-anchor-trigger to="#trash">Trash</doc-anchor-trigger>) and <code translate="no" v-pre>LanguageItem</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="the-shell-routes-and-login">The shell, routes and login</h2>
+<ul>
+<li>
+<p><code translate="no" v-pre>AppShellConfig</code> (<code translate="no" v-pre>AppShellConfigurator</code>) sets up the page once: <code translate="no" v-pre>@Push</code>, Lumo stylesheet, <code translate="no" v-pre>@ColorScheme(DARK)</code>,
+full-viewport body, <code translate="no" v-pre>shared-styles.css</code>, page title, PWA metadata.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>LingoLLMServlet</code> is the <code translate="no" v-pre>VaadinServlet</code> mapped to <code translate="no" v-pre>/*</code> (with <code translate="no" v-pre>asyncSupported</code> for push).</p>
+</li>
+<li>
+<p>There is one route, <code translate="no" v-pre>/</code> → <code translate="no" v-pre>Main</code>, which extends <code translate="no" v-pre>LoginCheckRoute</code>.</p>
+</li>
+</ul>
+<p><code translate="no" v-pre>LoginCheckRoute</code> runs in the route&#x27;s constructor (<code translate="no" v-pre>showLogin()</code>):</p>
+<ol>
+<li>
+<p>On an empty installation it opens <code translate="no" v-pre>UserDialog</code> in <em>first time</em> mode (create the administrator) and reloads.</p>
+</li>
+<li>
+<p>Otherwise it tries a user that is already logged in this session (<code translate="no" v-pre>authenticatedSessionUser</code>, overridden by <code translate="no" v-pre>Main</code>: the page was reloaded, e.g. by the language selector) and then the <em>Save login</em> cookies (<code translate="no" v-pre>authenticateFromCookie</code>, rotating the secret on success).</p>
+</li>
+<li>
+<p>Otherwise it shows a <code translate="no" v-pre>LoginOverlay</code> (<code translate="no" v-pre>PermissiveLoginOverlay</code> - allows empty passwords to reach the server-side
+check) with the <em>Save login</em> checkbox.
+The check passes the client address (<code translate="no" v-pre>LoginCheckRoute.clientAddress()</code>) to <code translate="no" v-pre>UserService.authenticate</code>, which
+throttles failed logins per address (see <a href="../services/#login-throttling">Login throttling</a>).</p>
+</li>
+<li>
+<p>After a successful login it calls <code translate="no" v-pre>VaadinService.reinitializeSession</code> (new session id) and the subclass&#x27;s
+<code translate="no" v-pre>proceedWithLogin(login)</code>, which fills the session-scoped <code translate="no" v-pre>user</code> bean, registers the login with
+<code translate="no" v-pre>SessionManager.userLoggedIn</code> (see <a href="../architecture/#sessions">Sessions</a>), sets the language of the session from
+the user&#x27;s settings (<a href="../architecture/#localization">Localization</a>) and builds the content.</p>
+</li>
+</ol>
+<p>Logout deletes the cookies, closes the Vaadin session, invalidates the HTTP session and redirects to the context
+root. Cookie names include the context path and the route class.</p>
+<h2 id="building-blocks">Building blocks</h2>
+<h3 id="classes-that-build-components">Classes that build components</h3>
+<p>Most UI classes are <strong>not</strong> Vaadin components themselves. They are plain classes with a <code translate="no" v-pre>create()</code> method that builds
+and returns the component tree, and keep references to the fields they need later:</p>
+<div id="classes-that-build-components-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Configurable
+@Extendable
+public class LanguagePart implements WorkspaceComponent {
+
+    @Autowired
+    private Localization loc;
+
+    @Autowired
+    private LanguageService languageService;
+
+    private ComboBox&lt;Language&gt; languageCombo;
+
+    @Override
+    public Component create() throws Exception {
+        VerticalLayout layout = new VerticalLayout();
+        ...
+        return layout;
+    }
+
+    @Override
+    public void refresh() throws Exception { ... }
+}</code></pre>
+</doc-codeblock></div>
+<p>This shape is deliberate:</p>
+<ul>
+<li>
+<p><strong><code translate="no" v-pre>@Configurable</code></strong> - the class is created with <code translate="no" v-pre>new</code>, and the AspectJ-woven configurer injects its <code translate="no" v-pre>@Autowired</code>
+fields (services, <code translate="no" v-pre>Localization</code>, the session <code translate="no" v-pre>User</code> and <code translate="no" v-pre>Language</code>). See <a href="../building/#aspectj-weaving">AspectJ weaving</a>.</p>
+</li>
+<li>
+<p><strong><code translate="no" v-pre>@Extendable</code></strong> - the class is instrumented at startup so extensions can run code before and after any of its
+methods and read its local variables (see <doc-anchor-trigger to="#extension-points">Extensions</doc-anchor-trigger>). Small methods with descriptive local
+variable names (<code translate="no" v-pre>menu</code>, <code translate="no" v-pre>toolbar</code>, <code translate="no" v-pre>headerLayout</code>) are what make a class easy to extend.</p>
+</li>
+</ul>
+<p>Dialogs (<code translate="no" v-pre>AIDialog</code>, <code translate="no" v-pre>UserDialog</code>, <code translate="no" v-pre>LanguageCreationDialog</code>...) extend Vaadin&#x27;s <code translate="no" v-pre>Dialog</code> but follow the same pattern:
+construct, call <code translate="no" v-pre>create()</code>, then <code translate="no" v-pre>open()</code>.</p>
+<h3 id="the-workspace">The workspace</h3>
+<p><code translate="no" v-pre>Workspace</code> is the interface of the top-level layout shown after login (<code translate="no" v-pre>create</code>, <code translate="no" v-pre>refresh</code>, <code translate="no" v-pre>setNavigationLocked</code>,
+<code translate="no" v-pre>isNavigationLocked</code>, <code translate="no" v-pre>getOnLogout</code>, <code translate="no" v-pre>setOnLogout</code>). <code translate="no" v-pre>Main</code>, the parts, <code translate="no" v-pre>ApplicationPoint</code> and <code translate="no" v-pre>SessionInformation</code>
+only depend on this interface. <code translate="no" v-pre>DesktopWorkspace</code> is the implementation (<code translate="no" v-pre>@Configurable</code>, <code translate="no" v-pre>@Extendable</code>): it builds an
+<code translate="no" v-pre>HTabSheet</code> (tabs on the left, a footer with <em>Admin</em>, the language selector, <em>Change Password</em>, <em>Logout</em>) and creates all tab components up
+front. Each tab is a <code translate="no" v-pre>WorkspaceComponent</code>:</p>
+<retype-table copy-text="| Method | Called |
+|---|---|
+| `create()` | Once, when the workspace is built. |
+| `refresh()` | To reload data (after login, after changes elsewhere). |
+| `onTabSwitched()` | When the tab becomes active - parts reload their lists here. |
+| `onTabClosed()` | When another tab is selected. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Method</th>
+<th>Called</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>create()</code></td>
+<td>Once, when the workspace is built.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>refresh()</code></td>
+<td>To reload data (after login, after changes elsewhere).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>onTabSwitched()</code></td>
+<td>When the tab becomes active - parts reload their lists here.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>onTabClosed()</code></td>
+<td>When another tab is selected.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>Workspace.setNavigationLocked(true)</code> disables the other tabs and the <em>Admin</em> and <em>Logout</em> buttons, so the user can&#x27;t
+leave the active tab. <code translate="no" v-pre>UserPart</code> locks it while the settings have unsaved changes: it listens to every <code translate="no" v-pre>HasValue</code>
+in its layout (extension settings panels included) and unlocks on <em>Save</em>, <em>Discard Changes</em> or <code translate="no" v-pre>refresh()</code>.</p>
+<p><code translate="no" v-pre>Main.proceedWithLogin</code> picks <code translate="no" v-pre>PhoneWorkspace</code> instead when the body of the page is narrower than 768 px
+(<code translate="no" v-pre>ExtendedClientDetails.getBodyClientWidth()</code>). The choice is made once per login: resizing or rotating the device
+does not switch the workspace until the page is reloaded. <code translate="no" v-pre>PhoneWorkspace</code> replaces the left-hand tab sheet with an
+<code translate="no" v-pre>AppLayout</code>: the parts are listed in a drawer whose footer holds the language selector, <em>Change Password</em> and <em>Logout</em>,
+and the active part fills the screen. <strong>There is no <em>Admin</em> button and no <code translate="no" v-pre>AdminPart</code></strong> on a phone; the services still
+check <code translate="no" v-pre>AdminGuard.requireAdmin()</code> themselves. The user manual describes this in <a href="../../user/phone/">Using LingoLLM on a
+phone</a>. <code translate="no" v-pre>PhoneAIPart</code>, <code translate="no" v-pre>PhoneTrashPart</code> and <code translate="no" v-pre>PhoneSettingsPart</code> are phone specific; <code translate="no" v-pre>LanguagePart</code> and
+<code translate="no" v-pre>ResourcesPart</code> are shared.</p>
+<h3 id="the-learning-tab-and-the-language-profiles">The Learning tab and the language profiles</h3>
+<p><code translate="no" v-pre>LanguagePart</code> is the first tab. Its header is a <code translate="no" v-pre>ComboBox&lt;Language&gt;</code> of the user&#x27;s profiles (rendered by <code translate="no" v-pre>LanguageItem</code>:
+flag, name, note) and a <strong>+</strong> button that opens <code translate="no" v-pre>LanguageCreationDialog</code>. Below it is the component of the <code translate="no" v-pre>LanguageUI</code>
+that the template of the selected profile creates, <code translate="no" v-pre>Languages.create(workspace)</code>.</p>
+<ul>
+<li>
+<p><code translate="no" v-pre>refresh()</code> loads the profiles, selects the open one, or the one in <code translate="no" v-pre>UserSetting.lastLanguage</code>, or the first; with no
+profile it clears the session language and opens <code translate="no" v-pre>LanguageCreationDialog</code> with <code translate="no" v-pre>setFirstTime(true)</code> once - the dialog
+has no cancel button and does not close on Esc or a click outside (the initial setup).</p>
+</li>
+<li>
+<p><code translate="no" v-pre>selectLanguage(language, remember)</code> is the one place a profile is chosen. It fills the session-scoped <code translate="no" v-pre>language</code>
+bean (<code translate="no" v-pre>selectSessionLanguage</code>), optionally saves <code translate="no" v-pre>UserSetting.lastLanguage</code>, and creates the <code translate="no" v-pre>LanguageUI</code> if the
+profile changed (<code translate="no" v-pre>onTabClosed</code> of the previous one first).</p>
+</li>
+<li>
+<p>Every selection change goes through the session bean, so services of language bound entities
+(<code translate="no" v-pre>LanguageBoundServiceImpl.save</code>) put what the user creates into the selected profile.</p>
+</li>
+</ul>
+<p>A <code translate="no" v-pre>LanguageUI</code> (<code translate="no" v-pre>getIcon</code>, <code translate="no" v-pre>getLanguage</code>, <code translate="no" v-pre>setLanguage</code>, plus the <code translate="no" v-pre>WorkspaceComponent</code> methods) is the screen set of one
+language. <code translate="no" v-pre>LanguageUIBase</code> supplies the plumbing and an empty <code translate="no" v-pre>create()</code>; <code translate="no" v-pre>Japanese</code> and <code translate="no" v-pre>German</code> extend it and are the
+place to add exercises. To add a language: a constant in <code translate="no" v-pre>Languages</code> (flag from <code translate="no" v-pre>LanguageIcons</code>, defaults from
+<code translate="no" v-pre>LanguageDefaults</code>, the <code translate="no" v-pre>LanguageUI</code> constructor), its <code translate="no" v-pre>ENUM_LANGUAGE_*</code> key in <code translate="no" v-pre>L</code>, <code translate="no" v-pre>LocalizationBundleEN</code> and
+<code translate="no" v-pre>LocalizationImpl.loadMaps</code>.</p>
+<h3 id="grids">Grids</h3>
+<p>Lists of entities use Vaadin <code translate="no" v-pre>Grid</code> with a lazy data provider. <code translate="no" v-pre>BackendTableProviderBase</code> (in <code translate="no" v-pre>ui.widgets</code>) is the
+common base: the owning part searches for the ids to show, passes them with <code translate="no" v-pre>setIds(ids)</code>, and the provider loads only
+the entities of the visible page (<code translate="no" v-pre>service.find(id)</code>) and wraps them in a <code translate="no" v-pre>BackendTableItem</code> subclass. It also tracks
+checked rows. <code translate="no" v-pre>ResourcesPart</code> is a lazy grid over <code translate="no" v-pre>ResourceService.findPageForUser</code>.</p>
+<h3 id="widgets">Widgets</h3>
+<retype-table copy-text="| Widget | Used for |
+|---|---|
+| `HTabSheet` | The workspace's left-hand tab sheet with a footer area. |
+| `LanguageSelector` | The language combo box of the workspace footers (language of the **interface**): saves the choice in `UserSetting.language`, sets `SessionPoint.language` and reloads every page of the user ([Localization](architecture.md#localization)). |
+| `LanguageItem` | `create(loc, template)` / `create(loc, profile)`: the flag with the name (and the note). `label(loc, profile)` is the text of a profile. |
+| `TextAreaPopoverComponent`, `TextFieldPopOverComponent` | Long and short fields with a hints popover. |
+| `ScrollPanel`, `HtmlText` | Scrollable container; text with HTML. |
+| `ResizableTextArea` | `ResizableTextArea.install(loc, textArea, &quot;160px&quot;)`: a corner icon toggles between the fixed height (with a scrollbar) and a height that fits the whole content. |
+| `TrashGrid` | Deleted objects with a restore button and a button that deletes messages for good, see [Trash](#trash). |
+| `Notification` | `Notification.success(...)` / `error(...)` with LingoLLM's durations and variants. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Widget</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>HTabSheet</code></td>
+<td>The workspace&#x27;s left-hand tab sheet with a footer area.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguageSelector</code></td>
+<td>The language combo box of the workspace footers (language of the <strong>interface</strong>): saves the choice in <code translate="no" v-pre>UserSetting.language</code>, sets <code translate="no" v-pre>SessionPoint.language</code> and reloads every page of the user (<a href="../architecture/#localization">Localization</a>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguageItem</code></td>
+<td><code translate="no" v-pre>create(loc, template)</code> / <code translate="no" v-pre>create(loc, profile)</code>: the flag with the name (and the note). <code translate="no" v-pre>label(loc, profile)</code> is the text of a profile.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TextAreaPopoverComponent</code>, <code translate="no" v-pre>TextFieldPopOverComponent</code></td>
+<td>Long and short fields with a hints popover.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ScrollPanel</code>, <code translate="no" v-pre>HtmlText</code></td>
+<td>Scrollable container; text with HTML.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ResizableTextArea</code></td>
+<td><code translate="no" v-pre>ResizableTextArea.install(loc, textArea, &quot;160px&quot;)</code>: a corner icon toggles between the fixed height (with a scrollbar) and a height that fits the whole content.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TrashGrid</code></td>
+<td>Deleted objects with a restore button and a button that deletes messages for good, see <doc-anchor-trigger to="#trash">Trash</doc-anchor-trigger>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Notification</code></td>
+<td><code translate="no" v-pre>Notification.success(...)</code> / <code translate="no" v-pre>error(...)</code> with LingoLLM&#x27;s durations and variants.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="trash">Trash</h3>
+<p><code translate="no" v-pre>TrashGrid</code> is a self-contained widget (<code translate="no" v-pre>@Configurable</code>, create it with <code translate="no" v-pre>new TrashGrid(allUsers).create()</code>) over
+<code translate="no" v-pre>TrashService</code>: a lazy multi-select <code translate="no" v-pre>Grid&lt;TrashItem&gt;</code> (items identified by their <code translate="no" v-pre>EntityKey</code>, so the selection
+survives paging), a filter by type (names from <code translate="no" v-pre>Localization.localizeDomainObject(Class)</code>) and, with <code translate="no" v-pre>allUsers</code>, a
+filter by owner and an owner column. <code translate="no" v-pre>allUsers</code> only decides what the widget shows; the service decides what the
+current user may see and restore. <em>Restore Selected</em> confirms and calls <code translate="no" v-pre>TrashService.restore</code>; when it returns
+blockers the widget shows them in a dialog (nothing was restored), otherwise it refreshes and runs the listeners from
+<code translate="no" v-pre>addRestoreListener</code> (<code translate="no" v-pre>TrashPart</code> uses it to refresh the whole workspace). <em>Delete Permanently</em> is enabled while the
+selection has only types of <code translate="no" v-pre>TrashService.getPermanentlyDeletableTypes()</code> (chat messages), confirms and calls
+<code translate="no" v-pre>TrashService.deletePermanently</code>, shows the reasons in a dialog when it is blocked and refreshes the table otherwise.
+The <em>Extended Content</em> link opens the JSON from <code translate="no" v-pre>TrashService.getExtendedContent</code> in a read-only text area. <code translate="no" v-pre>TrashPart</code>
+(the <em>Trash</em> tab, <code translate="no" v-pre>allUsers</code> for administrators) and <code translate="no" v-pre>CleanupPanel</code> (a <code translate="no" v-pre>Details</code> section, created when first opened) both
+use it.</p>
+<p><code translate="no" v-pre>PhoneTrashGrid</code> (used by <code translate="no" v-pre>PhoneTrashPart</code>) subclasses it through the <code translate="no" v-pre>createToolbar()</code> and <code translate="no" v-pre>addColumns()</code> hooks: the
+filters are stacked over the whole width, the description is behind an info button, and the table has one content
+column.</p>
+<p>Generic dialogs: <code translate="no" v-pre>ConfirmDialog.show(message, onYes)</code>, <code translate="no" v-pre>TextInputDialog.Builder</code>, <code translate="no" v-pre>ListSelectDialog</code>,
+<code translate="no" v-pre>ErrorDialog</code> (message and expandable stack trace). <code translate="no" v-pre>ExtensionLogDialog.show(bundle, name)</code> is the read-only, monospace
+view of an extension&#x27;s log. <code translate="no" v-pre>UsageDialog.show()</code> is the read-only table of every user&#x27;s <code translate="no" v-pre>Usage</code> (administrators).
+<code translate="no" v-pre>AILimitsDialog.show(ai)</code> is the table of the limits of a shared AI with add / edit (<code translate="no" v-pre>AILimitEditDialog</code>) / delete,
+<code translate="no" v-pre>AILimitInfoDialog.show(ai)</code> the current user&#x27;s limit and usage of it.</p>
+<h2 id="conventions">Conventions</h2>
+<h3 id="text">Text</h3>
+<p>Never hard-code user-visible text. Add a key to <code translate="no" v-pre>loc/L.java</code> and the text to <code translate="no" v-pre>LocalizationBundleEN</code> (and to any other
+bundle), and use <code translate="no" v-pre>loc.getValue(L.KEY)</code> (<code translate="no" v-pre>Localization</code> is injected into every UI class). Date formats come from the same
+bean (<code translate="no" v-pre>loc.getDateFormat()</code>...). The name of a kind of entity (language profile, chat...) is
+<code translate="no" v-pre>loc.localizeDomainObject(entityClass)</code>; it falls back to the closest known superclass, then to the simple class name, so
+a new entity type needs a mapping in <code translate="no" v-pre>LocalizationImpl.loadMaps()</code>. The texts are in the language of the user&#x27;s session,
+so never keep a text in a field that outlives the page or the request - look it up when you show it
+(<a href="../architecture/#localization">Localization</a>).</p>
+<h3 id="errors">Errors</h3>
+<p>Wrap event handlers in <code translate="no" v-pre>try</code>/<code translate="no" v-pre>catch</code> and report unexpected exceptions with
+<code translate="no" v-pre>UIUtils.internalServerError(loc, e)</code> - it logs the exception and opens an <code translate="no" v-pre>ErrorDialog</code> with the stack trace.
+Expected problems (validation, missing configuration) are shown with <code translate="no" v-pre>Notification.error(...)</code> or a message next to
+the field; <code translate="no" v-pre>UIUtils.showValidationErrors(loc, e)</code> formats a binder&#x27;s <code translate="no" v-pre>ValidationException</code>. Failures of a request to the
+model API (<code translate="no" v-pre>InferenceException</code>: wrong key, wrong URL, timeout...) go through <code translate="no" v-pre>UIUtils.inferenceError(loc, e)</code>, which
+shows the localized cause (<code translate="no" v-pre>InferenceErrors</code>) as a notification and falls back to <code translate="no" v-pre>internalServerError</code> for anything
+else. <code translate="no" v-pre>AIDialog</code> has the <em>Test Connection</em> button (<code translate="no" v-pre>InferenceService.testConnection()</code> with the values of the form) and,
+for administrators only, the <em>Shared with all users</em> checkbox. <code translate="no" v-pre>AIPart</code> / <code translate="no" v-pre>PhoneAIPart</code> list the user&#x27;s AIs and the
+shared ones with the user&#x27;s own <code translate="no" v-pre>Usage</code> (tokens sent / generated); the edit and delete buttons are only shown for AIs the
+user owns (<code translate="no" v-pre>AIService.isOwnedByCurrentUser</code>) and the add button only when <code translate="no" v-pre>AIService.canCreate()</code>. The service refuses
+the same things itself. Rows of shared AIs have an <em>info</em> button (<code translate="no" v-pre>AILimitInfoDialog</code>), and the owning administrator a
+<em>Limits</em> button (<code translate="no" v-pre>AILimitsDialog</code>, <code translate="no" v-pre>AILimitService</code>). <code translate="no" v-pre>AIPart</code> also has a <em>Usage per user</em> button, visible to
+administrators only, that opens <code translate="no" v-pre>UsageDialog</code>; the service checks the administrator itself.</p>
+<h3 id="saving">Saving</h3>
+<p>Forms either save automatically (value change listeners call an <code translate="no" v-pre>autosave()</code> method of the part, guarded so that
+loading values into the fields doesn&#x27;t trigger a save) or have an explicit <em>Save</em>, as the <em>Settings</em> tab does.
+<code translate="no" v-pre>LanguageCreationDialog</code> saves on <em>OK</em>. Entities held by the UI are detached copies - reload them through the service
+before changing them, and keep the object returned by <code translate="no" v-pre>save</code>.</p>
+<h3 id="background-work-and-push">Background work and push</h3>
+<p>Vaadin component state may only be touched on a thread holding the session lock. The rules:</p>
+<ul>
+<li>
+<p>Long work (requests to a model, backups, imports) runs on another thread; the UI thread returns immediately.</p>
+</li>
+<li>
+<p>Updates from that thread go through <code translate="no" v-pre>ui.access(() -&gt; ...)</code>, with the <code translate="no" v-pre>UI</code> captured on the UI thread
+(<code translate="no" v-pre>UI.getCurrent()</code> is <code translate="no" v-pre>null</code> elsewhere). <code translate="no" v-pre>UIPushGuard.push(ui)</code> sends them right away.</p>
+</li>
+<li>
+<p>Service calls on that thread need the user&#x27;s request scope - capture <code translate="no" v-pre>ThreadCopyRequestAttributes.create()</code> on the
+UI thread and wrap the work in <code translate="no" v-pre>InRequestScope</code> (see <a href="../services/#the-current-user">The current user</a>).</p>
+</li>
+</ul>
+<h3 id="browser-side-code">Browser-side code</h3>
+<p>Prefer Java components. When the browser has to do something (scroll positions, element sizes), the script is a
+static method of <code translate="no" v-pre>ui.JavascriptLibrary</code> - UI classes don&#x27;t call <code translate="no" v-pre>executeJs</code> themselves. The element is passed
+explicitly (<code translate="no" v-pre>$0</code>, not <code translate="no" v-pre>this</code>), and a script that returns a value returns the <code translate="no" v-pre>PendingJavaScriptResult</code>, read with
+<code translate="no" v-pre>.then(...)</code>; see <code translate="no" v-pre>UIUtils.getPositionAndSizeOfElement</code> and <code translate="no" v-pre>JavascriptLibrary.scrollTextAreaToBottom</code> (the extension log
+is shown scrolled to its newest line). Extensions keep their own scripts. There are no JavaScript modules of the
+application.</p>
+<h3 id="styles">Styles</h3>
+<p>Global styles are in <code translate="no" v-pre>src/main/frontend/styles/shared-styles.css</code> (imported by <code translate="no" v-pre>AppShellConfig</code>): the loading
+indicator, Markdown wrapping, the language flags and the utility classes (<code translate="no" v-pre>.text-secondary</code>, <code translate="no" v-pre>.hint-text</code>,
+<code translate="no" v-pre>.min-width-0</code>...). Each class has a constant in <code translate="no" v-pre>CssStyles</code> with the same name; apply it with
+<code translate="no" v-pre>addClassName(CssStyles.X)</code> and don&#x27;t use inline styles (<code translate="no" v-pre>getStyle().set(...)</code>) except for a value computed at runtime.
+Use Lumo variables (<code translate="no" v-pre>var(--lumo-...)</code>) in the rules. Reuse a class before adding one.</p>
+<p>Styles of plugins are not in the stylesheet. <code translate="no" v-pre>Main</code> (the <code translate="no" v-pre>ApplicationEntryPoint</code>) owns a <code translate="no" v-pre>CssRegistry</code> that puts the CSS of
+extensions implementing <code translate="no" v-pre>ExtensionHasCss</code> into the page and removes it again when the extension is unloaded.</p>
+<h2 id="extension-points">Extension points</h2>
+<p>Every class annotated <code translate="no" v-pre>@Extendable</code> can be extended by plugins: a decorator registered for a class and method name
+runs before and after that method and can read its arguments and local variables. The UI classes that are
+<code translate="no" v-pre>@Extendable</code>:</p>
+<retype-table copy-text="| Area | Classes |
+|---|---|
+| Workspace | `DesktopWorkspace`, `PhoneWorkspace`, `LanguagePart`, `UserPart`, `AIPart`, `ResourcesPart`, `TrashPart`, `AdminPart`, `DatabaseBackupPanel`, `CleanupPanel`, `PhoneAIPart`, `PhoneSettingsPart`, `PhoneTrashPart` |
+| Dialogs and widgets | `AIDialog`, `UserDialog`, `MessageImages`, `TrashGrid`, `PhoneTrashGrid` |
+| Routes | `LoginCheckRoute` (login, saved logins), `Main` (creates the `DesktopWorkspace` or `PhoneWorkspace` in `proceedWithLogin`) |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Area</th>
+<th>Classes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workspace</td>
+<td><code translate="no" v-pre>DesktopWorkspace</code>, <code translate="no" v-pre>PhoneWorkspace</code>, <code translate="no" v-pre>LanguagePart</code>, <code translate="no" v-pre>UserPart</code>, <code translate="no" v-pre>AIPart</code>, <code translate="no" v-pre>ResourcesPart</code>, <code translate="no" v-pre>TrashPart</code>, <code translate="no" v-pre>AdminPart</code>, <code translate="no" v-pre>DatabaseBackupPanel</code>, <code translate="no" v-pre>CleanupPanel</code>, <code translate="no" v-pre>PhoneAIPart</code>, <code translate="no" v-pre>PhoneSettingsPart</code>, <code translate="no" v-pre>PhoneTrashPart</code></td>
+</tr>
+<tr>
+<td>Dialogs and widgets</td>
+<td><code translate="no" v-pre>AIDialog</code>, <code translate="no" v-pre>UserDialog</code>, <code translate="no" v-pre>MessageImages</code>, <code translate="no" v-pre>TrashGrid</code>, <code translate="no" v-pre>PhoneTrashGrid</code></td>
+</tr>
+<tr>
+<td>Routes</td>
+<td><code translate="no" v-pre>LoginCheckRoute</code> (login, saved logins), <code translate="no" v-pre>Main</code> (creates the <code translate="no" v-pre>DesktopWorkspace</code> or <code translate="no" v-pre>PhoneWorkspace</code> in <code translate="no" v-pre>proceedWithLogin</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>New screens, dialogs and components with their own logic get <code translate="no" v-pre>@Extendable</code> too (a nested class needs its own
+annotation), and each of their instrumented methods gets a <a href="../plugins/extendable/#the-public-api"><code translate="no" v-pre>@PublicAPI</code></a> that
+declares its arguments, local variables and return type; <code translate="no" v-pre>PublicAPISignatureTest</code> checks it. Left out on purpose:
+classes with only static methods (<code translate="no" v-pre>UIUtils</code>; static methods are not instrumented), the generic dialogs and widgets used
+everywhere (<code translate="no" v-pre>ConfirmDialog</code>, <code translate="no" v-pre>ErrorDialog</code>, <code translate="no" v-pre>Notification</code>, <code translate="no" v-pre>HTabSheet</code>, the <code translate="no" v-pre>BackendTable*</code> providers), the plumbing
+(servlet, app shell, initializer, <code translate="no" v-pre>ThreadCopyRequestAttributes</code>), the language screens (<code translate="no" v-pre>LanguageUIBase</code> and its
+subclasses: they are the application&#x27;s content, not a hook) and <code translate="no" v-pre>LanguageCreationDialog</code>.</p>
+<p>The only bundled plugin is the Gemma 4 tools fix. When an extension depends on a method, the method is part of the plugin API: see
+<a href="../plugins/extendable/">Extendable classes</a>.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/services/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Services</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/plugins/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Plugin development</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "User interface", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/ui.md" }</script>
+</body>
+</html>

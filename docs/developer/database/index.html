@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Database &amp; migrations</title>
+    <meta name="title" content="Database & migrations">
+    <meta name="description" content="LingoLLM keeps all its data in one SQLite file. The schema is created and upgraded by Flyway migrations, and Hibernate maps the entities onto it but never changes it.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/database/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/database/">
+    <meta property="og:title" content="Database & migrations">
+    <meta property="og:description" content="LingoLLM keeps all its data in one SQLite file. The schema is created and upgraded by Flyway migrations, and Hibernate maps the entities onto it but never changes it.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/database/">
+    <meta name="twitter:title" content="Database & migrations">
+    <meta name="twitter:description" content="LingoLLM keeps all its data in one SQLite file. The schema is created and upgraded by Flyway migrations, and Hibernate maps the entities onto it but never changes it.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/database.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="database--migrations">Database &amp; migrations</h1>
+<p>LingoLLM keeps all its data in one SQLite file. The schema is created and upgraded by Flyway migrations, and
+Hibernate maps the entities onto it but never changes it. This page explains the setup, the conventions of the schema
+and how to write a migration. What the tables contain is described in <a href="../domain-model/">Domain model</a>.</p>
+<h2 id="the-database-file">The database file</h2>
+<retype-table copy-text="| | |
+|---|---|
+| File | `&lt;user.home&gt;/.lingollm/lingollm.sqlite`, with `lingollm.sqlite-wal` and `-shm` while it runs |
+| JDBC URL | `jdbc:sqlite:&lt;file&gt;?busy_timeout=10000&amp;journal_mode=WAL` (built by `Configuration.resolveDb`) |
+| Driver | `org.sqlite.JDBC` (`sqlite-jdbc`) |
+| Pool | commons-dbcp `BasicDataSource`, 10-20 connections, validated with `SELECT 1` |
+| Journal | WAL - readers don't block the writer; writers wait up to 10 s (`busy_timeout`) for each other |
+| Foreign keys | Not enforced (`PRAGMA foreign_keys` is off), see [Conventions](#schema-conventions) |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th> </th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File</td>
+<td><code translate="no" v-pre>&lt;user.home&gt;/.lingollm/lingollm.sqlite</code>, with <code translate="no" v-pre>lingollm.sqlite-wal</code> and <code translate="no" v-pre>-shm</code> while it runs</td>
+</tr>
+<tr>
+<td>JDBC URL</td>
+<td><code translate="no" v-pre>jdbc:sqlite:&lt;file&gt;?busy_timeout=10000&amp;journal_mode=WAL</code> (built by <code translate="no" v-pre>Configuration.resolveDb</code>)</td>
+</tr>
+<tr>
+<td>Driver</td>
+<td><code translate="no" v-pre>org.sqlite.JDBC</code> (<code translate="no" v-pre>sqlite-jdbc</code>)</td>
+</tr>
+<tr>
+<td>Pool</td>
+<td>commons-dbcp <code translate="no" v-pre>BasicDataSource</code>, 10-20 connections, validated with <code translate="no" v-pre>SELECT 1</code></td>
+</tr>
+<tr>
+<td>Journal</td>
+<td>WAL - readers don&#x27;t block the writer; writers wait up to 10 s (<code translate="no" v-pre>busy_timeout</code>) for each other</td>
+</tr>
+<tr>
+<td>Foreign keys</td>
+<td>Not enforced (<code translate="no" v-pre>PRAGMA foreign_keys</code> is off), see <doc-anchor-trigger to="#schema-conventions">Conventions</doc-anchor-trigger></td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The beans are in <code translate="no" v-pre>src/main/resources/META-INF/spring/datasources-config.xml</code>:</p>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    conf[&quot;configuration&lt;br/&gt;resolveDb()&quot;] --&gt; ds[&quot;dataSource&lt;br/&gt;BasicDataSource&quot;]
+    ds --&gt; fw[&quot;flyway&lt;br/&gt;init-method=migrate&quot;]
+    ds --&gt; proxy[&quot;ds&lt;br/&gt;TransactionAwareDataSourceProxy&quot;]
+    fw -. &quot;depends-on&quot; .-&gt; emf
+    proxy --&gt; emf[&quot;emf&lt;br/&gt;EntityManagerFactory (PU)&quot;]
+    proxy --&gt; jdbc[&quot;jdbcTemplate&quot;]
+    emf --&gt; em[&quot;em&lt;br/&gt;SharedEntityManagerBean&quot;]
+    emf --&gt; tm[&quot;transactionManager&lt;br/&gt;JpaTransactionManager 'common'&quot;]</pre></div>
+<ul>
+<li>
+<p><code translate="no" v-pre>flyway</code> migrates the database when the context starts; <code translate="no" v-pre>emf</code> depends on it, so Hibernate only sees a migrated
+schema.</p>
+</li>
+<li>
+<p>Hibernate and <code translate="no" v-pre>jdbcTemplate</code> use the data source through <code translate="no" v-pre>TransactionAwareDataSourceProxy</code>, so plain JDBC code
+joins the current JPA transaction.</p>
+</li>
+<li>
+<p>The persistence unit <code translate="no" v-pre>PU</code> is defined in <code translate="no" v-pre>src/main/webapp/config/persistence.xml</code>: the list of entity classes
+(<code translate="no" v-pre>exclude-unlisted-classes</code>), the dialect and <code translate="no" v-pre>hibernate.hbm2ddl.auto=validate</code>.</p>
+</li>
+</ul>
+<h3 id="looking-into-the-database">Looking into the database</h3>
+<p>The file is an ordinary SQLite database. While LingoLLM runs, open it read-only so you don&#x27;t hold locks:</p>
+<div id="looking-into-the-database-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">sqlite3 -readonly ~/.lingollm/lingollm.sqlite
+sqlite&gt; .tables
+sqlite&gt; select version, description, success from flyway_schema_history;
+sqlite&gt; select id, nameOverride, cast(extendedContent as text) from languages;</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>extendedContent</code> columns hold UTF-8 JSON, so <code translate="no" v-pre>cast(... as text)</code> (or <code translate="no" v-pre>json_extract</code>) shows the
+<a href="../domain-model/#extendableentity---extended-attributes">extended attributes</a>. Timestamps (<code translate="no" v-pre>creation</code>,
+<code translate="no" v-pre>modification</code>, <code translate="no" v-pre>lastOpened</code>) are stored as milliseconds since the epoch, booleans as <code translate="no" v-pre>0</code> / <code translate="no" v-pre>1</code>.</p>
+<h2 id="startup-migrate-then-validate">Startup: migrate, then validate</h2>
+<ol>
+<li>
+<p>Before the data source is created, <code translate="no" v-pre>Configuration.resolveDb</code> swaps in a staged database restore, if there is one
+(see <doc-anchor-trigger to="#database-backups-and-restores">Database backups and restores</doc-anchor-trigger>). Then <code translate="no" v-pre>Configuration.backupBeforeMigration</code>
+asks <code translate="no" v-pre>DatabaseCheck.pendingMigrationFrom</code> whether the existing file is behind the newest bundled <code translate="no" v-pre>V&lt;n&gt;</code> migration
+(or has no history table, which Flyway baselines at V1). If so it saves a <code translate="no" v-pre>VACUUM INTO</code> copy as
+<code translate="no" v-pre>db-backups/pre-migration-&lt;time&gt;-V&lt;from&gt;-lingollm.sqlite</code> and keeps the newest three. A new installation (no file
+or an empty one) and a current database are left alone, and a copy that fails is logged, not fatal. The check
+looks at the Flyway history only, so a Java <code translate="no" v-pre>Migration</code> bean without a <code translate="no" v-pre>V&lt;n&gt;</code> file does not trigger a copy.</p>
+</li>
+<li>
+<p>Flyway runs every pending migration from <code translate="no" v-pre>classpath:migration</code> (<code translate="no" v-pre>src/main/resources/migration/</code>) and records it in
+<code translate="no" v-pre>flyway_schema_history</code>. <code translate="no" v-pre>baselineOnMigrate=true</code> with baseline version <code translate="no" v-pre>1</code> makes databases created before Flyway
+was introduced (V1 schema without a history table) start at V1 and get V2 onwards.</p>
+</li>
+<li>
+<p>Hibernate builds the <code translate="no" v-pre>EntityManagerFactory</code> and <strong>validates</strong> the schema against the entities: every mapped table
+and column must exist with a compatible type. It never creates or alters anything.</p>
+</li>
+</ol>
+<p>If either step fails, the Spring context doesn&#x27;t start and LingoLLM doesn&#x27;t serve any page; the cause is in the
+log. Typical messages:</p>
+<retype-table copy-text="| Message | Cause |
+|---|---|
+| `Schema-validation: missing column [x] in table [y]` | An entity field was mapped as a column without a migration. |
+| `Schema-validation: missing table [x]` | A new entity without a migration, or the migration names the table differently. |
+| `Validate failed: Migrations have failed validation ... checksum mismatch` | An already applied migration file was edited. |
+| `Migration V&lt;n&gt;__... failed` | The SQL of a migration failed; Flyway rolls that migration back (SQLite DDL is transactional, each file is its own transaction, earlier files of the same run stay applied) and startup stops. Flyway Community has no undo, so a migration that succeeded is only reversible from the `pre-migration-*` copy. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Schema-validation: missing column [x] in table [y]</code></td>
+<td>An entity field was mapped as a column without a migration.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Schema-validation: missing table [x]</code></td>
+<td>A new entity without a migration, or the migration names the table differently.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Validate failed: Migrations have failed validation ... checksum mismatch</code></td>
+<td>An already applied migration file was edited.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Migration V&lt;n&gt;__... failed</code></td>
+<td>The SQL of a migration failed; Flyway rolls that migration back (SQLite DDL is transactional, each file is its own transaction, earlier files of the same run stay applied) and startup stops. Flyway Community has no undo, so a migration that succeeded is only reversible from the <code translate="no" v-pre>pre-migration-*</code> copy.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>There is also a second, Java-level version check: <code translate="no" v-pre>ApplicationInitializer</code> compares <code translate="no" v-pre>AppSettings.dbVersion</code> /
+<code translate="no" v-pre>appVersion</code> with the versions set in <code translate="no" v-pre>container-config.xml</code> and runs registered <code translate="no" v-pre>Migration</code> beans for data changes
+that are easier in Java than in SQL. It runs after Hibernate is up, so a migration can use <code translate="no" v-pre>jdbcTemplate</code> or services.
+Each migration gets the current version and returns the new one (or the same one when it has nothing to do), so a
+migration is written for one version step and ignores the others.</p>
+<p>No data migration exists yet (the list in <code translate="no" v-pre>applicationInitializer</code> is empty and <code translate="no" v-pre>appVersion</code> is 1).</p>
+<p>To add one: implement <code translate="no" v-pre>Migration</code>, register the bean in the <code translate="no" v-pre>migrations</code> list of <code translate="no" v-pre>applicationInitializer</code> and raise
+<code translate="no" v-pre>appVersion</code> (or <code translate="no" v-pre>dbVersion</code>). A fresh database starts at version 1, so it goes through all migrations too. Marginalia has examples (an encryption of plain text API keys, the refill of <code translate="no" v-pre>_fulltext</code>) in its <code translate="no" v-pre>bound/migration</code> package.</p>
+<h2 id="migrations">Migrations</h2>
+<retype-table copy-text="| Version | File | Change |
+|---|---|---|
+| V1 | `V1__initial.sql` | The initial schema: `users`, `settings`, `ais` (+ `ais_openaicompat`), `usages`, `resources`, `languages`, `free_chats` and `free_chat_messages`, each with its `&lt;table&gt;_SEQ` id table and the indexes of the lookups. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Version</th>
+<th>File</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1</td>
+<td><code translate="no" v-pre>V1__initial.sql</code></td>
+<td>The initial schema: <code translate="no" v-pre>users</code>, <code translate="no" v-pre>settings</code>, <code translate="no" v-pre>ais</code> (+ <code translate="no" v-pre>ais_openaicompat</code>), <code translate="no" v-pre>usages</code>, <code translate="no" v-pre>resources</code>, <code translate="no" v-pre>languages</code>, <code translate="no" v-pre>free_chats</code> and <code translate="no" v-pre>free_chat_messages</code>, each with its <code translate="no" v-pre>&lt;table&gt;_SEQ</code> id table and the indexes of the lookups.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>LingoLLM has no released database yet, so until the first release <code translate="no" v-pre>V1__initial.sql</code> may be edited when the model
+changes (after editing it, <code translate="no" v-pre>rm -rf lingollm/target/classes/migration</code> - stale scripts stay in <code translate="no" v-pre>target/classes</code> - and
+delete your development database). After the first release, every change is a new <code translate="no" v-pre>V&lt;n&gt;</code> file, see the rules below.</p>
+<h3 id="rules">Rules</h3>
+<ul>
+<li>
+<p><strong>Never change a migration that has been released.</strong> Flyway stores a checksum of each applied file and refuses to
+start when it changes. Fix mistakes with a new migration.</p>
+</li>
+<li>
+<p><strong>Name</strong> files <code translate="no" v-pre>V&lt;next number&gt;__&lt;what_it_does&gt;.sql</code> (two underscores). Versions are plain integers here.</p>
+</li>
+<li>
+<p><strong>One migration per change</strong>, together with the entity change in the same commit.</p>
+</li>
+<li>
+<p><strong>Keep data.</strong> Users upgrade in place - every migration must turn any existing database into the new schema
+without losing data. Convert old values in SQL.</p>
+</li>
+<li>
+<p><strong>Only SQL that SQLite understands.</strong> See <doc-anchor-trigger to="#sqlite-limitations">SQLite limitations</doc-anchor-trigger>.</p>
+</li>
+<li>
+<p><strong>Prefer extended attributes.</strong> A field stored in <code translate="no" v-pre>extendedContent</code> needs no migration at all; add a column only
+when the value is used in queries (see <a href="../domain-model/#adding-a-field-or-an-entity">Domain model</a>).</p>
+</li>
+</ul>
+<h3 id="adding-a-column">Adding a column</h3>
+<div id="adding-a-column-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-sql"><code v-pre class="language-sql">-- V2__language_archived.sql
+ALTER TABLE languages
+    ADD COLUMN archived boolean not null default false;</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>ADD COLUMN</code> with <code translate="no" v-pre>not null</code> needs a <code translate="no" v-pre>default</code>, otherwise existing rows can&#x27;t get a value. Then map it in the entity:</p>
+<div id="adding-a-column-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Column(nullable = false)
+private boolean archived = false;</code></pre>
+</doc-codeblock></div>
+<h3 id="adding-a-table">Adding a table</h3>
+<p>A new entity needs its table, its sequence table with a first row, and its indexes. Hibernate uses
+<code translate="no" v-pre>GenerationType.AUTO</code>, which on SQLite means a table-backed sequence named <code translate="no" v-pre>&lt;table&gt;_SEQ</code> with a pooled optimizer
+(ids are reserved in blocks of 50 - gaps in ids are normal):</p>
+<div id="adding-a-table-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-sql"><code v-pre class="language-sql">-- V2__notebooks.sql
+create table notebooks
+(
+    id              bigint      not null primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null unique,
+    extendedContent blob,
+    _fulltext       clob,
+    userId          bigint,
+    language_id     bigint
+);
+
+create index ix_notebooks_user on notebooks (userId, is_deleted);
+create index ix_notebooks_language on notebooks (language_id);
+
+create table notebooks_SEQ
+(
+    next_val bigint
+);
+
+INSERT INTO notebooks_SEQ (next_val) VALUES (1);</code></pre>
+</doc-codeblock></div>
+<p>The columns of <code translate="no" v-pre>BaseEntity</code> / <code translate="no" v-pre>OwnedEntity</code> / <code translate="no" v-pre>ExtendableEntity</code> are always the same: <code translate="no" v-pre>id</code>, <code translate="no" v-pre>creation</code>,
+<code translate="no" v-pre>is_deleted</code>, <code translate="no" v-pre>modification</code>, <code translate="no" v-pre>uuid</code>, <code translate="no" v-pre>userId</code> (owner), <code translate="no" v-pre>extendedContent</code> and <code translate="no" v-pre>_fulltext</code>. Then list the class in
+<code translate="no" v-pre>persistence.xml</code>. For joined inheritance (a subtype of <code translate="no" v-pre>AI</code>), the subtype table has only <code translate="no" v-pre>id</code> plus its
+own columns.</p>
+<h3 id="changing-or-removing-a-column">Changing or removing a column</h3>
+<p>SQLite can rename a column (<code translate="no" v-pre>ALTER TABLE ... RENAME COLUMN</code>) and, since 3.35, drop a simple one
+(<code translate="no" v-pre>ALTER TABLE ... DROP COLUMN</code>), but it can&#x27;t change a column&#x27;s type, nullability, default or constraints. For those,
+rebuild the table:</p>
+<div id="changing-or-removing-a-column-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-sql"><code v-pre class="language-sql">CREATE TABLE languages_new ( ... new definition ... );
+
+INSERT INTO languages_new (id, ...)
+SELECT id, ... FROM languages;          -- convert values here
+
+DROP TABLE languages;
+
+ALTER TABLE languages_new RENAME TO languages;
+
+CREATE INDEX ix_languages_user ON languages (userId, is_deleted);   -- indexes are dropped with the old table</code></pre>
+</doc-codeblock></div>
+<p>Recreate every index of the old table. Removing an entity field without removing the column is harmless - validation
+only checks that mapped columns exist.</p>
+<h3 id="generating-the-sql">Generating the SQL</h3>
+<p><code translate="no" v-pre>com.github.enerccio.tools.GenerateFlywayDiff</code> (in <code translate="no" v-pre>src/main/java/com/github/enerccio/tools/</code>) asks Hibernate what it
+would change to make an existing database match the entities, and prints the SQL. Run its <code translate="no" v-pre>main</code> from the
+repository root (it reads <code translate="no" v-pre>lingollm/src/main/webapp/config/persistence.xml</code>), with <code translate="no" v-pre>-Duser.home</code> pointing to a
+development home whose database is at the current schema version. Treat the output as a draft:</p>
+<ul>
+<li>Hibernate only creates and adds; it never drops or changes columns.</li>
+<li>It doesn&#x27;t know about data conversion, defaults for existing rows or the table rebuilds SQLite needs.</li>
+<li>It may print Hibernate&#x27;s temporary tables (<code translate="no" v-pre>HT_*</code>, <code translate="no" v-pre>HTE_*</code>, see below) - leave them out.</li>
+</ul>
+<h3 id="testing-a-migration">Testing a migration</h3>
+<p>Every test that boots the Spring context (<code translate="no" v-pre>LingoLLMTestBase</code>) migrates a fresh database with the real Flyway
+configuration and validates it against <code translate="no" v-pre>persistence.xml</code>, so a wrong script or an entity without a column fails nearly
+every test. <code translate="no" v-pre>db/DatabaseRestoreCheckTest</code> and <code translate="no" v-pre>db/PreMigrationBackupTest</code> cover the checks around restores and the copy
+saved before an upgrade. When you add a second migration, add a test that builds a database at the previous version (a
+<code translate="no" v-pre>Flyway</code> with <code translate="no" v-pre>setTarget</code>, see <code translate="no" v-pre>PreMigrationBackupTest.databaseAt</code>), inserts data and migrates it, so the data
+conversion is checked; the tests that need two versions (an older database being copied before an upgrade, a restore
+whose migration fails) were dropped from the port because there was only <code translate="no" v-pre>V1</code> to build them from.</p>
+<h2 id="schema-conventions">Schema conventions</h2>
+<p><strong>Names.</strong> Tables are plural (<code translate="no" v-pre>languages</code>, <code translate="no" v-pre>free_chats</code>, <code translate="no" v-pre>free_chat_messages</code>), set by <code translate="no" v-pre>@Table(name = ...)</code>. Columns use the Java
+field name (<code translate="no" v-pre>nameOverride</code>, <code translate="no" v-pre>maxContext</code>); relations end in <code translate="no" v-pre>_id</code> (<code translate="no" v-pre>language_id</code>, <code translate="no" v-pre>parentChat_id</code>), except the owner,
+which is <code translate="no" v-pre>userId</code>, and the soft delete flag, <code translate="no" v-pre>is_deleted</code>. Indexes exist only in the migrations, see
+<doc-anchor-trigger to="#indexes">Indexes</doc-anchor-trigger>.</p>
+<p><strong>No foreign key constraints.</strong> The tables have no <code translate="no" v-pre>REFERENCES</code> clauses (SQLite wouldn&#x27;t enforce them: <code translate="no" v-pre>PRAGMA foreign_keys</code> is off). Integrity is kept by the application: rows are soft
+deleted, so references stay valid, and the admin <em>Cleanup</em> follows the
+<a href="../domain-model/#cleanup-references">cleanup references</a> to decide what may be purged. Code that hard deletes must
+clear or move references itself (see <code translate="no" v-pre>CleanupServiceImpl.moveChildrenOfMessages</code>). Because cleanup nulls references
+before it purges, a column that holds one must be nullable in the table (<code translate="no" v-pre>free_chat_messages.parentChat_id</code>, <code translate="no" v-pre>usages.ai_id</code>).</p>
+<p><strong>Enums.</strong> <code translate="no" v-pre>AI.aiType</code> is stored as an ordinal (<code translate="no" v-pre>tinyint</code>), all other enums by name.
+<code translate="no" v-pre>SaneSQLiteDialect</code> turns off the <code translate="no" v-pre>CHECK</code> constraints that Hibernate would otherwise generate for enum columns, so a
+new enum value doesn&#x27;t need a table rebuild.</p>
+<p><strong>Large values.</strong> Text that can be long (<code translate="no" v-pre>name</code>, <code translate="no" v-pre>uri</code>, <code translate="no" v-pre>apiKey</code>...) is <code translate="no" v-pre>@Lob</code> → <code translate="no" v-pre>clob</code>; <code translate="no" v-pre>extendedContent</code> is a
+<code translate="no" v-pre>blob</code> with JSON. SQLite doesn&#x27;t enforce lengths, so <code translate="no" v-pre>varchar(255)</code> is only documentation.</p>
+<p><strong>Encrypted columns.</strong> Secrets are stored encrypted, see <doc-anchor-trigger to="#encrypted-columns">Encrypted columns</doc-anchor-trigger>.</p>
+<p><strong>Hibernate&#x27;s temporary tables.</strong> Marginalia&#x27;s <code translate="no" v-pre>V1__initial.sql</code> contains <code translate="no" v-pre>HT_*</code> and <code translate="no" v-pre>HTE_*</code> tables that Hibernate uses
+for bulk HQL updates and deletes (and inserts) on entities with joined inheritance (<code translate="no" v-pre>AI</code>). LingoLLM&#x27;s V1 does not have
+them, because no code runs such a statement on <code translate="no" v-pre>AI</code> (the cleanup removes entities one by one, and the bulk updates
+touch <code translate="no" v-pre>FreeChatMessage</code>, <code translate="no" v-pre>Usage</code> and <code translate="no" v-pre>Language</code> only, which have no subclasses). If you add a bulk <code translate="no" v-pre>UPDATE</code> or
+<code translate="no" v-pre>DELETE</code> of <code translate="no" v-pre>AI</code>, let <code translate="no" v-pre>GenerateFlywayDiff</code> print the tables and add them in a new migration.</p>
+<h2 id="indexes">Indexes</h2>
+<p>Indexes are created only by Flyway migrations; the entities don&#x27;t declare any (<code translate="no" v-pre>@Table(indexes = ...)</code>), because
+Hibernate only validates the schema and never creates them. Name them <code translate="no" v-pre>ix_&lt;table&gt;_&lt;what&gt;</code>.</p>
+<p>Index what the queries filter on, in the order of the <code translate="no" v-pre>WHERE</code> clause, with the equality columns first and the
+<code translate="no" v-pre>ORDER BY</code> column last:</p>
+<retype-table copy-text="| Index | Used by |
+|---|---|
+| `&lt;table&gt; (userId, is_deleted)` | Listing and finding the owner's entities (`ais`, `languages`). |
+| `free_chats (userId, language_id, is_deleted)` | The chats of a language profile. |
+| `free_chat_messages (parentChat_id, creation)`, `free_chat_messages (parent_id)` | Messages of a chat in order, children of a message. |
+| `ais (shared, is_deleted)` | The shared AIs every user sees next to their own. |
+| `usages (ai_id, userId)` (unique), `usages (userId, is_deleted)` | The usage of an AI by a user (the row `UsageRepository.add` updates), the usages of a user. |
+| `resources (userId, hash)` | Deduplication of uploaded files. |
+| `resources (userId, is_deleted, creation)` | The Resources tab: the user's files, newest first. |
+| `resources (clazz, objectId)` | Resources used by an object (the loose link). |
+| `settings (key, userId)` | Loading a settings object. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Index</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>&lt;table&gt; (userId, is_deleted)</code></td>
+<td>Listing and finding the owner&#x27;s entities (<code translate="no" v-pre>ais</code>, <code translate="no" v-pre>languages</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>free_chats (userId, language_id, is_deleted)</code></td>
+<td>The chats of a language profile.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>free_chat_messages (parentChat_id, creation)</code>, <code translate="no" v-pre>free_chat_messages (parent_id)</code></td>
+<td>Messages of a chat in order, children of a message.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ais (shared, is_deleted)</code></td>
+<td>The shared AIs every user sees next to their own.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>usages (ai_id, userId)</code> (unique), <code translate="no" v-pre>usages (userId, is_deleted)</code></td>
+<td>The usage of an AI by a user (the row <code translate="no" v-pre>UsageRepository.add</code> updates), the usages of a user.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>resources (userId, hash)</code></td>
+<td>Deduplication of uploaded files.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>resources (userId, is_deleted, creation)</code></td>
+<td>The Resources tab: the user&#x27;s files, newest first.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>resources (clazz, objectId)</code></td>
+<td>Resources used by an object (the loose link).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>settings (key, userId)</code></td>
+<td>Loading a settings object.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>A single-column index on <code translate="no" v-pre>is_deleted</code> alone helps only the <em>Cleanup</em> (few rows are deleted); don&#x27;t add new ones.
+Check a query with <code translate="no" v-pre>EXPLAIN QUERY PLAN</code> in SQLite - <code translate="no" v-pre>SCAN &lt;table&gt;</code> means a full table scan, <code translate="no" v-pre>SEARCH ... USING INDEX</code>
+means the index is used.</p>
+<h2 id="encrypted-columns">Encrypted columns</h2>
+<p><code translate="no" v-pre>OpenAICompatible.apiKey</code> is mapped with <code translate="no" v-pre>@Convert(converter = EncryptedStringConverter.class)</code>. The converter calls
+<code translate="no" v-pre>Configuration.encrypt</code> / <code translate="no" v-pre>decrypt</code>:</p>
+<ul>
+<li>
+<p>On the first start <code translate="no" v-pre>Configuration</code> writes a random UUID to <code translate="no" v-pre>&lt;data folder&gt;/secret.key</code>; the AES-256 key is the
+SHA-256 of that UUID. The file is outside the database, so a database backup alone doesn&#x27;t reveal the secrets.</p>
+</li>
+<li>
+<p>A stored value is <code translate="no" v-pre>enc:</code> + Base64 of a random 12-byte IV and the AES/GCM ciphertext. Values without the prefix are
+read as they are (plain values from before the migration); a value that can&#x27;t be decrypted (a database from another
+installation, a different <code translate="no" v-pre>secret.key</code>) is logged and read as <code translate="no" v-pre>null</code> - the user enters the key again.</p>
+</li>
+<li>
+<p>The converter is a Spring bean: <code translate="no" v-pre>emf</code> sets <code translate="no" v-pre>hibernate.resource.beans.container</code> to a <code translate="no" v-pre>SpringBeanContainer</code>, so
+Hibernate asks Spring for converters (and entity listeners) and <code translate="no" v-pre>@Autowired</code> fields are injected. Use the same
+converter for any new secret column.</p>
+</li>
+<li>
+<p>Code outside JPA (<code translate="no" v-pre>jdbcTemplate</code>, migrations) sees the encrypted value and must use <code translate="no" v-pre>Configuration</code> itself, (a Java migration that encrypts existing values would do that).</p>
+</li>
+</ul>
+<h2 id="sqlite-limitations">SQLite limitations</h2>
+<retype-table copy-text="| Limitation | Consequence |
+|---|---|
+| One writer at a time | Writes are serialized; long transactions block other users' writes (up to `busy_timeout`, then `SQLITE_BUSY`). Keep transactions short and never call a model inside one - such code runs outside transactions (`@NoTx`). |
+| `ALTER TABLE` is limited | Type, nullability and constraint changes need a table rebuild. |
+| DDL in transactions | SQLite supports transactional DDL, so a failing migration is rolled back completely. |
+| No `VACUUM` inside a transaction | `VACUUM INTO` for backups runs with `@NoTx`. |
+| Dynamic typing | A column accepts any value; the entity mapping is what keeps types consistent. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Limitation</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One writer at a time</td>
+<td>Writes are serialized; long transactions block other users&#x27; writes (up to <code translate="no" v-pre>busy_timeout</code>, then <code translate="no" v-pre>SQLITE_BUSY</code>). Keep transactions short and never call a model inside one - such code runs outside transactions (<code translate="no" v-pre>@NoTx</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ALTER TABLE</code> is limited</td>
+<td>Type, nullability and constraint changes need a table rebuild.</td>
+</tr>
+<tr>
+<td>DDL in transactions</td>
+<td>SQLite supports transactional DDL, so a failing migration is rolled back completely.</td>
+</tr>
+<tr>
+<td>No <code translate="no" v-pre>VACUUM</code> inside a transaction</td>
+<td><code translate="no" v-pre>VACUUM INTO</code> for backups runs with <code translate="no" v-pre>@NoTx</code>.</td>
+</tr>
+<tr>
+<td>Dynamic typing</td>
+<td>A column accepts any value; the entity mapping is what keeps types consistent.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="database-backups-and-restores">Database backups and restores</h2>
+<p><code translate="no" v-pre>DatabaseBackupServiceImpl</code> backs up the live database with SQLite&#x27;s <code translate="no" v-pre>VACUUM INTO '&lt;file&gt;'</code>, which writes a
+consistent, compacted copy without stopping the application. Backups go to <code translate="no" v-pre>&lt;data folder&gt;/db-backups/</code> as
+<code translate="no" v-pre>lingollm-&lt;time&gt;.sqlite</code> (manual) or <code translate="no" v-pre>lingollm-scheduled-&lt;time&gt;.sqlite</code>; scheduled ones are rotated (keep last N). <code translate="no" v-pre>Configuration</code> writes two more kinds into the same folder, <code translate="no" v-pre>pre-restore-*</code> (the database a restore replaced) and <code translate="no" v-pre>pre-migration-*</code> (see <doc-anchor-trigger to="#startup-migrate-then-validate">Startup</doc-anchor-trigger>); the service lists every <code translate="no" v-pre>.sqlite</code> file there, and only <code translate="no" v-pre>lingollm-scheduled-*</code> counts as scheduled. The methods the UI calls (create, list, download, upload, delete, restore, schedule) call <code translate="no" v-pre>AdminGuard.requireAdmin()</code>; the scheduled run (<code translate="no" v-pre>createScheduledBackup</code>) and the rotation need no logged-in user.</p>
+<p>A database can&#x27;t be replaced while it&#x27;s open, so restoring is done in two steps:</p>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">sequenceDiagram
+    participant A as Admin UI
+    participant B as DatabaseBackupService
+    participant C as Configuration (next start)
+    A-&gt;&gt;B: scheduleRestore(backup)
+    B-&gt;&gt;B: DatabaseCheck.check(backup)
+    B-&gt;&gt;B: copy backup → lingollm.sqlite.restore (tmp file + atomic move)
+    Note over A,C: restart
+    C-&gt;&gt;C: DatabaseCheck.check(lingollm.sqlite.restore)
+    C-&gt;&gt;C: move lingollm.sqlite (+ -wal, -shm) → db-backups/pre-restore-&lt;time&gt;-lingollm.sqlite
+    C-&gt;&gt;C: move lingollm.sqlite.restore → lingollm.sqlite
+    C-&gt;&gt;C: Flyway migrates the restored database
+    Note over C: datasource, Flyway bean (nothing left to migrate), Hibernate validates</pre></div>
+<p><code translate="no" v-pre>DatabaseCheck.check(File)</code> is run on <em>Upload Backup</em> (<code translate="no" v-pre>importBackup</code>), on <code translate="no" v-pre>scheduleRestore</code> and on start. It opens the
+file read-only and refuses it (<code translate="no" v-pre>InvalidDatabaseException</code>, an <code translate="no" v-pre>IllegalArgumentException</code> with the reason) when:</p>
+<ul>
+<li>
+<p>it doesn&#x27;t start with the SQLite header,</p>
+</li>
+<li>
+<p><code translate="no" v-pre>PRAGMA integrity_check</code> reports problems,</p>
+</li>
+<li>
+<p>core tables (<code translate="no" v-pre>users</code>, <code translate="no" v-pre>settings</code>, <code translate="no" v-pre>ais</code>, <code translate="no" v-pre>languages</code>, <code translate="no" v-pre>free_chats</code>,
+<code translate="no" v-pre>free_chat_messages</code>) are missing - another application&#x27;s database,</p>
+</li>
+<li>
+<p><code translate="no" v-pre>flyway_schema_history</code> has a failed migration or a version newer than the newest bundled <code translate="no" v-pre>migration/V*__*.sql</code> -
+a database of a newer LingoLLM version. A database without the history table predates Flyway and is baselined at
+V1 as usual.</p>
+</li>
+</ul>
+<p><code translate="no" v-pre>Configuration.applyPendingRestore()</code> migrates the restored database itself, before the datasource is created, with
+the same Flyway configuration as the <code translate="no" v-pre>flyway</code> bean (<code translate="no" v-pre>DatabaseCheck.flywayConfiguration(DataSource)</code>, used by
+<code translate="no" v-pre>datasources-config.xml</code> too). If the check fails, the staged file is moved to
+<code translate="no" v-pre>db-backups/rejected-restore-&lt;time&gt;-lingollm.sqlite</code> and the current database stays. If the migration fails, the
+restored file is moved there as well and the <code translate="no" v-pre>pre-restore-*</code> database is moved back. Either way the reason is logged
+as an error and LingoLLM starts with the previous database. A backup from an older version is upgraded on start.</p>
+<p>API keys in a backup are encrypted with the installation&#x27;s <code translate="no" v-pre>secret.key</code> (see <doc-anchor-trigger to="#encrypted-columns">Encrypted columns</doc-anchor-trigger>).
+A backup restored on another installation loses them unless <code translate="no" v-pre>secret.key</code> is copied along.</p>
+<h2 id="tests-and-the-database">Tests and the database</h2>
+<p>Tests don&#x27;t touch your data: <code translate="no" v-pre>LingoLLMTestBase</code> starts the Spring configuration with the data folder in
+<code translate="no" v-pre>target/test-home/ctx-*</code>, so every test context gets a fresh database migrated by the real Flyway configuration. See
+<a href="../testing/">Testing</a>.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/domain-model/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Domain model</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/services/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Services</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Database & migrations", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/database.md" }</script>
+</body>
+</html>

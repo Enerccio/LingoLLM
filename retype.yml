@@ -1,0 +1,21 @@
+# LingoLLM manual - https://retype.com
+# Sources are in manual/, the generated site is written to docs/ and served by GitHub Pages
+# (Settings → Pages → Deploy from a branch → master, /docs). Rebuild with `retype build` and commit docs/.
+input: manual
+output: docs
+
+url: https://enerccio.github.io/LingoLLM
+
+branding:
+  title: LingoLLM
+  label: Manual
+
+links:
+  - text: GitHub
+    link: https://github.com/Enerccio/LingoLLM
+    icon: mark-github
+  - text: Releases
+    link: https://github.com/Enerccio/LingoLLM/releases
+
+footer:
+  copyright: "&copy; Copyright 2026. MIT License."

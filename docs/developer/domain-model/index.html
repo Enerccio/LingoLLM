@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Domain model</title>
+    <meta name="title" content="Domain model">
+    <meta name="description" content="The entities LingoLLM stores, how they relate, and the rules every entity follows: identity, ownership, soft delete, extended attributes and cleanup. Entities are in domain/model/ (base classes), domain/model/impl/ and domain/security/model/User.java.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/domain-model/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/domain-model/">
+    <meta property="og:title" content="Domain model">
+    <meta property="og:description" content="The entities LingoLLM stores, how they relate, and the rules every entity follows: identity, ownership, soft delete, extended attributes and cleanup. Entities are in domain/model/ (base classes), domain/model/impl/ and domain/security/model/User.java.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/domain-model/">
+    <meta name="twitter:title" content="Domain model">
+    <meta name="twitter:description" content="The entities LingoLLM stores, how they relate, and the rules every entity follows: identity, ownership, soft delete, extended attributes and cleanup. Entities are in domain/model/ (base classes), domain/model/impl/ and domain/security/model/User.java.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/domain-model.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="domain-model">Domain model</h1>
+<p>The entities LingoLLM stores, how they relate, and the rules every entity follows: identity, ownership, soft
+delete, extended attributes and cleanup. Entities are in <code translate="no" v-pre>domain/model/</code> (base classes), <code translate="no" v-pre>domain/model/impl/</code> and
+<code translate="no" v-pre>domain/security/model/User.java</code>. How the tables are created and changed is in <a href="../database/">Database &amp; migrations</a>.</p>
+<h2 id="names-in-code-and-ui">Names in code and UI</h2>
+<p>Some entities have a name in the UI that differs from the class. The UI and this manual use the names on the right:</p>
+<retype-table copy-text="| Class | Table | In the UI |
+|---|---|---|
+| `Language` | `languages` | Language profile |
+| `Languages` (enum) | - | Language (the template of a profile) |
+| `FreeChat`, `FreeChatMessage` | `free_chats`, `free_chat_messages` | Free chat, message |
+| `AI`, `OpenAICompatible` | `ais`, `ais_openaicompat` | Inference provider |
+| `Usage` | `usages` | Tokens sent / generated column of the Inference Providers tab |
+| `Setting`, `AppSettings`, `UserSetting` | `settings` | Settings page, admin settings |
+| `User` | `users` | User |
+| `Resource` | `resources` | Resources tab, attachments of a message |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Class</th>
+<th>Table</th>
+<th>In the UI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Language</code></td>
+<td><code translate="no" v-pre>languages</code></td>
+<td>Language profile</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Languages</code> (enum)</td>
+<td>-</td>
+<td>Language (the template of a profile)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code></td>
+<td><code translate="no" v-pre>free_chats</code>, <code translate="no" v-pre>free_chat_messages</code></td>
+<td>Free chat, message</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AI</code>, <code translate="no" v-pre>OpenAICompatible</code></td>
+<td><code translate="no" v-pre>ais</code>, <code translate="no" v-pre>ais_openaicompat</code></td>
+<td>Inference provider</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Usage</code></td>
+<td><code translate="no" v-pre>usages</code></td>
+<td>Tokens sent / generated column of the Inference Providers tab</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Setting</code>, <code translate="no" v-pre>AppSettings</code>, <code translate="no" v-pre>UserSetting</code></td>
+<td><code translate="no" v-pre>settings</code></td>
+<td>Settings page, admin settings</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>User</code></td>
+<td><code translate="no" v-pre>users</code></td>
+<td>User</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Resource</code></td>
+<td><code translate="no" v-pre>resources</code></td>
+<td>Resources tab, attachments of a message</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The language of the interface is <strong>not</strong> an entity: it is <code translate="no" v-pre>loc.Language</code>, a record with a code.</p>
+<h2 id="overview">Overview</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">erDiagram
+    User ||--o{ Language : owns
+    User ||--o{ AI : owns
+    AI ||--o{ Usage : &quot;used by users&quot;
+    User ||--o{ Usage : owns
+    User ||--o| UserSetting : has
+
+    Language ||--o{ FreeChat : &quot;language&quot;
+    Language ||--o{ FreeChatMessage : &quot;language&quot;
+    FreeChat ||--o{ FreeChatMessage : &quot;parentChat&quot;
+    FreeChatMessage |o--o{ FreeChatMessage : &quot;parent / children&quot;
+    FreeChatMessage }o..o{ Resource : &quot;attachments (uuid in JSON)&quot;
+    UserSetting }o..o| Language : &quot;lastLanguage (id)&quot;
+    UserSetting }o..o| AI : &quot;defaultModel (id)&quot;</pre></div>
+<p>Every entity except <code translate="no" v-pre>User</code> has an owner, so each user has a separate set of language profiles, providers and
+settings. The relationships between them never cross users. The dotted lines are not foreign keys: a message keeps the
+uuids of its attachments in its extended content, and <code translate="no" v-pre>UserSetting</code> keeps ids of the last profile and the default model
+(weak cleanup references).</p>
+<h2 id="base-classes">Base classes</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">classDiagram
+    class BaseEntity {
+        Long id
+        String uuid
+        boolean deleted
+        Date creation
+        Date modification
+    }
+    class OwnedEntity {
+        User owner
+    }
+    class ExtendableEntity {
+        byte[] extendedContent
+        String _fulltext
+        JsonObject attributes
+    }
+    class LanguageBoundEntity {
+        Language language
+    }
+    BaseEntity &lt;|-- User
+    BaseEntity &lt;|-- OwnedEntity
+    OwnedEntity &lt;|-- Resource
+    OwnedEntity &lt;|-- ExtendableEntity
+    OwnedEntity &lt;|-- Usage
+    ExtendableEntity &lt;|-- Language
+    ExtendableEntity &lt;|-- LanguageBoundEntity
+    ExtendableEntity &lt;|-- AI
+    ExtendableEntity &lt;|-- Setting
+    LanguageBoundEntity &lt;|-- FreeChat
+    LanguageBoundEntity &lt;|-- FreeChatMessage
+    AI &lt;|-- OpenAICompatible
+    Setting &lt;|-- AppSettings
+    Setting &lt;|-- UserSetting</pre></div>
+<h3 id="baseentity---identity-and-soft-delete"><code translate="no" v-pre>BaseEntity</code> - identity and soft delete</h3>
+<retype-table copy-text="| Field | Column | |
+|---|---|---|
+| `id` | `id` | Database key, generated by Hibernate (`GenerationType.AUTO`, a `&lt;table&gt;_SEQ` table per hierarchy). Used for relations and inside one installation only. |
+| `uuid` | `uuid` (unique) | Stable identity, set on the first save. Used wherever an entity leaves the database or must be found again: URLs (`/view/&lt;uuid&gt;`), backups, exports, imports, extension data. |
+| `deleted` | `is_deleted` | Soft delete flag. |
+| `creation`, `modification` | | Set by the repository on save. Messages of a chat are ordered by `creation`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th>Column</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>id</code></td>
+<td><code translate="no" v-pre>id</code></td>
+<td>Database key, generated by Hibernate (<code translate="no" v-pre>GenerationType.AUTO</code>, a <code translate="no" v-pre>&lt;table&gt;_SEQ</code> table per hierarchy). Used for relations and inside one installation only.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>uuid</code></td>
+<td><code translate="no" v-pre>uuid</code> (unique)</td>
+<td>Stable identity, set on the first save. Used wherever an entity leaves the database or must be found again: URLs (<code translate="no" v-pre>/view/&lt;uuid&gt;</code>), backups, exports, imports, extension data.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>deleted</code></td>
+<td><code translate="no" v-pre>is_deleted</code></td>
+<td>Soft delete flag.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>creation</code>, <code translate="no" v-pre>modification</code></td>
+<td> </td>
+<td>Set by the repository on save. Messages of a chat are ordered by <code translate="no" v-pre>creation</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>equals</code> and <code translate="no" v-pre>hashCode</code> use the <code translate="no" v-pre>id</code>, so don&#x27;t put unsaved entities into hash-based collections.</p>
+<p><strong>Soft delete.</strong> <code translate="no" v-pre>delete(entity, false)</code> - the normal delete - only sets <code translate="no" v-pre>deleted = true</code>. All finder queries skip
+deleted rows, so to the application the entity is gone, but the row stays and other rows can still point at it. The
+administrator&#x27;s <em>Cleanup</em> page later purges deleted rows that nothing needs any more (see <doc-anchor-trigger to="#cleanup-references">Cleanup references</doc-anchor-trigger>).
+<code translate="no" v-pre>delete(entity, true)</code> removes the row right away; it is used where nothing can reference the row, e.g. replaced
+messages during a backup restore.</p>
+<p><strong>A soft delete takes the dependent rows with it.</strong> The services whose entities own other rows override <code translate="no" v-pre>delete</code> and,
+when it is not a hard delete, soft delete those rows first (the <code translate="no" v-pre>OWNED_BY</code> / <code translate="no" v-pre>OWNS</code> rows of the
+<doc-anchor-trigger to="#cleanup-references">cleanup references</doc-anchor-trigger>), so the trash and the cleanup see the whole group deleted:</p>
+<retype-table copy-text="| Deleted | Also deleted |
+|---|---|
+| `Language` | its `FreeChat`s and `FreeChatMessage`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
+| `FreeChat` | its `FreeChatMessage`s (`FreeChatMessageService.softDeleteForChat`) |
+| `FreeChatMessage` | nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent |
+| `AI` | its `Usage`s |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Deleted</th>
+<th>Also deleted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Language</code></td>
+<td>its <code translate="no" v-pre>FreeChat</code>s and <code translate="no" v-pre>FreeChatMessage</code>s (<code translate="no" v-pre>LanguageBoundService.softDeleteForLanguage</code>, bulk updates)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>FreeChat</code></td>
+<td>its <code translate="no" v-pre>FreeChatMessage</code>s (<code translate="no" v-pre>FreeChatMessageService.softDeleteForChat</code>)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>FreeChatMessage</code></td>
+<td>nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AI</code></td>
+<td>its <code translate="no" v-pre>Usage</code>s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Objects that only <em>reference</em> the deleted one (a default model, the last language profile) are not deleted. A hard
+delete does not cascade. Code that adds an entity owned by another one has to add it to the cascade, or the owned
+rows stay live while their owner is in the trash.</p>
+<h3 id="ownedentity---ownership"><code translate="no" v-pre>OwnedEntity</code> - ownership</h3>
+<p><code translate="no" v-pre>owner</code> (column <code translate="no" v-pre>userId</code>) is the user the entity belongs to; <code translate="no" v-pre>null</code> for installation-wide rows (<code translate="no" v-pre>AppSettings</code>).
+<code translate="no" v-pre>OwnedServiceImpl.save</code> fills it with the current user when a new entity has no owner. Lookups that start from
+user input go through the owner-aware finders:</p>
+<retype-table copy-text="| Method | Returns |
+|---|---|
+| `findAllForUser()`, `findAllIdsForUser()` | Non-deleted entities of the current user. |
+| `findForUser(uuid)` | The entity with this uuid if it belongs to the current user and isn't deleted, otherwise `null`. |
+| `find(id)` | Any entity, regardless of owner and `deleted` - only for ids taken from the user's own data. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>findAllForUser()</code>, <code translate="no" v-pre>findAllIdsForUser()</code></td>
+<td>Non-deleted entities of the current user.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>findForUser(uuid)</code></td>
+<td>The entity with this uuid if it belongs to the current user and isn&#x27;t deleted, otherwise <code translate="no" v-pre>null</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>find(id)</code></td>
+<td>Any entity, regardless of owner and <code translate="no" v-pre>deleted</code> - only for ids taken from the user&#x27;s own data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="extendableentity---extended-attributes"><code translate="no" v-pre>ExtendableEntity</code> - extended attributes</h3>
+<p>Most of an entity&#x27;s data is not in table columns but in one JSON document stored in the <code translate="no" v-pre>extendedContent</code> blob. Two
+kinds of fields end up there:</p>
+<ul>
+<li>fields annotated <code translate="no" v-pre>@ExtendedAttribute</code> (they are also <code translate="no" v-pre>@Transient</code>, so Hibernate ignores them), and</li>
+<li><code translate="no" v-pre>attributes</code>, a free-form <code translate="no" v-pre>JsonObject</code> for extensions. Its keys are stored with the prefix <code translate="no" v-pre>attributes_</code> next to
+the other fields. Any <code translate="no" v-pre>JsonObject</code> field can be stored this way with <code translate="no" v-pre>@ExtendedAttribute(inject = true, injectPrefix = &quot;name&quot;)</code>; <code translate="no" v-pre>Language.languageSpecificData</code> does (keys <code translate="no" v-pre>languageSpecificData_*</code>), <code translate="no" v-pre>attributes</code> is the same
+mechanism.</li>
+</ul>
+<div id="extendableentity---extended-attributes-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-json"><code v-pre class="language-json">{
+  &quot;note&quot;: &quot;evening class&quot;,
+  &quot;defaults&quot;: &quot;{...}&quot;,
+  &quot;languageSpecificData_kana&quot;: &quot;hiragana&quot;,
+  &quot;attributes_myplugin&quot;: { &quot;reviews&quot;: [ ... ] }
+}</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>ExtendableEntityListener</code> converts between the fields and the document:</p>
+<ul>
+<li>
+<p><strong>Load</strong> (<code translate="no" v-pre>@PostLoad</code>): the JSON is parsed and the fields are set. Supported field types are <code translate="no" v-pre>String</code>, numbers,
+<code translate="no" v-pre>Boolean</code>, <code translate="no" v-pre>Date</code> (ISO-8601 instant in UTC, e.g. <code translate="no" v-pre>2026-10-09T08:15:30.123Z</code>; values in the old <code translate="no" v-pre>yyyy.MM.dd'Z'HH:mm:ss.SSS</code> format, written in the server&#x27;s time zone, are still read), enums (by name) and <code translate="no" v-pre>JsonObject</code> for <code translate="no" v-pre>inject = true</code>.</p>
+</li>
+<li>
+<p><strong>Types</strong>: the values are written with <code translate="no" v-pre>toString()</code>, so a field can&#x27;t be a collection. A list is kept as a JSON string
+in a <code translate="no" v-pre>String</code> field with typed accessors, like <code translate="no" v-pre>FreeChatMessage.attachments</code> (<code translate="no" v-pre>getAttachments()</code> / <code translate="no" v-pre>setAttachments(...)</code>, a JSON
+array of <code translate="no" v-pre>ImageAttachment(resource uuid, caption)</code>).</p>
+</li>
+<li>
+<p><strong>Save</strong>: <code translate="no" v-pre>JpaExtendableRepository.save</code> serializes the fields into <code translate="no" v-pre>extendedContent</code> before the entity is written.</p>
+</li>
+</ul>
+<p>Because the fields are <code translate="no" v-pre>@Transient</code>, Hibernate&#x27;s dirty checking doesn&#x27;t see them. <strong>A change to an extended attribute
+is only stored by calling the service&#x27;s <code translate="no" v-pre>save</code>.</strong> Changing it on a managed entity and letting the transaction commit
+does nothing.</p>
+<p><code translate="no" v-pre>saveWithoutEvent</code> writes <code translate="no" v-pre>extendedContent</code> as it is, without serializing the fields first. It is used when
+<code translate="no" v-pre>extendedContent</code> was set directly - copying the JSON of a backup into a restored entity - and must not be overwritten
+by the (empty) fields. The repository then reads the fields back from the JSON and rebuilds <code translate="no" v-pre>_fulltext</code> from them.</p>
+<h2 id="language-profiles-and-free-chats">Language profiles and free chats</h2>
+<h3 id="language-language-profile"><code translate="no" v-pre>Language</code> (language profile)</h3>
+<retype-table copy-text="| Field | Stored | |
+|---|---|---|
+| `language` | column (by name) | The template, `Languages` (`JAPANESE`, `GERMAN`): flag, defaults and the `LanguageUI` factory. Renaming a constant breaks existing data. |
+| `nameOverride` | column | The name the user gave the profile. |
+| `note` | extended attribute | Free text shown below the name. |
+| `defaults` | extended attribute | JSON of `LanguageDefaults` as it was when the profile was created, so a later change of the defaults does not change old profiles. |
+| `languageSpecificData` | injected `JsonObject` | Whatever the language's own UI keeps (progress, settings), stored as `languageSpecificData_*`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th>Stored</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>language</code></td>
+<td>column (by name)</td>
+<td>The template, <code translate="no" v-pre>Languages</code> (<code translate="no" v-pre>JAPANESE</code>, <code translate="no" v-pre>GERMAN</code>): flag, defaults and the <code translate="no" v-pre>LanguageUI</code> factory. Renaming a constant breaks existing data.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>nameOverride</code></td>
+<td>column</td>
+<td>The name the user gave the profile.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>note</code></td>
+<td>extended attribute</td>
+<td>Free text shown below the name.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>defaults</code></td>
+<td>extended attribute</td>
+<td>JSON of <code translate="no" v-pre>LanguageDefaults</code> as it was when the profile was created, so a later change of the defaults does not change old profiles.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>languageSpecificData</code></td>
+<td>injected <code translate="no" v-pre>JsonObject</code></td>
+<td>Whatever the language&#x27;s own UI keeps (progress, settings), stored as <code translate="no" v-pre>languageSpecificData_*</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="languageboundentity-freechat-freechatmessage"><code translate="no" v-pre>LanguageBoundEntity</code>, <code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code></h3>
+<p><code translate="no" v-pre>LanguageBoundEntity</code> is a mapped superclass of <code translate="no" v-pre>ExtendableEntity</code> with a lazy <code translate="no" v-pre>language</code> (column <code translate="no" v-pre>language_id</code>, <code translate="no" v-pre>OWNED_BY</code>:
+the object is purged with its profile). <code translate="no" v-pre>LanguageBoundService</code> adds <code translate="no" v-pre>findAllForUser(language)</code> and
+<code translate="no" v-pre>findAllIdsForUser(language)</code>, and <code translate="no" v-pre>LanguageBoundServiceImpl.save</code> gives a <strong>new</strong> object without a language the one of the
+session, see below.</p>
+<retype-table copy-text="| Entity | Table | Fields |
+|---|---|---|
+| `FreeChat` | `free_chats` | `rootPrompt`, `prompt` (extended attributes). |
+| `FreeChatMessage` | `free_chat_messages` | `parentChat` (`OWNED_BY`; a column that cleanup sets to null before the purge, so it is nullable), `parent` (the message it answers, `OWNED_BY`; null for the first message), `contents` and `attachments` (extended attributes). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Entity</th>
+<th>Table</th>
+<th>Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>FreeChat</code></td>
+<td><code translate="no" v-pre>free_chats</code></td>
+<td><code translate="no" v-pre>rootPrompt</code>, <code translate="no" v-pre>prompt</code> (extended attributes).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>FreeChatMessage</code></td>
+<td><code translate="no" v-pre>free_chat_messages</code></td>
+<td><code translate="no" v-pre>parentChat</code> (<code translate="no" v-pre>OWNED_BY</code>; a column that cleanup sets to null before the purge, so it is nullable), <code translate="no" v-pre>parent</code> (the message it answers, <code translate="no" v-pre>OWNED_BY</code>; null for the first message), <code translate="no" v-pre>contents</code> and <code translate="no" v-pre>attachments</code> (extended attributes).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>FreeChatMessage</code> attachments are <strong>loose</strong>: the JSON holds <code translate="no" v-pre>ImageAttachment(resource uuid, caption)</code>, there is no foreign key to <code translate="no" v-pre>Resource</code>,
+so deleting or replacing a resource never touches a message (and cleanup does not know the link). The messages of a chat form a
+tree through <code translate="no" v-pre>parent</code> like the parts of a Marginalia story; deleting a message permanently moves its children to its parent
+(<code translate="no" v-pre>CleanupServiceImpl.moveChildrenOfMessages</code>). <code translate="no" v-pre>FreeChatMessageService.findByChat</code> lists the messages of a chat, oldest first.</p>
+<h3 id="the-language-of-the-session">The language of the session</h3>
+<p>The session-scoped bean <code translate="no" v-pre>language</code> (type <code translate="no" v-pre>Language</code>, <code translate="no" v-pre>scope=&quot;session&quot;</code> with a scoped proxy in <code translate="no" v-pre>container-config.xml</code>, like
+the <code translate="no" v-pre>user</code> bean) is only a <strong>reference</strong>: <code translate="no" v-pre>LanguagePart</code> fills id, uuid, template and name when the user picks a profile and
+clears them when there is none. Code that needs the profile loads the entity by <code translate="no" v-pre>getId()</code> through <code translate="no" v-pre>LanguageService</code>.
+The last profile is also stored in <code translate="no" v-pre>UserSetting.lastLanguage</code> so the next login opens it.</p>
+<div id="the-language-of-the-session-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">@Autowired
+private Language currentLanguage; // session bean, id is null until a profile is selected</code></pre>
+</doc-codeblock></div>
+<p>Background threads have no session, see <a href="../architecture/#threads-and-push">Threads and push</a>: the proxy resolves only in a
+request or after <code translate="no" v-pre>ThreadCopyRequestAttributes</code>.</p>
+<h2 id="inference-providers">Inference providers</h2>
+<p>They use joined inheritance: a base table with the common fields and one table per type. Today there is one type.</p>
+<h3 id="ai--openaicompatible-inference-provider"><code translate="no" v-pre>AI</code> / <code translate="no" v-pre>OpenAICompatible</code> (inference provider)</h3>
+<retype-table copy-text="| Field | Stored | |
+|---|---|---|
+| `aiType` | column (ordinal) | `AIType.OPEN_AI_COMPATIBLE`. `InferenceServices` picks the implementation by this type. |
+| `name` | column | |
+| `maxContext`, `maxCompletionTokens` | columns | Context size and maximum response tokens of the model. |
+| `shared` | column (indexed with `deleted`) | An AI of an administrator that every user can use: `AIRepository`'s `findAll(user)`, `findAllIds(user)` and `findByUuid` return the user's own AIs and the shared ones, so `findAllForUser()` / `findForUser(uuid)` see them, as do backup restore and the model combos. Only the owner changes or deletes it and only an administrator sets the flag (`AIServiceImpl`, server side; the UI hides edit, delete and the API key from others). Real column because the lookups filter on it. |
+| `enabledReasoning`, `reasoningEffort` | columns | Reasoning settings. |
+| `needsJailbreak`, `jailbreak` | columns | Text put before the system prompt. |
+| `uri`, `model`, `modelName`, `apiKey` | columns (`ais_openaicompat`) | Base URL, the model id sent to the API, its label in the model list, the API key (encrypted, see [Encrypted columns](database.md#encrypted-columns)). |
+| `additionalParameters` | JSON (`additionalParameters_*`) | Extra fields added to every request; they win over the settings LingoLLM sends. |
+| `requestTimeoutSeconds`, `maxRetries` | JSON | Wait for the API (read timeout) and retries of a request; `null` = the defaults of `OpenAICompatibleInferenceService` (300 s, 2 retries). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th>Stored</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>aiType</code></td>
+<td>column (ordinal)</td>
+<td><code translate="no" v-pre>AIType.OPEN_AI_COMPATIBLE</code>. <code translate="no" v-pre>InferenceServices</code> picks the implementation by this type.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>name</code></td>
+<td>column</td>
+<td> </td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>maxContext</code>, <code translate="no" v-pre>maxCompletionTokens</code></td>
+<td>columns</td>
+<td>Context size and maximum response tokens of the model.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>shared</code></td>
+<td>column (indexed with <code translate="no" v-pre>deleted</code>)</td>
+<td>An AI of an administrator that every user can use: <code translate="no" v-pre>AIRepository</code>&#x27;s <code translate="no" v-pre>findAll(user)</code>, <code translate="no" v-pre>findAllIds(user)</code> and <code translate="no" v-pre>findByUuid</code> return the user&#x27;s own AIs and the shared ones, so <code translate="no" v-pre>findAllForUser()</code> / <code translate="no" v-pre>findForUser(uuid)</code> see them, as do backup restore and the model combos. Only the owner changes or deletes it and only an administrator sets the flag (<code translate="no" v-pre>AIServiceImpl</code>, server side; the UI hides edit, delete and the API key from others). Real column because the lookups filter on it.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>enabledReasoning</code>, <code translate="no" v-pre>reasoningEffort</code></td>
+<td>columns</td>
+<td>Reasoning settings.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>needsJailbreak</code>, <code translate="no" v-pre>jailbreak</code></td>
+<td>columns</td>
+<td>Text put before the system prompt.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>uri</code>, <code translate="no" v-pre>model</code>, <code translate="no" v-pre>modelName</code>, <code translate="no" v-pre>apiKey</code></td>
+<td>columns (<code translate="no" v-pre>ais_openaicompat</code>)</td>
+<td>Base URL, the model id sent to the API, its label in the model list, the API key (encrypted, see <a href="../database/#encrypted-columns">Encrypted columns</a>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>additionalParameters</code></td>
+<td>JSON (<code translate="no" v-pre>additionalParameters_*</code>)</td>
+<td>Extra fields added to every request; they win over the settings LingoLLM sends.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>requestTimeoutSeconds</code>, <code translate="no" v-pre>maxRetries</code></td>
+<td>JSON</td>
+<td>Wait for the API (read timeout) and retries of a request; <code translate="no" v-pre>null</code> = the defaults of <code translate="no" v-pre>OpenAICompatibleInferenceService</code> (300 s, 2 retries).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="usage-tokens-used-with-an-ai"><code translate="no" v-pre>Usage</code> (tokens used with an AI)</h3>
+<p>One row per AI and user (<code translate="no" v-pre>owner</code>), unique on <code translate="no" v-pre>(ai_id, userId)</code>: a personal AI has one, a shared AI one for everybody who
+uses it. Counts what the user used, and since the last reset for the user&#x27;s limit on the AI (below).</p>
+<retype-table copy-text="| Field | Stored | |
+|---|---|---|
+| `ai` | column `ai_id` | `@ManyToOne`, `OWNED_BY` the AI for cleanup. |
+| `prefillTokens` | column | Tokens sent to the model (the prompt). |
+| `generatedTokens` | column | Tokens the model generated, reasoning included. |
+| `requests`, `lastUsed` | columns | Number of requests added up, time of the last one. |
+| `periodPrefillTokens`, `periodGeneratedTokens` | columns | Tokens sent / generated since the last reset of the user's token limit. Counted only while the user has a `TOKEN_LIMIT` (otherwise set to 0); stale when `lastUsed` is before the start of the current period. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th>Stored</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>ai</code></td>
+<td>column <code translate="no" v-pre>ai_id</code></td>
+<td><code translate="no" v-pre>@ManyToOne</code>, <code translate="no" v-pre>OWNED_BY</code> the AI for cleanup.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>prefillTokens</code></td>
+<td>column</td>
+<td>Tokens sent to the model (the prompt).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>generatedTokens</code></td>
+<td>column</td>
+<td>Tokens the model generated, reasoning included.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>requests</code>, <code translate="no" v-pre>lastUsed</code></td>
+<td>columns</td>
+<td>Number of requests added up, time of the last one.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>periodPrefillTokens</code>, <code translate="no" v-pre>periodGeneratedTokens</code></td>
+<td>columns</td>
+<td>Tokens sent / generated since the last reset of the user&#x27;s token limit. Counted only while the user has a <code translate="no" v-pre>TOKEN_LIMIT</code> (otherwise set to 0); stale when <code translate="no" v-pre>lastUsed</code> is before the start of the current period.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>All are real columns: they are added up in SQL (<code translate="no" v-pre>UsageRepository.add</code>, <code translate="no" v-pre>UPDATE ... SET x = x + :n</code>), not read and saved, so parallel
+requests don&#x27;t lose counts. <code translate="no" v-pre>UsageService.record(ai, prefill, generated)</code> is the way to count: it adds to the row of the
+current user, creating it on first use (under a lock held until the commit, so two first uses can&#x27;t both insert), and
+never throws. <code translate="no" v-pre>findAllForAI(ai)</code> lists every user&#x27;s usage for the owner of the AI or an administrator; <code translate="no" v-pre>findAllUsages()</code> lists all of them, administrators only (the
+<strong>Usage per user</strong> dialog of the Models tab).</p>
+<p><code translate="no" v-pre>OpenAICompatibleInferenceService</code> calls <code translate="no" v-pre>UsageService.record</code> when a <code translate="no" v-pre>stream</code> or <code translate="no" v-pre>infer</code> ends, see <a href="../services/#inference">Inference</a>.</p>
+<h4 id="limits-of-the-users-of-a-shared-ai">Limits of the users of a shared AI</h4>
+<p><code translate="no" v-pre>AI.limits</code> is an <code translate="no" v-pre>@ExtendedAttribute</code> string holding a JSON object: the <code translate="no" v-pre>AILimit</code> of each user under the user&#x27;s uuid
+(<code translate="no" v-pre>strategy</code> <code translate="no" v-pre>LimitStrategy</code> UNLIMITED / TOKEN_LIMIT / NOT_AVAILABLE, <code translate="no" v-pre>resetStrategy</code> <code translate="no" v-pre>ResetStrategy</code> DAILY / WEEKLY / MONTHLY,
+and <code translate="no" v-pre>prefillTokens</code>, <code translate="no" v-pre>generatedTokens</code>, <code translate="no" v-pre>totalTokens</code>, each null for unlimited). <code translate="no" v-pre>AILimits</code> reads and writes it; a user
+without an entry is not limited. These are only the <em>settings</em> and they are set by the owner (an administrator). What a user
+<em>used</em> is not in this JSON on purpose: it changes with every request, from the thread of any user, and <code translate="no" v-pre>AIService.save</code> is
+for the owner and would lose parallel updates, so it is in the two <code translate="no" v-pre>period*</code> columns of the user&#x27;s <code translate="no" v-pre>Usage</code>, added up in SQL
+like the other counters.</p>
+<p>The reset is lazy. <code translate="no" v-pre>ResetStrategy.periodStart(now)</code> is the start of the calendar day / week (from Monday) / month in the
+server&#x27;s time zone. <code translate="no" v-pre>UsageService.add</code> (under <code translate="no" v-pre>record</code>) of a user with a <code translate="no" v-pre>TOKEN_LIMIT</code> first runs
+<code translate="no" v-pre>UsageRepository.resetPeriod</code> (zeroes the period counters when <code translate="no" v-pre>lastUsed</code> is before the period start) and then adds; for a
+user without one it zeroes them. <code translate="no" v-pre>AILimitService.getStatus</code> does not write: it reports 0 used when <code translate="no" v-pre>lastUsed</code> is before the
+period start. <code translate="no" v-pre>LimitStatus.block(promptTokens)</code> is the first reached of the sent, generated and total limits, or NOT_AVAILABLE. The
+prompt is known before the request, so a request is refused when the sent (or total) counter is at its limit or the
+estimated prompt (<code translate="no" v-pre>approximatePromptTokens</code>, our count) would take it over; the generated counter is only compared with its
+limit, so the last response can go over - unless <code translate="no" v-pre>AILimit.hardGeneratedLimit</code> is set: then the generated counter plus the
+response the request reserves (the AI&#x27;s <code translate="no" v-pre>maxCompletionTokens</code>; 0 when
+there is none) has to fit into the generated limit. The hard flag does not apply to the total limit. <code translate="no" v-pre>AILimit.validate()</code> rejects negative numbers and, when all three are
+set, sent plus generated below the total (the total could never be reached).</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-warning"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-warning" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M22.48 15.59L14.01 1.45A2.968 2.968 0 0012.16.09c-.78-.19-1.58-.07-2.27.35-.41.25-.76.6-1.01 1.01v.01L.4 15.6c-.83 1.43-.33 3.27 1.1 4.1.45.26.95.4 1.48.4h16.95c.8-.01 1.55-.33 2.11-.9.56-.57.87-1.33.86-2.13a3.04 3.04 0 00-.42-1.48zm-1.87 2.21c-.19.19-.44.3-.69.3H2.99c-.17 0-.34-.05-.49-.13a.992.992 0 01-.37-1.35L10.6 2.48c.08-.14.2-.25.34-.33a.992.992 0 011.37.33l8.46 14.13c.09.15.13.32.13.49 0 .26-.1.51-.29.7z"></path>
+                    <path d="M11.45 12.1c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .56.45 1 1 1zM11.46 14.1c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5>Enum columns</h5>
+<p><code translate="no" v-pre>AI.aiType</code> is stored as an <strong>ordinal</strong>: add new values only at the end of <code translate="no" v-pre>AIType</code>, never reorder them. All other enums
+(<code translate="no" v-pre>AI.reasoningEffort</code>, <code translate="no" v-pre>Language.language</code>...) are stored by <strong>name</strong>: renaming a value breaks existing data.</p>
+        </div>
+    </div>
+</div>
+<h2 id="settings">Settings</h2>
+<p><code translate="no" v-pre>Setting</code> is one table (<code translate="no" v-pre>settings</code>) for all settings classes, with the class name in <code translate="no" v-pre>DTYPE</code> and in <code translate="no" v-pre>key</code>. Almost all
+values are extended attributes.</p>
+<retype-table copy-text="| Class | Owner | Contains |
+|---|---|---|
+| `AppSettings` | none (one per installation) | Data versions (`dbVersion`, `appVersion`), the database backup schedule (`backupScheduleEnabled`, `backupSchedule`, `backupKeep`, `lastScheduledBackup`, `backupScheduleChanged`), `userAisAllowed` (users who are not administrators can create AIs, default and `null` = yes; `AIService.setUserCreationAllowed`, checked in `AIServiceImpl.save` for new AIs only, existing ones stay editable). |
+| `UserSetting` | each user | The default model (id, `@CleanupReference(WEAK)`), the last language profile (`lastLanguage`, id, `WEAK`) and the code of the language of the UI (`language`, see [Localization](architecture.md#localization)). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Class</th>
+<th>Owner</th>
+<th>Contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>AppSettings</code></td>
+<td>none (one per installation)</td>
+<td>Data versions (<code translate="no" v-pre>dbVersion</code>, <code translate="no" v-pre>appVersion</code>), the database backup schedule (<code translate="no" v-pre>backupScheduleEnabled</code>, <code translate="no" v-pre>backupSchedule</code>, <code translate="no" v-pre>backupKeep</code>, <code translate="no" v-pre>lastScheduledBackup</code>, <code translate="no" v-pre>backupScheduleChanged</code>), <code translate="no" v-pre>userAisAllowed</code> (users who are not administrators can create AIs, default and <code translate="no" v-pre>null</code> = yes; <code translate="no" v-pre>AIService.setUserCreationAllowed</code>, checked in <code translate="no" v-pre>AIServiceImpl.save</code> for new AIs only, existing ones stay editable).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>UserSetting</code></td>
+<td>each user</td>
+<td>The default model (id, <code translate="no" v-pre>@CleanupReference(WEAK)</code>), the last language profile (<code translate="no" v-pre>lastLanguage</code>, id, <code translate="no" v-pre>WEAK</code>) and the code of the language of the UI (<code translate="no" v-pre>language</code>, see <a href="../architecture/#localization">Localization</a>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>SettingService.getOrCreate(UserSetting.class)</code> returns the current user&#x27;s settings, creating them on first use;
+<code translate="no" v-pre>getOrCreateApp(AppSettings.class)</code> the installation&#x27;s. Extensions keep their settings in the <code translate="no" v-pre>attributes</code> of
+<code translate="no" v-pre>UserSetting</code> (Reviewer and Side Query profiles do).</p>
+<h2 id="users">Users</h2>
+<p><code translate="no" v-pre>User</code> extends <code translate="no" v-pre>BaseEntity</code> directly - it has no owner and no extended attributes.</p>
+<retype-table copy-text="| Field | |
+|---|---|
+| `login` | Unique login name. |
+| `fullName` | Display name. |
+| `passwordHash` | Password hash (`UserServiceImpl`). |
+| `savedLogins` | The *Save login* tokens as text, one `identifier;hashedSecret;created;lastAccess` entry per login, separated by `\|` (`PersistedLoginInfo`, read and written by `UserServiceImpl`). |
+| `isAdmin` | Administrator. |
+| `failedLogins`, `lockedUntil` | Login back-off: consecutive failed logins and the time (epoch milliseconds, `0` = not locked) until which the account refuses logins. Real columns (V7), reset by a successful login, a password change or clear and the administrator's unlock. A separate, in-memory limit per client address is kept by `UserServiceImpl`, not on the entity. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>login</code></td>
+<td>Unique login name.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>fullName</code></td>
+<td>Display name.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>passwordHash</code></td>
+<td>Password hash (<code translate="no" v-pre>UserServiceImpl</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>savedLogins</code></td>
+<td>The <em>Save login</em> tokens as text, one <code translate="no" v-pre>identifier;hashedSecret;created;lastAccess</code> entry per login, separated by <code translate="no" v-pre>\|</code> (<code translate="no" v-pre>PersistedLoginInfo</code>, read and written by <code translate="no" v-pre>UserServiceImpl</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>isAdmin</code></td>
+<td>Administrator.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>failedLogins</code>, <code translate="no" v-pre>lockedUntil</code></td>
+<td>Login back-off: consecutive failed logins and the time (epoch milliseconds, <code translate="no" v-pre>0</code> = not locked) until which the account refuses logins. Real columns (V7), reset by a successful login, a password change or clear and the administrator&#x27;s unlock. A separate, in-memory limit per client address is kept by <code translate="no" v-pre>UserServiceImpl</code>, not on the entity.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>The current user of a session is the session-scoped <code translate="no" v-pre>user</code> bean (see <a href="../architecture/#spring-wiring">Architecture</a>),
+which holds a copy of the logged-in user&#x27;s id, login and name - load the entity through <code translate="no" v-pre>UserService</code> when you need
+more.</p>
+<h2 id="resources">Resources</h2>
+<p><code translate="no" v-pre>Resource</code> (<code translate="no" v-pre>resources</code>, an <code translate="no" v-pre>OwnedEntity</code>) is an uploaded file, for example an image attached to a chat message
+(<code translate="no" v-pre>FreeChatMessage.getAttachments()</code>, see <doc-anchor-trigger to="#extendableentity---extended-attributes">Extended attributes</doc-anchor-trigger>).</p>
+<retype-table copy-text="| Field | |
+|---|---|
+| `path` | File name in the user's `images` folder (images) or `resources` folder (other files) of the data folder. The files are stored by content: uploading the same bytes again reuses the file. |
+| `hash` | Hash of the content; with the owner it is the key for that deduplication (`ix_resources_user_hash`). |
+| `mimeType`, `originalName` | Detected content type and the name the file was uploaded with. |
+| `objectId`, `clazz` | Loose link to the object that uses the file (class name and id). Bookkeeping for the Resources tab only - not a cleanup reference, the object may be gone. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Field</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>path</code></td>
+<td>File name in the user&#x27;s <code translate="no" v-pre>images</code> folder (images) or <code translate="no" v-pre>resources</code> folder (other files) of the data folder. The files are stored by content: uploading the same bytes again reuses the file.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>hash</code></td>
+<td>Hash of the content; with the owner it is the key for that deduplication (<code translate="no" v-pre>ix_resources_user_hash</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>mimeType</code>, <code translate="no" v-pre>originalName</code></td>
+<td>Detected content type and the name the file was uploaded with.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>objectId</code>, <code translate="no" v-pre>clazz</code></td>
+<td>Loose link to the object that uses the file (class name and id). Bookkeeping for the Resources tab only - not a cleanup reference, the object may be gone.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Deleting a resource is a soft delete like any other; files are never deleted from disk.</p>
+<h2 id="cleanup-references">Cleanup references</h2>
+<p>Soft-deleted rows are purged by <code translate="no" v-pre>CleanupService</code> (<em>Admin → Cleanup</em>, administrators only: every method calls <code translate="no" v-pre>AdminGuard.requireAdmin()</code>). Before purging, it builds a graph of all
+references between rows and decides what may go. Each reference has a policy (<code translate="no" v-pre>@CleanupReference</code>, in
+<code translate="no" v-pre>domain/traits/</code>):</p>
+<retype-table copy-text="| Policy | Meaning | Used for |
+|---|---|---|
+| `STRONG` (default) | The referenced row can't be purged while the reference exists. | (none yet) |
+| `OWNED_BY` | The referencing row belongs to the referenced one and is purged with it. | `LanguageBoundEntity.language`; `FreeChatMessage.parentChat`, `.parent`; `Usage.ai`; every `owner` |
+| `OWNS` | The referenced row belongs to the referencing one and is purged with it, unless referenced elsewhere. | (none yet) |
+| `WEAK` | The reference doesn't block the purge; it is cleared when the referenced row goes. | `UserSetting.defaultModel`, `.lastLanguage` |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Policy</th>
+<th>Meaning</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>STRONG</code> (default)</td>
+<td>The referenced row can&#x27;t be purged while the reference exists.</td>
+<td>(none yet)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>OWNED_BY</code></td>
+<td>The referencing row belongs to the referenced one and is purged with it.</td>
+<td><code translate="no" v-pre>LanguageBoundEntity.language</code>; <code translate="no" v-pre>FreeChatMessage.parentChat</code>, <code translate="no" v-pre>.parent</code>; <code translate="no" v-pre>Usage.ai</code>; every <code translate="no" v-pre>owner</code></td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>OWNS</code></td>
+<td>The referenced row belongs to the referencing one and is purged with it, unless referenced elsewhere.</td>
+<td>(none yet)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>WEAK</code></td>
+<td>The reference doesn&#x27;t block the purge; it is cleared when the referenced row goes.</td>
+<td><code translate="no" v-pre>UserSetting.defaultModel</code>, <code translate="no" v-pre>.lastLanguage</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>JPA associations are found automatically from the Hibernate metamodel and default to <code translate="no" v-pre>STRONG</code>. Plain id fields
+pointing to other entities (&quot;soft references&quot;, including extended attributes) are only seen when annotated with
+<code translate="no" v-pre>target = SomeEntity.class</code> or, for polymorphic ones, <code translate="no" v-pre>targetClassField = &quot;clazz&quot;</code>. On an entity class,
+<code translate="no" v-pre>field = &quot;...&quot;</code> sets the policy of an inherited field (<code translate="no" v-pre>OwnedEntity</code> makes <code translate="no" v-pre>owner</code> <code translate="no" v-pre>OWNED_BY</code>, so a deleted user
+is purged together with everything they own).</p>
+<h3 id="trash">Trash</h3>
+<p>The same reference model drives the trash (<code translate="no" v-pre>TrashService</code>, implemented by <code translate="no" v-pre>CleanupServiceImpl</code>; <em>Trash</em> tab and
+<em>Admin → Cleanup</em>). It lists the soft-deleted rows of every root entity that is an <code translate="no" v-pre>OwnedEntity</code> (<code translate="no" v-pre>AI</code> stands for
+its subclasses) with narrow projections - the <code translate="no" v-pre>extendedContent</code> blob is only read by <code translate="no" v-pre>getExtendedContent</code>, which
+pretty-prints it - and restores them with a bulk <code translate="no" v-pre>UPDATE ... SET deleted = false, modification = now</code>, so no entity
+listener runs and extended attributes stay untouched. Before it restores, it looks up the <em>parents</em> of the selected rows:</p>
+<retype-table copy-text="| Reference | Parent |
+|---|---|
+| `STRONG`, `OWNED_BY` held by the row | the referenced row (`FreeChatMessage.parentChat`, `LanguageBoundEntity.language`, `owner`...) |
+| `OWNS` held by another row | that row |
+| `WEAK` | none, purge clears it anyway |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Reference</th>
+<th>Parent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>STRONG</code>, <code translate="no" v-pre>OWNED_BY</code> held by the row</td>
+<td>the referenced row (<code translate="no" v-pre>FreeChatMessage.parentChat</code>, <code translate="no" v-pre>LanguageBoundEntity.language</code>, <code translate="no" v-pre>owner</code>...)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>OWNS</code> held by another row</td>
+<td>that row</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>WEAK</code></td>
+<td>none, purge clears it anyway</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>When a parent is deleted and not part of the same selection, nothing is restored and the result lists the blockers.
+A deleted owner counts as a parent, so the objects of a deleted user can&#x27;t be restored.</p>
+<p>The restore is the reverse of the <doc-anchor-trigger to="#baseentity---identity-and-soft-delete">soft delete cascade</doc-anchor-trigger>: the selection is first
+extended with the deleted rows it owns (<code translate="no" v-pre>OWNED_BY</code> rows pointing at a selected row, rows a selected row <code translate="no" v-pre>OWNS</code>,
+repeatedly), so restoring a language profile brings back its chats and messages, and <code translate="no" v-pre>RestoreResult.getRestored()</code> counts
+them too. It can&#x27;t tell a row that was deleted together with its owner from one deleted on its own earlier, so the latter
+comes back as well. A restored message whose children were moved to its parent (a permanent delete) does not get them back.</p>
+<p><code translate="no" v-pre>TrashService.deletePermanently</code> removes deleted rows for good, for the <em>Delete Permanently</em> button of <code translate="no" v-pre>TrashGrid</code>. It is
+limited to <code translate="no" v-pre>getPermanentlyDeletableTypes()</code> (<code translate="no" v-pre>FreeChatMessage</code>; anything else raises <code translate="no" v-pre>IllegalArgumentException</code>) so a user
+can&#x27;t purge a whole profile, and checks ownership like <code translate="no" v-pre>restore</code>. It runs the purge of the cleanup (<code translate="no" v-pre>executePurge</code>) on the
+selection; a block by a <code translate="no" v-pre>CleanupContributor</code> (or any other row that would have to go) makes the whole call return
+<code translate="no" v-pre>DeleteResult.getBlocked()</code> and roll back. Before that, <code translate="no" v-pre>moveChildrenOfMessages</code> moves the children of the selected
+messages - deleted ones too - to the nearest ancestor that is not selected, with bulk updates, so removing a chain of
+messages keeps the messages below it connected.</p>
+<p>So a deleted provider that something still uses shows up as <em>blocked</em> on the Cleanup page, while a deleted language
+profile takes its chats and messages with it.</p>
+<p>Because the soft delete deletes the owned rows too, they are purge roots of their own. A root whose owner (<code translate="no" v-pre>OWNED_BY</code>,
+directly or through other rows) is blocked is <em>held back</em>: it stays, is not listed as blocked itself and is not
+counted as purgeable, so a blocked chat that is still restorable keeps its messages.</p>
+<h2 id="adding-a-field-or-an-entity">Adding a field or an entity</h2>
+<p><strong>A field on an existing entity:</strong></p>
+<ol>
+<li>
+<p>Decide where it lives. Prefer an extended attribute (<code translate="no" v-pre>@ExtendedAttribute @Transient</code>) - no migration, backed up
+automatically. Use a column only when you need to query, sort or join on it.</p>
+</li>
+<li>
+<p>For a column: add a Flyway migration (see <a href="../database/">Database &amp; migrations</a>); Hibernate validates the schema on
+start. Extend the backup / restore code if the value should survive a backup.</p>
+</li>
+<li>
+<p>For a reference to another entity: think about its cleanup policy and annotate it if <code translate="no" v-pre>STRONG</code> isn&#x27;t right.
+Soft references (ids) must be annotated with <code translate="no" v-pre>target</code> or <code translate="no" v-pre>targetClassField</code>, otherwise cleanup may purge the
+referenced row.</p>
+</li>
+<li>
+<p>Save it through the service&#x27;s <code translate="no" v-pre>save</code> (not <code translate="no" v-pre>saveWithoutEvent</code>).</p>
+</li>
+<li>
+<p>If its text should be found by a search, annotate it <code translate="no" v-pre>@Fulltextable</code>; <code translate="no" v-pre>ExtendableEntityListener</code> then collects it into
+<code translate="no" v-pre>_fulltext</code> (there is no search UI yet). Existing rows need a migration that refills <code translate="no" v-pre>_fulltext</code>.</p>
+</li>
+</ol>
+<p><strong>A new entity:</strong></p>
+<ol>
+<li>
+<p>Extend <code translate="no" v-pre>ExtendableEntity</code> (or <code translate="no" v-pre>OwnedEntity</code> if it never needs extended data) and annotate the references.</p>
+</li>
+<li>
+<p>List the class in <code translate="no" v-pre>src/main/webapp/config/persistence.xml</code> - unlisted classes are ignored.</p>
+</li>
+<li>
+<p>Write a Flyway migration creating the table, its <code translate="no" v-pre>&lt;table&gt;_SEQ</code> table and indexes.</p>
+</li>
+<li>
+<p>Add a repository (<code translate="no" v-pre>JpaExtendableRepository</code> subclass) and a service (<code translate="no" v-pre>ExtendableServiceImpl</code> subclass), and
+define both beans in <code translate="no" v-pre>services-config.xml</code>.</p>
+</li>
+<li>
+<p>Add a CRUD test based on <code translate="no" v-pre>ExtendableCrudContract</code> (see <a href="../testing/">Testing</a>).</p>
+</li>
+<li>
+<p>If it belongs to a language profile, extend <code translate="no" v-pre>LanguageBoundEntity</code>, use <code translate="no" v-pre>JpaLanguageBoundRepository</code> and <code translate="no" v-pre>LanguageBoundServiceImpl</code>.</p>
+</li>
+</ol>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/project-structure/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Project structure</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/database/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Database &amp; migrations</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Domain model", level: 2, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/domain-model.md" }</script>
+</body>
+</html>

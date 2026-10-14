@@ -1,0 +1,8 @@
+# desktop launch scripts: the shell script must keep LF (also when checked out on Windows), the batch file CRLF
+lingollm/src/desktop/bin/lingollm      text eol=lf
+lingollm/src/desktop/bin/lingollm.bat  text eol=crlf
+# Docker entrypoint runs in Linux, must keep LF
+docker-entrypoint.sh                       text eol=lf
+# server update scripts: shell script LF, batch file CRLF
+rebuild.sh                                 text eol=lf
+rebuild.bat                                text eol=crlf

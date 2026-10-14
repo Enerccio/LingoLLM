@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://enerccio.github.io/LingoLLM/sitemap.xml

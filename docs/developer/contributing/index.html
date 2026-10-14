@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Contributing</title>
+    <meta name="title" content="Contributing">
+    <meta name="description" content="Contributions are welcome: bug reports, fixes, new features, extensions, and corrections to this manual. This page describes how to report a problem, how changes are made and what a pull request should contain.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/contributing/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/contributing/">
+    <meta property="og:title" content="Contributing">
+    <meta property="og:description" content="Contributions are welcome: bug reports, fixes, new features, extensions, and corrections to this manual. This page describes how to report a problem, how changes are made and what a pull request should contain.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/contributing/">
+    <meta name="twitter:title" content="Contributing">
+    <meta name="twitter:description" content="Contributions are welcome: bug reports, fixes, new features, extensions, and corrections to this manual. This page describes how to report a problem, how changes are made and what a pull request should contain.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/contributing.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="contributing">Contributing</h1>
+<p>Contributions are welcome: bug reports, fixes, new features, extensions, and corrections to this manual. This page
+describes how to report a problem, how changes are made and what a pull request should contain.</p>
+<p>LingoLLM is released under the <a href="https://github.com/Enerccio/LingoLLM/blob/master/LICENSE">MIT License</a>. By
+contributing you agree that your contribution is released under the same license.</p>
+<h2 id="reporting-bugs-and-ideas">Reporting bugs and ideas</h2>
+<p>Open an issue on <a href="https://github.com/Enerccio/LingoLLM/issues">GitHub</a>. For a bug, include:</p>
+<ul>
+<li>what you did, what happened and what you expected;</li>
+<li>the version (desktop app archive name, or the commit for a Docker server) and how you run it;</li>
+<li>the inference provider type and model, if the problem is about a provider (never your API key);</li>
+<li>the relevant part of the log - see <a href="../../user/troubleshooting/#where-are-the-logs">Where are the logs?</a>. Logs may
+contain chat text; remove what you don&#x27;t want to share.</li>
+</ul>
+<p>Security problems (access to other users&#x27; data, login, cookies) should not be reported in a public issue - contact the
+maintainer privately through GitHub first.</p>
+<h3 id="planned-work">Planned work</h3>
+<p><a href="https://github.com/Enerccio/LingoLLM/blob/master/TODO.md"><code translate="no" v-pre>TODO.md</code></a> is the list of planned work for the first
+release, ordered by priority. Items marked <span class="docs-emoji">&#x1F9E9;</span> are good candidates for an extension instead of a change to the core.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>
+<p>For anything larger than a small fix, open an issue (or comment on an existing one) first and describe what you
+plan. Some features belong in an extension rather than in the core - see <a href="../plugins/">Plugin development</a>.</p>
+</li>
+<li>
+<p>Read <a href="../architecture/">Architecture</a> and the page about the area you are changing.</p>
+</li>
+<li>
+<p>Set up the build and make sure <code translate="no" v-pre>mvn test</code> passes on a clean checkout - see <a href="../building/">Building from source</a>.</p>
+</li>
+</ul>
+<h2 id="workflow">Workflow</h2>
+<ol>
+<li>
+<p>Fork the repository and create a branch from <code translate="no" v-pre>master</code> with a short descriptive name (<code translate="no" v-pre>fix-profile-selector</code>,
+<code translate="no" v-pre>german-exercises</code>).</p>
+</li>
+<li>
+<p>Make the change, with tests where the area is testable (see <a href="../testing/">Testing</a>).</p>
+</li>
+<li>
+<p>Run <code translate="no" v-pre>mvn test</code> in <code translate="no" v-pre>lingollm/</code>. If you touched classes plugins use, build your plugins too.</p>
+</li>
+<li>
+<p>Start LingoLLM and try the change in the browser - most of the application is UI, which the tests don&#x27;t cover.</p>
+</li>
+<li>
+<p>Update the manual if users or developers will notice the change (see <doc-anchor-trigger to="#documentation">Documentation</doc-anchor-trigger>).</p>
+</li>
+<li>
+<p>Push and open a pull request against <code translate="no" v-pre>master</code>.</p>
+</li>
+</ol>
+<p>CI runs the tests and builds the desktop app on all platforms for every pull request that changes <code translate="no" v-pre>lingollm/</code>
+(see <a href="../packaging/#continuous-integration">Continuous integration</a>). A pull request is merged when CI is green and
+the change has been reviewed.</p>
+<h2 id="commits">Commits</h2>
+<p>Commit messages follow the style already in the history: one line, <strong>lowercase</strong>, starting with a verb in the
+imperative, class and method names in backticks, related changes separated by a semicolon:</p>
+<div id="commits-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">add `softDeleteForLanguage` to `LanguageBoundService`; delete the chats of a deleted profile
+throw `IllegalArgumentException` for a chat of another user in `FreeChatMessageServiceImpl`
+fix `selectLanguage` not clearing the session language; correct `lastLanguage` reference in `UserSetting`</code></pre>
+</doc-codeblock></div>
+<p>Common verbs: <code translate="no" v-pre>add</code>, <code translate="no" v-pre>fix</code>, <code translate="no" v-pre>update</code>, <code translate="no" v-pre>remove</code>, <code translate="no" v-pre>refactor</code>, <code translate="no" v-pre>rename</code>, <code translate="no" v-pre>migrate</code>, <code translate="no" v-pre>handle</code>. Mention the issue number
+when the commit fixes one (<code translate="no" v-pre>... (#17)</code>).</p>
+<p>Keep commits focused - one fix or one step of a feature per commit, not a mix of a feature, a reformat and an
+unrelated fix. Don&#x27;t commit generated or local files: <code translate="no" v-pre>target/</code>, <code translate="no" v-pre>src/main/frontend/generated/</code>,
+<code translate="no" v-pre>src/main/bundles/</code>, <code translate="no" v-pre>flow-build-info.json</code> in <code translate="no" v-pre>src/main/resources</code> and <code translate="no" v-pre>.idea/</code> are ignored by Git for this reason.</p>
+<h2 id="pull-requests">Pull requests</h2>
+<p>A good pull request:</p>
+<ul>
+<li>
+<p>does one thing, and says in the description <strong>what</strong> changed and <strong>why</strong>, with the issue it fixes;</p>
+</li>
+<li>
+<p>for a UI change, includes a screenshot or a short description of what to click to see it;</p>
+</li>
+<li>
+<p>adds or updates tests where it can, and passes <code translate="no" v-pre>mvn test</code>;</p>
+</li>
+<li>
+<p>adds a Flyway migration for every entity change (see <a href="../database/">Database &amp; migrations</a>) - never edit a
+migration that is already in <code translate="no" v-pre>master</code>;</p>
+</li>
+<li>
+<p>updates the manual;</p>
+</li>
+<li>
+<p>doesn&#x27;t change formatting of code it doesn&#x27;t otherwise touch.</p>
+</li>
+</ul>
+<h2 id="code-style">Code style</h2>
+<p>There is no formatter configuration in the repository; match the code around your change. In short:</p>
+<h3 id="java">Java</h3>
+<ul>
+<li>
+<p>Java 25. Modern language features (records, <code translate="no" v-pre>switch</code> expressions, pattern matching, text blocks, <code translate="no" v-pre>var</code> where the
+type is obvious) are welcome.</p>
+</li>
+<li>
+<p>4 spaces, no tabs; opening braces on the same line; lines up to about 120 characters.</p>
+</li>
+<li>
+<p>Javadoc on classes and on public methods whose purpose isn&#x27;t obvious from the name. Write <em>why</em> and the contract
+(what <code translate="no" v-pre>null</code> means, which thread, which transaction), not a restatement of the signature.</p>
+</li>
+<li>
+<p>Logging through SLF4J (<code translate="no" v-pre>private static final Logger log = LoggerFactory.getLogger(X.class)</code>), with <code translate="no" v-pre>{}</code>
+placeholders. Chat content and prompts are logged at <code translate="no" v-pre>DEBUG</code> only; API keys and passwords never. Plugins
+don&#x27;t use <code translate="no" v-pre>LoggerFactory</code>: they take the logger from <code translate="no" v-pre>OsgiService.createLogger(bundle)</code> so their lines reach the
+extension log (<a href="../plugins/overview/#logging">Logging</a>).</p>
+</li>
+<li>
+<p>Return <code translate="no" v-pre>null</code> for &quot;not found&quot; where the existing service API does (<code translate="no" v-pre>find</code>, <code translate="no" v-pre>findForUser</code>), and keep that consistent
+within a class.</p>
+</li>
+</ul>
+<h3 id="naming">Naming</h3>
+<ul>
+<li>
+<p>An inference provider is <code translate="no" v-pre>AI</code>, a language profile is <code translate="no" v-pre>Language</code> (the language of the interface is <code translate="no" v-pre>loc.Language</code>, a
+learnable language template <code translate="no" v-pre>Languages</code>). Use the user-facing words (<em>inference provider</em>, <em>language profile</em>) in UI
+text, the manual and log messages.</p>
+</li>
+<li>
+<p>Services are an interface in <code translate="no" v-pre>domain/service</code> and an implementation <code translate="no" v-pre>&lt;Name&gt;Impl</code> in <code translate="no" v-pre>domain/service/impl</code>,
+registered in the Spring XML (see <a href="../services/#writing-a-new-service">Services</a>).</p>
+</li>
+<li>
+<p>UI classes: a tab of the workspace is <code translate="no" v-pre>&lt;Name&gt;Part</code>, the screens of a learnable language live in <code translate="no" v-pre>ui/lang/languages</code>, a
+dialog is <code translate="no" v-pre>&lt;Name&gt;Dialog</code>, a reusable component in <code translate="no" v-pre>ui/components</code> or <code translate="no" v-pre>ui/widgets</code>.</p>
+</li>
+</ul>
+<h3 id="architecture-rules">Architecture rules</h3>
+<ul>
+<li>
+<p><strong>Transactions</strong> live on services (<code translate="no" v-pre>@CommonTx</code>, <code translate="no" v-pre>@CommonTxReadOnly</code>), never on UI classes. Entities held by the UI
+are detached; reload them through the service before changing them.</p>
+</li>
+<li>
+<p><strong>The current user</strong> comes from the session-scoped <code translate="no" v-pre>User</code> bean; services check ownership (<code translate="no" v-pre>findForUser</code>) - the UI
+must not be the only thing protecting other users&#x27; data.</p>
+</li>
+<li>
+<p><strong>UI text</strong> is never hard-coded: add a key to <code translate="no" v-pre>loc/L.java</code> and the text to <code translate="no" v-pre>loc/LocalizationBundleEN.java</code> (and to
+the bundles of other languages, if any; a language without the key shows the English text), and
+use <code translate="no" v-pre>loc.getValue(L.KEY)</code> (see <a href="../ui/#text">User interface</a>).</p>
+</li>
+<li>
+<p><strong>Threads</strong>: long work runs off the UI thread, and UI updates go through <code translate="no" v-pre>ui.access(...)</code> (see
+<a href="../ui/#background-work-and-push">Background work and push</a>).</p>
+</li>
+<li>
+<p><strong>Extension points</strong>: methods that extensions decorate are <code translate="no" v-pre>@Extendable</code>, and each of them declares its signature
+with <code translate="no" v-pre>@PublicAPI</code> (<code translate="no" v-pre>PublicAPISignatureTest</code> fails when a method has none or the annotation is out of date). Renaming
+or removing such a method, its parameters or its local variables breaks plugins - update the annotation, check the
+plugins you know of and mention the change in the pull request (see
+<a href="../plugins/extendable/#the-public-api">The public API</a> and
+<a href="../plugins/extendable/#keeping-hooks-working">Keeping hooks working</a>).</p>
+</li>
+<li>
+<p><strong>Schema</strong>: every entity change comes with a migration; Hibernate only validates the schema.</p>
+</li>
+</ul>
+<h3 id="tests">Tests</h3>
+<p>Use JUnit Jupiter and AssertJ, the <a href="../testing/#test-bases">test bases</a> and the fake LLM server; no real network calls.
+See the <a href="../testing/#checklist-for-a-new-test">checklist for a new test</a>.</p>
+<h2 id="documentation">Documentation</h2>
+<p>The manual you are reading is in <code translate="no" v-pre>manual/</code> (Markdown for <a href="https://retype.com">Retype</a>); <code translate="no" v-pre>docs/</code> is the generated site.</p>
+<ul>
+<li>
+<p>Change the Markdown in <code translate="no" v-pre>manual/</code>, then run <code translate="no" v-pre>retype build</code> and commit <code translate="no" v-pre>docs/</code> in the same pull request. Never edit
+files in <code translate="no" v-pre>docs/</code> by hand.</p>
+</li>
+<li>
+<p>Preview with <code translate="no" v-pre>retype start</code>.</p>
+</li>
+<li>
+<p>Write for the reader of that part: the <a href="../../user/">User guide</a> talks about what users see and click (UI
+names in <em>italics</em>, no class names), the developer guide about code (paths relative to the main package, class
+names in backticks).</p>
+</li>
+<li>
+<p>Screenshots go to <code translate="no" v-pre>manual/images/</code> (there are none yet). Diagrams are Mermaid code blocks, not images.</p>
+</li>
+<li>
+<p>A screenshot that shows a third-party picture needs a credit on the <a href="../../credits/">Credits</a> page (author, source,
+license, changes), and must be shared under the license of the picture.</p>
+</li>
+<li>
+<p>Every developer page has <code translate="no" v-pre>verified</code> (the commit it was last checked against the code; a page gets it with the first <code translate="no" v-pre>--stamp</code>) and <code translate="no" v-pre>covers</code> (the code it
+describes) in its front matter. <code translate="no" v-pre>python3 tools/check_dev_docs.py</code> lists the pages whose covered code changed since
+then (<code translate="no" v-pre>-v</code> names modified files, <code translate="no" v-pre>--check</code> fails when any page is behind). After you review a page, mark it with
+<code translate="no" v-pre>--stamp &lt;page.md&gt;</code> in a commit of its own. When a page starts describing other code, extend its <code translate="no" v-pre>covers</code>.</p>
+</li>
+<li>
+<p>Bugs you find while writing documentation are reported as an issue (see <doc-anchor-trigger to="#reporting-bugs-and-ideas">Reporting bugs and ideas</doc-anchor-trigger>).</p>
+</li>
+</ul>
+<h2 id="extensions">Extensions</h2>
+<p>New features that not every user needs - and anything experimental - are often better as an extension than as a
+change to the core. An extension can be developed and released on its own, and doesn&#x27;t need a pull request at all. If
+you want it bundled with LingoLLM in <code translate="no" v-pre>lingollm/plugins/</code>, open an issue first. See
+<a href="../plugins/">Plugin development</a> and the <a href="../plugins/example/">example plugin</a>.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/packaging/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Packaging &amp; releases</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../credits/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Credits</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Contributing", level: 2, icon: "file", hasPrism: false, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/developer/contributing.md" }</script>
+</body>
+</html>

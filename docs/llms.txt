@@ -1,0 +1,60 @@
+﻿# LingoLLM
+
+> LingoLLM is a self-hosted tool for learning languages with large language models. For every language you learn you keep a language profile, and everything you practise belongs to it.
+
+- [LingoLLM](https://enerccio.github.io/LingoLLM/index.md): LingoLLM
+- [User guide](https://enerccio.github.io/LingoLLM/user/index.md): This part of the manual is for people who learn with LingoLLM and for those who run it for others. It explains every screen and setting, from installing LingoLLM and connecting a model to backing up the database.
+- [Developer guide](https://enerccio.github.io/LingoLLM/developer/index.md): This part of the manual is for people who want to change LingoLLM itself, write an extension for it, or just understand how it works inside. If you only want to install and use LingoLLM, see the User guide.
+- [Credits](https://enerccio.github.io/LingoLLM/credits.md): The flags of the languages (the SVG images in LanguageIcons) come from the flag-icons collection by Panayiotis Lipiridis and contributors, which is distributed under the MIT License.
+
+## User guide
+
+### Getting started
+
+- [Getting started](https://enerccio.github.io/LingoLLM/user/getting-started/index.md): LingoLLM runs in your browser. You can install it in two ways:
+- [Desktop app](https://enerccio.github.io/LingoLLM/user/getting-started/desktop-app.md): The desktop app is a self-contained version of LingoLLM for one computer. It brings its own Java runtime and server, listens only on your computer and opens in your default browser.
+- [Server (Docker)](https://enerccio.github.io/LingoLLM/user/getting-started/docker-server.md): Run LingoLLM as a server when several people use it, or when you want to open it from other devices. Every user gets their own language profiles and inference providers.
+- [First start](https://enerccio.github.io/LingoLLM/user/getting-started/first-start.md): When LingoLLM starts with an empty database, it asks for the first account instead of showing the login screen. This account is the administrator: it can manage users, database backups, cleanup and extensions.
+- [Quick start](https://enerccio.github.io/LingoLLM/user/getting-started/quick-start.md): From a fresh installation to your first language profile. It assumes LingoLLM is installed and you are logged in as the administrator.
+- [Using LingoLLM on a phone](https://enerccio.github.io/LingoLLM/user/phone.md): LingoLLM has a layout made for phones. The phone layout is not a copy of the desktop one: it is simpler, a few things are missing and not every extension works in it.
+- [Inference providers](https://enerccio.github.io/LingoLLM/user/inference-providers.md): An inference provider is a connection to a model: the API address, the API key, the model and its limits. You can have as many as you like, for example a large cloud model and a small local one for experiments, and pick one as your default in Settings.
+- [Resources](https://enerccio.github.io/LingoLLM/user/resources.md): The Resources tab lists the files you have uploaded to LingoLLM, for example pictures you attach to chat messages. The tab is the place to find a file again, to download it, to swap it for a better one without touching what uses it, and to throw away what you no longer need.
+- [Trash](https://enerccio.github.io/LingoLLM/user/trash.md): Deleting in LingoLLM does not destroy anything right away: a deleted language profile, chat or inference provider is only marked as deleted and hidden from your lists.
+
+### Extensions
+
+- [Extensions](https://enerccio.github.io/LingoLLM/user/extensions/index.md): Extensions add features to LingoLLM without changing the application itself. Extensions that come with LingoLLM are listed below; how to write one is described in the developer manual.
+- [Gemma 4 tools fix](https://enerccio.github.io/LingoLLM/user/extensions/gemma-4-tools-fix.md): Makes function calling work with Gemma 4 models whose API expects another role for the results of the calls.
+- [Account & settings](https://enerccio.github.io/LingoLLM/user/account.md): Everything you create in LingoLLM belongs to your account: language profiles, inference providers and settings. Other users don't see them (except an inference provider an administrator shares), and you don't see theirs.
+
+### Administration
+
+- [Administration](https://enerccio.github.io/LingoLLM/user/administration/index.md): Administrators manage the LingoLLM installation: user accounts, database backups, cleanup of deleted data and extensions. The first account, created on the first start, is an administrator; it can make other users administrators too.
+- [Users](https://enerccio.github.io/LingoLLM/user/administration/users.md): The Users tab of the admin page lists all accounts with their Username, Full Name and whether they are an Administrator.
+- [Database backups](https://enerccio.github.io/LingoLLM/user/administration/database-backups.md): A database backup is a complete copy of the LingoLLM database: all users with all their language profiles, chats, settings and extension data. Use it to protect the installation against mistakes and failures, and to move it to another computer.
+- [Cleanup](https://enerccio.github.io/LingoLLM/user/administration/cleanup.md): When users delete something in LingoLLM - a language profile, a chat, an inference provider - it disappears from their lists, but stays in the database. That makes deleting safe and keeps references working (a chat still knows the provider that answered).
+- [Managing extensions](https://enerccio.github.io/LingoLLM/user/administration/extensions.md): The Extensions tab of the admin page installs and removes extensions for the whole installation.
+- [Troubleshooting & FAQ](https://enerccio.github.io/LingoLLM/user/troubleshooting.md): Most problems leave a trace in the log:
+- [Language profiles](https://enerccio.github.io/LingoLLM/user/language-profiles.md): A language profile is one language you learn. You can have several, also of the same language (for example German - work and German - travel): each one keeps its own things apart from the others.
+
+## Developer guide
+
+- [Building from source](https://enerccio.github.io/LingoLLM/developer/building.md): This page shows how to build LingoLLM, run it on your machine while you work on it, and build a plugin and this manual. Packaging for release (the Docker image, the desktop app, CI) is covered in Packaging & releases.
+- [Architecture](https://enerccio.github.io/LingoLLM/developer/architecture.md): LingoLLM is one Java web application running in one JVM. There is no separate frontend project, no REST API and no external database: the browser shows Vaadin components that live on the server, the components call Spring services, and the services store everything in a single SQLite file.
+- [Project structure](https://enerccio.github.io/LingoLLM/developer/project-structure.md): A tour of the repository: what each folder and package contains and where to look when you want to change something. Architecture explains how the parts work together; this page is the map.
+- [Domain model](https://enerccio.github.io/LingoLLM/developer/domain-model.md): The entities LingoLLM stores, how they relate, and the rules every entity follows: identity, ownership, soft delete, extended attributes and cleanup. Entities are in domain/model/ (base classes), domain/model/impl/ and domain/security/model/User.java.
+- [Database & migrations](https://enerccio.github.io/LingoLLM/developer/database.md): LingoLLM keeps all its data in one SQLite file. The schema is created and upgraded by Flyway migrations, and Hibernate maps the entities onto it but never changes it.
+- [Services](https://enerccio.github.io/LingoLLM/developer/services.md): The service layer holds LingoLLM's logic: everything the UI does to data goes through a service, and services are the main API extensions use. This page describes how services and repositories are built, how transactions and the current user work, and what each service is for.
+- [User interface](https://enerccio.github.io/LingoLLM/developer/ui.md): LingoLLM's UI is written in Java with Vaadin Flow 25: the component tree lives on the server, the browser renders it with Vaadin's web components (Lumo theme, dark color scheme) and sends events back over HTTP and a push WebSocket.
+
+### Plugin development
+
+- [Plugin development](https://enerccio.github.io/LingoLLM/developer/plugins/index.md): A LingoLLM plugin (the user interface calls them extensions) is an OSGi bundle - a JAR with a few extra manifest headers - that LingoLLM loads at runtime, without a restart.
+- [Plugin basics](https://enerccio.github.io/LingoLLM/developer/plugins/overview.md): This page covers what every plugin needs: the Maven project, the bundle activator, the LingoLLMExtension and how LingoLLM loads, starts and unloads it.
+- [@Extendable hooks](https://enerccio.github.io/LingoLLM/developer/plugins/extendable.md): Most of what a plugin does starts with a decorator: an object whose onMethodEnter and onMethodLeave run before and after a method of an application class.
+- [Example plugin](https://enerccio.github.io/LingoLLM/developer/plugins/example.md): This page builds a small plugin from scratch - Language Notes, which adds a notes field to every language profile - and explains each piece. The code
+- [Extended attributes](https://enerccio.github.io/LingoLLM/developer/plugins/extended-attributes.md): Plugins can't add tables or columns - there is no way to run their own Flyway migrations. Instead, every data entity carries a JSON object where a plugin can keep whatever it needs: ExtendableEntity.attributes.
+- [Extending the UI](https://enerccio.github.io/LingoLLM/developer/plugins/ui-extensions.md): Plugins add to the user interface from decorators: when a method that builds part of a screen runs, the plugin's decorator finds the component it built and adds to it.
+- [Testing](https://enerccio.github.io/LingoLLM/developer/testing.md): LingoLLM's tests are integration tests first: most of them start the real Spring XML configuration against a throwaway SQLite database and talk to a fake OpenAI-compatible server.
+- [Packaging & releases](https://enerccio.github.io/LingoLLM/developer/packaging.md): LingoLLM is built once as a WAR and then shipped in two forms: a Docker image for servers and a desktop app with its own Java runtime and Jetty. This page describes how each is built, what CI does, and how a release is made.
+- [Contributing](https://enerccio.github.io/LingoLLM/developer/contributing.md): Contributions are welcome: bug reports, fixes, new features, extensions, and corrections to this manual. This page describes how to report a problem, how changes are made and what a pull request should contain.

@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Project structure</title>
+    <meta name="title" content="Project structure">
+    <meta name="description" content="A tour of the repository: what each folder and package contains and where to look when you want to change something. Architecture explains how the parts work together; this page is the map.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/project-structure/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/project-structure/">
+    <meta property="og:title" content="Project structure">
+    <meta property="og:description" content="A tour of the repository: what each folder and package contains and where to look when you want to change something. Architecture explains how the parts work together; this page is the map.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/project-structure/">
+    <meta name="twitter:title" content="Project structure">
+    <meta name="twitter:description" content="A tour of the repository: what each folder and package contains and where to look when you want to change something. Architecture explains how the parts work together; this page is the map.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/project-structure.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="project-structure">Project structure</h1>
+<p>A tour of the repository: what each folder and package contains and where to look when you want to change
+something. <a href="../architecture/">Architecture</a> explains how the parts work together; this page is the map.</p>
+<h2 id="repository-root">Repository root</h2>
+<div id="repository-root-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">LingoLLM/
+├── lingollm/              the application - a Maven project (see below)
+├── manual/                  sources of this manual (Retype, Markdown)
+├── docs/                    generated manual, served by GitHub Pages - don't edit by hand
+├── tools/                   check_dev_docs.py (stale developer pages)
+├── .github/workflows/
+│   ├── desktop.yml          CI: tests, desktop builds for 5 platforms, release upload
+│   └── server.yml           CI: WAR, Docker image (ghcr.io), release upload
+├── pom.xml                  parent POM: the version of the application and of the plugins, lists them as modules
+├── Dockerfile               two-stage build: Maven builder → Jetty 12 image
+├── docker-compose.yml       the server setup (port 8080, ./data volume, JVM options)
+├── rebuild.sh, rebuild.bat  update a Docker server: pull, rebuild the image, restart
+├── retype.yml               manual configuration (input manual/, output docs/)
+├── README.md, CLAUDE.md, CONTRIBUTING.md, CHANGELOG.MD, TODO.md, LICENSE</code></pre>
+</doc-codeblock></div>
+<retype-table copy-text="| Path | Notes |
+|---|---|
+| `data/` | Created by `docker compose`: the data folder of the Docker server. Ignored by Git. |
+| `.gitattributes` | Keeps line endings of the desktop launch scripts and of `rebuild.sh` / `rebuild.bat` (`LF` for the shell scripts, `CRLF` for the batch files). |
+| `.dockerignore` | Excludes `lingollm/target/`, `lingollm/node_modules/` and `.idea/` from the Docker build context. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>data/</code></td>
+<td>Created by <code translate="no" v-pre>docker compose</code>: the data folder of the Docker server. Ignored by Git.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>.gitattributes</code></td>
+<td>Keeps line endings of the desktop launch scripts and of <code translate="no" v-pre>rebuild.sh</code> / <code translate="no" v-pre>rebuild.bat</code> (<code translate="no" v-pre>LF</code> for the shell scripts, <code translate="no" v-pre>CRLF</code> for the batch files).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>.dockerignore</code></td>
+<td>Excludes <code translate="no" v-pre>lingollm/target/</code>, <code translate="no" v-pre>lingollm/node_modules/</code> and <code translate="no" v-pre>.idea/</code> from the Docker build context.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>There is no <code translate="no" v-pre>lingollm/plugins/</code> folder yet. A plugin is its own Maven project (see <a href="../plugins/">Plugin development</a>);
+add it as a module of the root <code translate="no" v-pre>pom.xml</code> when it lives in this repository.</p>
+<h2 id="the-application-lingollm">The application (<code translate="no" v-pre>lingollm/</code>)</h2>
+<div id="the-application-lingollm-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">lingollm/
+├── pom.xml                       dependencies, build plugins, the desktop profile
+├── src/main/java/                application code
+├── src/main/resources/           Spring XML, the Flyway migration, log4j, Vaadin build info
+├── src/main/resources-release/   WAR-only resources: the release log4j.properties
+├── src/main/resources-raw/       copied into WEB-INF/classes without filtering (empty)
+├── src/main/webapp/config/       configuration.properties, persistence.xml
+├── src/main/frontend/            CSS for the Vaadin frontend
+├── src/desktop/                  desktop launcher and launch scripts (not part of the WAR)
+└── src/test/                     tests</code></pre>
+</doc-codeblock></div>
+<h2 id="java-packages">Java packages</h2>
+<p>Application code lives in <code translate="no" v-pre>com.github.enerccio.lingollm</code> (paths below are relative to
+<code translate="no" v-pre>src/main/java/com/github/enerccio/lingollm/</code>), plus a helper tool in <code translate="no" v-pre>com.github.enerccio.tools</code>.</p>
+<h3 id="top-level">Top level</h3>
+<retype-table copy-text="| File | |
+|---|---|
+| `Configuration.java` | The `configuration` bean: data folder (`~/.lingollm`) and its subfolders, database URL, staged database restore, the copy saved before a migration, saved login settings. |
+| `Constants.java` | Application constants: `DEAD_SESSION_CHECK_TIMEOUT` (seconds without a heartbeat before `SessionManager` closes a UI, default 120). |
+| `UIConstants.java`, `CssStyles.java` | Column widths and dialog offsets; CSS class names defined in `shared-styles.css`. |
+| `DatabaseCheck.java` | Checks a database file before it is used or restored (core tables, Flyway history, version). |
+| `SaneSQLiteDialect.java` | Hibernate's community SQLite dialect without generated `CHECK` constraints. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>File</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Configuration.java</code></td>
+<td>The <code translate="no" v-pre>configuration</code> bean: data folder (<code translate="no" v-pre>~/.lingollm</code>) and its subfolders, database URL, staged database restore, the copy saved before a migration, saved login settings.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Constants.java</code></td>
+<td>Application constants: <code translate="no" v-pre>DEAD_SESSION_CHECK_TIMEOUT</code> (seconds without a heartbeat before <code translate="no" v-pre>SessionManager</code> closes a UI, default 120).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>UIConstants.java</code>, <code translate="no" v-pre>CssStyles.java</code></td>
+<td>Column widths and dialog offsets; CSS class names defined in <code translate="no" v-pre>shared-styles.css</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>DatabaseCheck.java</code></td>
+<td>Checks a database file before it is used or restored (core tables, Flyway history, version).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>SaneSQLiteDialect.java</code></td>
+<td>Hibernate&#x27;s community SQLite dialect without generated <code translate="no" v-pre>CHECK</code> constraints.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="bound---startup-and-sessions"><code translate="no" v-pre>bound</code> - startup and sessions</h3>
+<retype-table copy-text="| File | |
+|---|---|
+| `ApplicationInitializer.java`, `Migration.java` | Runs registered `Migration`s (data migrations in Java) when the stored `AppSettings` versions are behind. None are registered yet; schema migrations are Flyway SQL. |
+| `SessionManager.java` | The `sessionManager` bean: registry of all HTTP sessions, binds the logged-in user to them, runs code in other users' sessions (`runForUsers`) and closes dead UIs and sessions on its watcher thread. See [Sessions](architecture.md#sessions). |
+| `SessionTrackingListener.java` | `HttpSessionListener` registered by `WebappApplicationInitializer`; forwards session creation and destruction to `SessionManager`. |
+| `SessionInformation.java`, `SessionCloseListener.java`, `RunInSession.java` | What `SessionManager` knows about one session; callbacks. |
+| `ApplicationPoint.java` | The `applicationPoint` bean: application-wide maps of open UIs to their `Workspace` and to a copy of their logged-in user. |
+| `SessionPoint.java` | Session-scoped bean; holds the `loc.Language` of the session's UI (set from the user's settings when the workspace opens, read by `LocalizationImpl`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>File</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>ApplicationInitializer.java</code>, <code translate="no" v-pre>Migration.java</code></td>
+<td>Runs registered <code translate="no" v-pre>Migration</code>s (data migrations in Java) when the stored <code translate="no" v-pre>AppSettings</code> versions are behind. None are registered yet; schema migrations are Flyway SQL.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>SessionManager.java</code></td>
+<td>The <code translate="no" v-pre>sessionManager</code> bean: registry of all HTTP sessions, binds the logged-in user to them, runs code in other users&#x27; sessions (<code translate="no" v-pre>runForUsers</code>) and closes dead UIs and sessions on its watcher thread. See <a href="../architecture/#sessions">Sessions</a>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>SessionTrackingListener.java</code></td>
+<td><code translate="no" v-pre>HttpSessionListener</code> registered by <code translate="no" v-pre>WebappApplicationInitializer</code>; forwards session creation and destruction to <code translate="no" v-pre>SessionManager</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>SessionInformation.java</code>, <code translate="no" v-pre>SessionCloseListener.java</code>, <code translate="no" v-pre>RunInSession.java</code></td>
+<td>What <code translate="no" v-pre>SessionManager</code> knows about one session; callbacks.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ApplicationPoint.java</code></td>
+<td>The <code translate="no" v-pre>applicationPoint</code> bean: application-wide maps of open UIs to their <code translate="no" v-pre>Workspace</code> and to a copy of their logged-in user.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>SessionPoint.java</code></td>
+<td>Session-scoped bean; holds the <code translate="no" v-pre>loc.Language</code> of the session&#x27;s UI (set from the user&#x27;s settings when the workspace opens, read by <code translate="no" v-pre>LocalizationImpl</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="ui---user-interface"><code translate="no" v-pre>ui</code> - user interface</h3>
+<retype-table copy-text="| Package | Files |
+|---|---|
+| `ui.main` | `WebappApplicationInitializer` (creates the Spring context, registers the session listener), `LingoLLMServlet` (the `VaadinServlet`), `AppShellConfig` (push, theme, global CSS), `LoginCheckRoute` (login overlay, saved logins, first-start dialog), `Main` (route `/`), `CssRegistry` (CSS of extensions). |
+| `ui.workspace` | `Workspace` (interface of the workspace shown after login), `DesktopWorkspace` (its tabbed implementation with footer buttons), `WorkspaceComponent` (interface of its tabs), `LanguageUI` / `LanguageUIBase` (what the workspace shows for a language profile). |
+| `ui.workspace.phone`, `ui.workspace.phone.parts` | `PhoneWorkspace` (an `AppLayout` with a drawer instead of the left-hand tabs), `PhoneAIPart`, `PhoneSettingsPart` (`UserPart` with a stacked header), `PhoneTrashPart` (trash with `PhoneTrashGrid`). |
+| `ui.workspace.parts` | One class per workspace tab: `LanguagePart` (Learning: the language selector and the `LanguageUI`), `UserPart` (Settings), `AIPart` (Inference Providers), `ResourcesPart`, `TrashPart`, `AdminPart`. |
+| `ui.workspace.parts.admin` | Admin panels with their own logic: `DatabaseBackupPanel`, `CleanupPanel`. |
+| `ui.lang`, `ui.lang.languages` | The learnable languages: `LanguageDefaults` (what a new profile starts with), `LanguageIcons` (flags as SVG) and one `LanguageUI` per language (`Japanese`, `German`). |
+| `ui.dialogs` | `LanguageCreationDialog` (a new language profile; the first-start flow), entity dialogs (`AIDialog`, `UserDialog`), the limits of a shared AI (`AILimitsDialog`, `AILimitEditDialog`; `AILimitInfoDialog` is the user's own view), `UsageDialog`, `ExtensionLogDialog` and generic dialogs: `ConfirmDialog`, `TextInputDialog`, `ListSelectDialog`, `ErrorDialog`, plus the threading helper `UIPushGuard`. |
+| `ui.components` | `MessageImages` (images of attachments, read when the browser asks for them) and `ThreadCopyRequestAttributes` (carries the session to worker threads). |
+| `ui.widgets` | `LanguageItem` (flag + name of a language or profile), `LanguageSelector` (language of the interface), `HTabSheet` (tab sheet with the tabs on the left and room for custom content), `BackendTableProvider*` / `BackendTableItem` (lazy grids backed by a repository query), `TrashGrid` / `PhoneTrashGrid`, `TextAreaPopoverComponent` / `TextFieldPopOverComponent`, `HtmlText`, `ScrollPanel`, `ResizableTextArea`, `Notification`, `PermissiveLoginOverlay` (allows empty passwords). |
+| `ui` | `JavascriptLibrary` - every script the app runs in the browser. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>ui.main</code></td>
+<td><code translate="no" v-pre>WebappApplicationInitializer</code> (creates the Spring context, registers the session listener), <code translate="no" v-pre>LingoLLMServlet</code> (the <code translate="no" v-pre>VaadinServlet</code>), <code translate="no" v-pre>AppShellConfig</code> (push, theme, global CSS), <code translate="no" v-pre>LoginCheckRoute</code> (login overlay, saved logins, first-start dialog), <code translate="no" v-pre>Main</code> (route <code translate="no" v-pre>/</code>), <code translate="no" v-pre>CssRegistry</code> (CSS of extensions).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace</code></td>
+<td><code translate="no" v-pre>Workspace</code> (interface of the workspace shown after login), <code translate="no" v-pre>DesktopWorkspace</code> (its tabbed implementation with footer buttons), <code translate="no" v-pre>WorkspaceComponent</code> (interface of its tabs), <code translate="no" v-pre>LanguageUI</code> / <code translate="no" v-pre>LanguageUIBase</code> (what the workspace shows for a language profile).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace.phone</code>, <code translate="no" v-pre>ui.workspace.phone.parts</code></td>
+<td><code translate="no" v-pre>PhoneWorkspace</code> (an <code translate="no" v-pre>AppLayout</code> with a drawer instead of the left-hand tabs), <code translate="no" v-pre>PhoneAIPart</code>, <code translate="no" v-pre>PhoneSettingsPart</code> (<code translate="no" v-pre>UserPart</code> with a stacked header), <code translate="no" v-pre>PhoneTrashPart</code> (trash with <code translate="no" v-pre>PhoneTrashGrid</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace.parts</code></td>
+<td>One class per workspace tab: <code translate="no" v-pre>LanguagePart</code> (Learning: the language selector and the <code translate="no" v-pre>LanguageUI</code>), <code translate="no" v-pre>UserPart</code> (Settings), <code translate="no" v-pre>AIPart</code> (Inference Providers), <code translate="no" v-pre>ResourcesPart</code>, <code translate="no" v-pre>TrashPart</code>, <code translate="no" v-pre>AdminPart</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.workspace.parts.admin</code></td>
+<td>Admin panels with their own logic: <code translate="no" v-pre>DatabaseBackupPanel</code>, <code translate="no" v-pre>CleanupPanel</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.lang</code>, <code translate="no" v-pre>ui.lang.languages</code></td>
+<td>The learnable languages: <code translate="no" v-pre>LanguageDefaults</code> (what a new profile starts with), <code translate="no" v-pre>LanguageIcons</code> (flags as SVG) and one <code translate="no" v-pre>LanguageUI</code> per language (<code translate="no" v-pre>Japanese</code>, <code translate="no" v-pre>German</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.dialogs</code></td>
+<td><code translate="no" v-pre>LanguageCreationDialog</code> (a new language profile; the first-start flow), entity dialogs (<code translate="no" v-pre>AIDialog</code>, <code translate="no" v-pre>UserDialog</code>), the limits of a shared AI (<code translate="no" v-pre>AILimitsDialog</code>, <code translate="no" v-pre>AILimitEditDialog</code>; <code translate="no" v-pre>AILimitInfoDialog</code> is the user&#x27;s own view), <code translate="no" v-pre>UsageDialog</code>, <code translate="no" v-pre>ExtensionLogDialog</code> and generic dialogs: <code translate="no" v-pre>ConfirmDialog</code>, <code translate="no" v-pre>TextInputDialog</code>, <code translate="no" v-pre>ListSelectDialog</code>, <code translate="no" v-pre>ErrorDialog</code>, plus the threading helper <code translate="no" v-pre>UIPushGuard</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.components</code></td>
+<td><code translate="no" v-pre>MessageImages</code> (images of attachments, read when the browser asks for them) and <code translate="no" v-pre>ThreadCopyRequestAttributes</code> (carries the session to worker threads).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui.widgets</code></td>
+<td><code translate="no" v-pre>LanguageItem</code> (flag + name of a language or profile), <code translate="no" v-pre>LanguageSelector</code> (language of the interface), <code translate="no" v-pre>HTabSheet</code> (tab sheet with the tabs on the left and room for custom content), <code translate="no" v-pre>BackendTableProvider*</code> / <code translate="no" v-pre>BackendTableItem</code> (lazy grids backed by a repository query), <code translate="no" v-pre>TrashGrid</code> / <code translate="no" v-pre>PhoneTrashGrid</code>, <code translate="no" v-pre>TextAreaPopoverComponent</code> / <code translate="no" v-pre>TextFieldPopOverComponent</code>, <code translate="no" v-pre>HtmlText</code>, <code translate="no" v-pre>ScrollPanel</code>, <code translate="no" v-pre>ResizableTextArea</code>, <code translate="no" v-pre>Notification</code>, <code translate="no" v-pre>PermissiveLoginOverlay</code> (allows empty passwords).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ui</code></td>
+<td><code translate="no" v-pre>JavascriptLibrary</code> - every script the app runs in the browser.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="domainmodel---entities"><code translate="no" v-pre>domain.model</code> - entities</h3>
+<retype-table copy-text="| File | |
+|---|---|
+| `BaseEntity`, `OwnedEntity`, `ExtendableEntity` | Mapped superclasses: id, uuid, soft delete, timestamps; owner; JSON `attributes` for extensions. |
+| `LanguageBoundEntity` | Mapped superclass of everything that belongs to a language profile (`language`). |
+| `ImageAttachment` | Record of a loose attachment: resource uuid and caption. |
+| `Setting` | Base of settings, single table `settings` with a `DTYPE` discriminator. |
+| `impl/Language` | A language profile of a user. |
+| `impl/FreeChat`, `impl/FreeChatMessage` | A free conversation and its messages (a tree through `parent`). |
+| `impl/AI`, `impl/OpenAICompatible` | Inference providers (`AI` is the base, `OpenAICompatible` the only type). |
+| `impl/Resource` | Uploaded files stored by hash; `clazz` + `objectId` loosely note what uses it. Listed in the Resources tab. |
+| `impl/Usage` | What a user used of an AI (tokens, requests, tokens since the last reset of their limit). |
+| `impl/settings/AppSettings`, `impl/settings/UserSetting` | Installation-wide settings (versions, database backup schedule) and per-user settings. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>File</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>BaseEntity</code>, <code translate="no" v-pre>OwnedEntity</code>, <code translate="no" v-pre>ExtendableEntity</code></td>
+<td>Mapped superclasses: id, uuid, soft delete, timestamps; owner; JSON <code translate="no" v-pre>attributes</code> for extensions.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguageBoundEntity</code></td>
+<td>Mapped superclass of everything that belongs to a language profile (<code translate="no" v-pre>language</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>ImageAttachment</code></td>
+<td>Record of a loose attachment: resource uuid and caption.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Setting</code></td>
+<td>Base of settings, single table <code translate="no" v-pre>settings</code> with a <code translate="no" v-pre>DTYPE</code> discriminator.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/Language</code></td>
+<td>A language profile of a user.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/FreeChat</code>, <code translate="no" v-pre>impl/FreeChatMessage</code></td>
+<td>A free conversation and its messages (a tree through <code translate="no" v-pre>parent</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/AI</code>, <code translate="no" v-pre>impl/OpenAICompatible</code></td>
+<td>Inference providers (<code translate="no" v-pre>AI</code> is the base, <code translate="no" v-pre>OpenAICompatible</code> the only type).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/Resource</code></td>
+<td>Uploaded files stored by hash; <code translate="no" v-pre>clazz</code> + <code translate="no" v-pre>objectId</code> loosely note what uses it. Listed in the Resources tab.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/Usage</code></td>
+<td>What a user used of an AI (tokens, requests, tokens since the last reset of their limit).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>impl/settings/AppSettings</code>, <code translate="no" v-pre>impl/settings/UserSetting</code></td>
+<td>Installation-wide settings (versions, database backup schedule) and per-user settings.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>User</code> is in <code translate="no" v-pre>domain.security.model</code>. Every entity must also be listed in <code translate="no" v-pre>src/main/webapp/config/persistence.xml</code>.
+See <a href="../domain-model/">Domain model</a>.</p>
+<h3 id="domainrepository---data-access"><code translate="no" v-pre>domain.repository</code> - data access</h3>
+<p>One interface and one JPA implementation (<code translate="no" v-pre>impl/Jpa*Repository</code>) per entity, built on <code translate="no" v-pre>BaseRepository</code> →
+<code translate="no" v-pre>OwnedRepository</code> → <code translate="no" v-pre>ExtendableRepository</code> (→ <code translate="no" v-pre>LanguageBoundRepository</code> for language bound entities). The beans are
+defined in <code translate="no" v-pre>services-config.xml</code> with the shared <code translate="no" v-pre>EntityManager</code>.</p>
+<h3 id="domaincomponents---plain-data-and-helpers"><code translate="no" v-pre>domain.components</code> - plain data and helpers</h3>
+<retype-table copy-text="| Class | |
+|---|---|
+| `AILimit`, `AILimits`, `LimitStatus` | The limit of one user on a shared AI, the JSON in `AI.limits` that holds them by user uuid, and where a user stands. See [Limits](domain-model.md#limits-of-the-users-of-a-shared-ai). |
+| `CronSchedule` | Cron expression parsing and next-run computation, used by the database backup schedule. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Class</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>AILimit</code>, <code translate="no" v-pre>AILimits</code>, <code translate="no" v-pre>LimitStatus</code></td>
+<td>The limit of one user on a shared AI, the JSON in <code translate="no" v-pre>AI.limits</code> that holds them by user uuid, and where a user stands. See <a href="../domain-model/#limits-of-the-users-of-a-shared-ai">Limits</a>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>CronSchedule</code></td>
+<td>Cron expression parsing and next-run computation, used by the database backup schedule.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="domainservice---business-logic"><code translate="no" v-pre>domain.service</code> - business logic</h3>
+<p>Interfaces in <code translate="no" v-pre>domain.service</code>, implementations in <code translate="no" v-pre>domain.service.impl</code>:</p>
+<retype-table copy-text="| Service | Responsible for |
+|---|---|
+| `BaseService`, `OwnedService`, `ExtendableService`, `LanguageBoundService` | Generic CRUD, soft delete, lookups restricted to the current user (and to a language profile). |
+| `LanguageService`, `FreeChatService`, `FreeChatMessageService` | Language profiles, free chats and their messages. |
+| `AIService`, `SettingService`, `ResourceService` | Inference providers, settings, files. |
+| `AILimitService` | The per-user limits of a shared AI: the owning administrator sets them, `check` refuses a request of a user who is over their limit, `getStatus` is for the user's own view. |
+| `UsageService` | Tokens a user used with an AI (`Usage`, one per AI and user); `findAllUsages()` lists everybody's for administrators. |
+| `InferenceServices`, `InferenceService`, `InferenceException`, `InferenceErrors` | Choosing and calling the model API (list models, test a connection); classified failures and their localized texts. |
+| `DatabaseBackupService` | Database backups and their schedule. |
+| `CleanupService`, `TrashService` | Purging soft-deleted data that is no longer referenced; listing, restoring and (messages) permanently deleting it (one bean, `CleanupServiceImpl`, shares the reference model). |
+| `OsgiService`, `ExtensionService` | Loading, stopping and starting extensions (the `.STOPPED` flag), the logger of an extension and its log file; `@Extendable` decorators. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Service</th>
+<th>Responsible for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>BaseService</code>, <code translate="no" v-pre>OwnedService</code>, <code translate="no" v-pre>ExtendableService</code>, <code translate="no" v-pre>LanguageBoundService</code></td>
+<td>Generic CRUD, soft delete, lookups restricted to the current user (and to a language profile).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>LanguageService</code>, <code translate="no" v-pre>FreeChatService</code>, <code translate="no" v-pre>FreeChatMessageService</code></td>
+<td>Language profiles, free chats and their messages.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AIService</code>, <code translate="no" v-pre>SettingService</code>, <code translate="no" v-pre>ResourceService</code></td>
+<td>Inference providers, settings, files.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AILimitService</code></td>
+<td>The per-user limits of a shared AI: the owning administrator sets them, <code translate="no" v-pre>check</code> refuses a request of a user who is over their limit, <code translate="no" v-pre>getStatus</code> is for the user&#x27;s own view.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>UsageService</code></td>
+<td>Tokens a user used with an AI (<code translate="no" v-pre>Usage</code>, one per AI and user); <code translate="no" v-pre>findAllUsages()</code> lists everybody&#x27;s for administrators.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>InferenceServices</code>, <code translate="no" v-pre>InferenceService</code>, <code translate="no" v-pre>InferenceException</code>, <code translate="no" v-pre>InferenceErrors</code></td>
+<td>Choosing and calling the model API (list models, test a connection); classified failures and their localized texts.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>DatabaseBackupService</code></td>
+<td>Database backups and their schedule.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>CleanupService</code>, <code translate="no" v-pre>TrashService</code></td>
+<td>Purging soft-deleted data that is no longer referenced; listing, restoring and (messages) permanently deleting it (one bean, <code translate="no" v-pre>CleanupServiceImpl</code>, shares the reference model).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>OsgiService</code>, <code translate="no" v-pre>ExtensionService</code></td>
+<td>Loading, stopping and starting extensions (the <code translate="no" v-pre>.STOPPED</code> flag), the logger of an extension and its log file; <code translate="no" v-pre>@Extendable</code> decorators.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>service.impl.inference.OpenAICompatibleInferenceService</code> is the openai-java client with the mapping of API failures to
+<code translate="no" v-pre>InferenceException</code>.</p>
+<h3 id="domainsecurity"><code translate="no" v-pre>domain.security</code></h3>
+<p><code translate="no" v-pre>model/User</code>, <code translate="no" v-pre>repository/UserRepository</code> (+ <code translate="no" v-pre>impl/JpaUserRepository</code>), <code translate="no" v-pre>service/UserService</code> (+
+<code translate="no" v-pre>impl/UserServiceImpl</code>: authentication, password hashes, saved logins, protection of the last administrator),
+<code translate="no" v-pre>AdminGuard</code> (<code translate="no" v-pre>requireAdmin()</code>, used by the administrator-only services) and <code translate="no" v-pre>PersistedLoginInfo</code> (a saved login).</p>
+<h3 id="domaintraits-domaincollections-domainlistener"><code translate="no" v-pre>domain.traits</code>, <code translate="no" v-pre>domain.collections</code>, <code translate="no" v-pre>domain.listener</code></h3>
+<retype-table copy-text="| Package | |
+|---|---|
+| `domain.traits` | Annotations: `@CommonTx`, `@CommonTxReadOnly`, `@NoTx` (transactions), `@LLMFunction`, `@LLMParam`, `@LLMSchema`, `@LLMField` (what the model calls and answers with), `@Extendable` (instrumented UI classes) with `@PublicAPI`, `@APIReturn`, `@APIParameter`, `@APILocals`, `@ExtendedAttribute` (fields stored in the extended content), `@Fulltextable`, `@CleanupReference(s)` (how references behave during cleanup), `@SupportedAI` (provider type of an inference service). |
+| `domain.collections` | Enums: `Languages` (the learnable languages), `AIType`, `ReasoningEffort`, `LimitStrategy`, `ResetStrategy`. |
+| `domain.listener` | `ExtendableEntityListener` - serializes `attributes` and `@ExtendedAttribute` fields to `extendedContent` and back, and collects the `@Fulltextable` fields into `_fulltext`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>domain.traits</code></td>
+<td>Annotations: <code translate="no" v-pre>@CommonTx</code>, <code translate="no" v-pre>@CommonTxReadOnly</code>, <code translate="no" v-pre>@NoTx</code> (transactions), <code translate="no" v-pre>@LLMFunction</code>, <code translate="no" v-pre>@LLMParam</code>, <code translate="no" v-pre>@LLMSchema</code>, <code translate="no" v-pre>@LLMField</code> (what the model calls and answers with), <code translate="no" v-pre>@Extendable</code> (instrumented UI classes) with <code translate="no" v-pre>@PublicAPI</code>, <code translate="no" v-pre>@APIReturn</code>, <code translate="no" v-pre>@APIParameter</code>, <code translate="no" v-pre>@APILocals</code>, <code translate="no" v-pre>@ExtendedAttribute</code> (fields stored in the extended content), <code translate="no" v-pre>@Fulltextable</code>, <code translate="no" v-pre>@CleanupReference(s)</code> (how references behave during cleanup), <code translate="no" v-pre>@SupportedAI</code> (provider type of an inference service).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>domain.collections</code></td>
+<td>Enums: <code translate="no" v-pre>Languages</code> (the learnable languages), <code translate="no" v-pre>AIType</code>, <code translate="no" v-pre>ReasoningEffort</code>, <code translate="no" v-pre>LimitStrategy</code>, <code translate="no" v-pre>ResetStrategy</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>domain.listener</code></td>
+<td><code translate="no" v-pre>ExtendableEntityListener</code> - serializes <code translate="no" v-pre>attributes</code> and <code translate="no" v-pre>@ExtendedAttribute</code> fields to <code translate="no" v-pre>extendedContent</code> and back, and collects the <code translate="no" v-pre>@Fulltextable</code> fields into <code translate="no" v-pre>_fulltext</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="extensions-localization-helpers">Extensions, localization, helpers</h3>
+<retype-table copy-text="| Package | |
+|---|---|
+| `extensions` | `LingoLLMExtension` - the service interface every extension bundle registers; `ExtensionHasCss` and `ExtensionHasLocalization` - optional interfaces of an extension. |
+| `instruct` | `RuntimeInstrumentationInitializer`, `ExtendableMethodVisitor`, `ExtensionServiceHolder`; `instruct.verify`: `ExtensionVerifier` and its helpers, which check an extension's decorators against the application before it is started. |
+| `loc` | `L` (all text keys), `Localization` / `LocalizationImpl` (picks the bundle of the session's language), `Language` (a language of the interface), `LocalizationBundle` / `LocalizationBundleBase` / `LocalizationBundleEN`, `NaturalOrderComparator`. |
+| `concurrent` | `AsyncRunnableWrapper`, `ThrowingRunnable`. |
+| `utils` | `UIUtils`, `ClientAddressResolver`, `ReflectUtils`, `ThreadUtils`. |
+| `com.github.enerccio.tools` | `Pair`, `Pointer` and `GenerateFlywayDiff` (development tool, see [Database schema changes](building.md#database-schema-changes)). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>extensions</code></td>
+<td><code translate="no" v-pre>LingoLLMExtension</code> - the service interface every extension bundle registers; <code translate="no" v-pre>ExtensionHasCss</code> and <code translate="no" v-pre>ExtensionHasLocalization</code> - optional interfaces of an extension.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>instruct</code></td>
+<td><code translate="no" v-pre>RuntimeInstrumentationInitializer</code>, <code translate="no" v-pre>ExtendableMethodVisitor</code>, <code translate="no" v-pre>ExtensionServiceHolder</code>; <code translate="no" v-pre>instruct.verify</code>: <code translate="no" v-pre>ExtensionVerifier</code> and its helpers, which check an extension&#x27;s decorators against the application before it is started.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>loc</code></td>
+<td><code translate="no" v-pre>L</code> (all text keys), <code translate="no" v-pre>Localization</code> / <code translate="no" v-pre>LocalizationImpl</code> (picks the bundle of the session&#x27;s language), <code translate="no" v-pre>Language</code> (a language of the interface), <code translate="no" v-pre>LocalizationBundle</code> / <code translate="no" v-pre>LocalizationBundleBase</code> / <code translate="no" v-pre>LocalizationBundleEN</code>, <code translate="no" v-pre>NaturalOrderComparator</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>concurrent</code></td>
+<td><code translate="no" v-pre>AsyncRunnableWrapper</code>, <code translate="no" v-pre>ThrowingRunnable</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>utils</code></td>
+<td><code translate="no" v-pre>UIUtils</code>, <code translate="no" v-pre>ClientAddressResolver</code>, <code translate="no" v-pre>ReflectUtils</code>, <code translate="no" v-pre>ThreadUtils</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>com.github.enerccio.tools</code></td>
+<td><code translate="no" v-pre>Pair</code>, <code translate="no" v-pre>Pointer</code> and <code translate="no" v-pre>GenerateFlywayDiff</code> (development tool, see <a href="../building/#database-schema-changes">Database schema changes</a>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="resources-and-configuration">Resources and configuration</h2>
+<retype-table copy-text="| Path | |
+|---|---|
+| `src/main/resources/META-INF/spring/application-config.xml` | Root of the Spring configuration; imports the three files below. |
+| `.../spring/container-config.xml` | Localization, configuration, `applicationPoint`, `sessionManager`, the session beans `sessionPoint`, `user` and `language`, application initializer. |
+| `.../spring/datasources-config.xml` | Data source, Flyway, JPA, transaction manager. |
+| `.../spring/services-config.xml` | Repositories, services, extensions. |
+| `src/main/resources/migration/V&lt;n&gt;__&lt;name&gt;.sql` | Flyway migrations - currently `V1__initial`. |
+| `src/main/resources/log4j.properties` | Logging for development (IDE, `mvn jetty:run`) - `DEBUG`. |
+| `src/main/resources-release/log4j.properties` | Logging packaged into the WAR instead - `INFO` (see [Packaging &amp; releases](packaging.md#the-war)). |
+| `src/main/webapp/config/configuration.properties` | Application settings (saved logins). |
+| `src/main/webapp/config/persistence.xml` | The persistence unit: list of entity classes, dialect, `hbm2ddl.auto=validate`. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>src/main/resources/META-INF/spring/application-config.xml</code></td>
+<td>Root of the Spring configuration; imports the three files below.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>.../spring/container-config.xml</code></td>
+<td>Localization, configuration, <code translate="no" v-pre>applicationPoint</code>, <code translate="no" v-pre>sessionManager</code>, the session beans <code translate="no" v-pre>sessionPoint</code>, <code translate="no" v-pre>user</code> and <code translate="no" v-pre>language</code>, application initializer.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>.../spring/datasources-config.xml</code></td>
+<td>Data source, Flyway, JPA, transaction manager.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>.../spring/services-config.xml</code></td>
+<td>Repositories, services, extensions.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>src/main/resources/migration/V&lt;n&gt;__&lt;name&gt;.sql</code></td>
+<td>Flyway migrations - currently <code translate="no" v-pre>V1__initial</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>src/main/resources/log4j.properties</code></td>
+<td>Logging for development (IDE, <code translate="no" v-pre>mvn jetty:run</code>) - <code translate="no" v-pre>DEBUG</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>src/main/resources-release/log4j.properties</code></td>
+<td>Logging packaged into the WAR instead - <code translate="no" v-pre>INFO</code> (see <a href="../packaging/#the-war">Packaging &amp; releases</a>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>src/main/webapp/config/configuration.properties</code></td>
+<td>Application settings (saved logins).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>src/main/webapp/config/persistence.xml</code></td>
+<td>The persistence unit: list of entity classes, dialect, <code translate="no" v-pre>hbm2ddl.auto=validate</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="frontend-srcmainfrontend">Frontend (<code translate="no" v-pre>src/main/frontend/</code>)</h2>
+<p>There is no hand-written frontend application - Vaadin generates it. The only source is <code translate="no" v-pre>styles/shared-styles.css</code>:
+global CSS imported by <code translate="no" v-pre>AppShellConfig</code> (spacing helpers, utility classes, Markdown wrapping, language flags).</p>
+<p>Generated and ignored by Git: <code translate="no" v-pre>src/main/frontend/generated/</code>, <code translate="no" v-pre>src/main/frontend/index.html</code>, the development bundle
+in <code translate="no" v-pre>src/main/bundles/</code>, <code translate="no" v-pre>node_modules/</code>, <code translate="no" v-pre>package.json</code> and the Vite configuration.</p>
+<h2 id="desktop-app-srcdesktop">Desktop app (<code translate="no" v-pre>src/desktop/</code>)</h2>
+<retype-table copy-text="| Path | |
+|---|---|
+| `java/.../desktop/DesktopLauncher.java` | The launcher: options, Jetty base in `~/.lingollm/desktop`, starts Jetty in-process, browser, tray icon, single instance. JDK only. |
+| `bin/lingollm`, `bin/lingollm.bat` | Start scripts of the portable folder (bundled runtime + JVM options + `LINGOLLM_JAVA_OPTS`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>java/.../desktop/DesktopLauncher.java</code></td>
+<td>The launcher: options, Jetty base in <code translate="no" v-pre>~/.lingollm/desktop</code>, starts Jetty in-process, browser, tray icon, single instance. JDK only.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>bin/lingollm</code>, <code translate="no" v-pre>bin/lingollm.bat</code></td>
+<td>Start scripts of the portable folder (bundled runtime + JVM options + <code translate="no" v-pre>LINGOLLM_JAVA_OPTS</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Built only by the <code translate="no" v-pre>desktop</code> profile. See <a href="../packaging/">Packaging &amp; releases</a>.</p>
+<h2 id="tests-srctest">Tests (<code translate="no" v-pre>src/test/</code>)</h2>
+<p>Test classes mirror the areas they cover (paths relative to <code translate="no" v-pre>src/test/java/com/github/enerccio/lingollm/</code>):</p>
+<retype-table copy-text="| Package | |
+|---|---|
+| `test` | Test infrastructure: `LingoLLMTestBase` (Spring context, temp data folder, login helpers), `ExpectedLog`, `TestContextPostProcessor`. |
+| `test.llm` | `MockLLMServer` - a fake OpenAI-compatible server with programmable scenarios. |
+| `crud` | CRUD tests for every entity, built on `OwnedCrudContract` / `ExtendableCrudContract`. |
+| `db` | Database restore check and the copy before a migration. |
+| `backup` | The database backup schedule. |
+| `instruct` | Bytecode instrumentation (with fixture classes in `instruct.fixture`), the extension verifier and the check that every method of an `@Extendable` class declares its `@PublicAPI` (`PublicAPISignatureTest`). |
+| `domain`, `domain.service` | Entity listener, AI limits and sharing, usage, cron expressions. |
+| `loc`, `security`, `utils`, `ui.main` | Localization, helpers, CSS registry. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>test</code></td>
+<td>Test infrastructure: <code translate="no" v-pre>LingoLLMTestBase</code> (Spring context, temp data folder, login helpers), <code translate="no" v-pre>ExpectedLog</code>, <code translate="no" v-pre>TestContextPostProcessor</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>test.llm</code></td>
+<td><code translate="no" v-pre>MockLLMServer</code> - a fake OpenAI-compatible server with programmable scenarios.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>crud</code></td>
+<td>CRUD tests for every entity, built on <code translate="no" v-pre>OwnedCrudContract</code> / <code translate="no" v-pre>ExtendableCrudContract</code>.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>db</code></td>
+<td>Database restore check and the copy before a migration.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>backup</code></td>
+<td>The database backup schedule.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>instruct</code></td>
+<td>Bytecode instrumentation (with fixture classes in <code translate="no" v-pre>instruct.fixture</code>), the extension verifier and the check that every method of an <code translate="no" v-pre>@Extendable</code> class declares its <code translate="no" v-pre>@PublicAPI</code> (<code translate="no" v-pre>PublicAPISignatureTest</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>domain</code>, <code translate="no" v-pre>domain.service</code></td>
+<td>Entity listener, AI limits and sharing, usage, cron expressions.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>loc</code>, <code translate="no" v-pre>security</code>, <code translate="no" v-pre>utils</code>, <code translate="no" v-pre>ui.main</code></td>
+<td>Localization, helpers, CSS registry.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>src/test/resources/META-INF/spring/test-application-config.xml</code> is the test variant of the Spring configuration.
+See <a href="../testing/">Testing</a>.</p>
+<h2 id="build-output-lingollmtarget">Build output (<code translate="no" v-pre>lingollm/target/</code>)</h2>
+<retype-table copy-text="| Path | |
+|---|---|
+| `lingollm-1.0.0.war`, `lingollm-1.0.0/` | The WAR and its exploded form. |
+| `lingollm-1.0.0-classes.jar` | Classes for plugin builds. |
+| `classes/`, `test-classes/` | Woven classes. |
+| `surefire-reports/`, `test-home/` | Test reports and test data folders. |
+| `desktop/` | Desktop distribution (with `-Pdesktop`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Path</th>
+<th> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.0.0.war</code>, <code translate="no" v-pre>lingollm-1.0.0/</code></td>
+<td>The WAR and its exploded form.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>lingollm-1.0.0-classes.jar</code></td>
+<td>Classes for plugin builds.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>classes/</code>, <code translate="no" v-pre>test-classes/</code></td>
+<td>Woven classes.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>surefire-reports/</code>, <code translate="no" v-pre>test-home/</code></td>
+<td>Test reports and test data folders.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>desktop/</code></td>
+<td>Desktop distribution (with <code translate="no" v-pre>-Pdesktop</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="where-to-find">Where to find...</h2>
+<retype-table copy-text="| I want to change... | Look at |
+|---|---|
+| A text in the UI | `loc/L.java` (key) and the text in `loc/LocalizationBundleEN.java` |
+| The language selector or the first-start flow | `ui/workspace/parts/LanguagePart.java`, `ui/dialogs/LanguageCreationDialog.java` |
+| What a language shows | `ui/lang/languages/` (one class per language), `ui/workspace/LanguageUIBase.java` |
+| A new learnable language | `domain/collections/Languages.java`, `ui/lang/`, `ENUM_LANGUAGE_*` keys, `LocalizationImpl.loadMaps` |
+| An entity or the schema | the entity in `domain/model/impl/`, the Flyway migration, `persistence.xml` - see [Database &amp; migrations](database.md) |
+| A new service | interface in `domain/service/`, implementation in `impl/`, a bean in `services-config.xml` |
+| What an extension can hook into | classes annotated `@Extendable` in `ui/` |
+| Global styles | `src/main/frontend/styles/shared-styles.css` and `CssStyles.java` |
+| Login and saved logins | `ui/main/LoginCheckRoute.java`, `UserServiceImpl` |
+| Database backups | `DatabaseBackupServiceImpl`, `Configuration` (pending restore, copy before a migration) |
+| The desktop app | `src/desktop/java/.../DesktopLauncher.java`, the `desktop` profile in `pom.xml` |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>I want to change...</th>
+<th>Look at</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A text in the UI</td>
+<td><code translate="no" v-pre>loc/L.java</code> (key) and the text in <code translate="no" v-pre>loc/LocalizationBundleEN.java</code></td>
+</tr>
+<tr>
+<td>The language selector or the first-start flow</td>
+<td><code translate="no" v-pre>ui/workspace/parts/LanguagePart.java</code>, <code translate="no" v-pre>ui/dialogs/LanguageCreationDialog.java</code></td>
+</tr>
+<tr>
+<td>What a language shows</td>
+<td><code translate="no" v-pre>ui/lang/languages/</code> (one class per language), <code translate="no" v-pre>ui/workspace/LanguageUIBase.java</code></td>
+</tr>
+<tr>
+<td>A new learnable language</td>
+<td><code translate="no" v-pre>domain/collections/Languages.java</code>, <code translate="no" v-pre>ui/lang/</code>, <code translate="no" v-pre>ENUM_LANGUAGE_*</code> keys, <code translate="no" v-pre>LocalizationImpl.loadMaps</code></td>
+</tr>
+<tr>
+<td>An entity or the schema</td>
+<td>the entity in <code translate="no" v-pre>domain/model/impl/</code>, the Flyway migration, <code translate="no" v-pre>persistence.xml</code> - see <a href="../database/">Database &amp; migrations</a></td>
+</tr>
+<tr>
+<td>A new service</td>
+<td>interface in <code translate="no" v-pre>domain/service/</code>, implementation in <code translate="no" v-pre>impl/</code>, a bean in <code translate="no" v-pre>services-config.xml</code></td>
+</tr>
+<tr>
+<td>What an extension can hook into</td>
+<td>classes annotated <code translate="no" v-pre>@Extendable</code> in <code translate="no" v-pre>ui/</code></td>
+</tr>
+<tr>
+<td>Global styles</td>
+<td><code translate="no" v-pre>src/main/frontend/styles/shared-styles.css</code> and <code translate="no" v-pre>CssStyles.java</code></td>
+</tr>
+<tr>
+<td>Login and saved logins</td>
+<td><code translate="no" v-pre>ui/main/LoginCheckRoute.java</code>, <code translate="no" v-pre>UserServiceImpl</code></td>
+</tr>
+<tr>
+<td>Database backups</td>
+<td><code translate="no" v-pre>DatabaseBackupServiceImpl</code>, <code translate="no" v-pre>Configuration</code> (pending restore, copy before a migration)</td>
+</tr>
+<tr>
+<td>The desktop app</td>
+<td><code translate="no" v-pre>src/desktop/java/.../DesktopLauncher.java</code>, the <code translate="no" v-pre>desktop</code> profile in <code translate="no" v-pre>pom.xml</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../developer/architecture/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Architecture</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../developer/domain-model/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Domain model</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Project structure", level: 2, icon: "file", hasPrism: false, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/developer/project-structure.md" }</script>
+</body>
+</html>

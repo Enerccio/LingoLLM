@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Extended attributes</title>
+    <meta name="title" content="Extended attributes">
+    <meta name="description" content="Plugins can't add tables or columns - there is no way to run their own Flyway migrations. Instead, every data entity carries a JSON object where a plugin can keep whatever it needs: ExtendableEntity.attributes.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/plugins/extended-attributes/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/extended-attributes/">
+    <meta property="og:title" content="Extended attributes">
+    <meta property="og:description" content="Plugins can't add tables or columns - there is no way to run their own Flyway migrations. Instead, every data entity carries a JSON object where a plugin can keep whatever it needs: ExtendableEntity.attributes.">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/extended-attributes/">
+    <meta name="twitter:title" content="Extended attributes">
+    <meta name="twitter:description" content="Plugins can't add tables or columns - there is no way to run their own Flyway migrations. Instead, every data entity carries a JSON object where a plugin can keep whatever it needs: ExtendableEntity.attributes.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/plugins/extended-attributes.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../../resources/js/mermaid.js?v=4.6.0" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="extended-attributes">Extended attributes</h1>
+<p>Plugins can&#x27;t add tables or columns - there is no way to run their own Flyway migrations. Instead, every data entity
+carries a JSON object where a plugin can keep whatever it needs: <code translate="no" v-pre>ExtendableEntity.attributes</code>. It is saved with the
+entity, loaded with it, and travels with it into backups.</p>
+<h2 id="where-attributes-are">Where attributes are</h2>
+<p>All data entities extend <code translate="no" v-pre>ExtendableEntity</code> (<a href="../../domain-model/">Domain model</a>):</p>
+<retype-table copy-text="| Entity | Typical plugin data |
+|---|---|
+| `Language` (language profile) | Per-profile state and settings - the [example plugin](example.md) keeps notes here. |
+| `FreeChat`, `FreeChatMessage` | Data about one chat or message - an analysis of a message, a translation. |
+| `AI` (inference provider) | Per-provider options. (LingoLLM itself keeps the per-user limits of a shared AI in the `@ExtendedAttribute` field `AI.limits`, see [Domain model](../domain-model.md#limits-of-the-users-of-a-shared-ai).) |
+| `UserSetting` | Per-user plugin settings. |
+| `AppSettings` | Settings for the whole installation (administrators). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Entity</th>
+<th>Typical plugin data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Language</code> (language profile)</td>
+<td>Per-profile state and settings - the <a href="../example/">example plugin</a> keeps notes here.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code></td>
+<td>Data about one chat or message - an analysis of a message, a translation.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AI</code> (inference provider)</td>
+<td>Per-provider options. (LingoLLM itself keeps the per-user limits of a shared AI in the <code translate="no" v-pre>@ExtendedAttribute</code> field <code translate="no" v-pre>AI.limits</code>, see <a href="../../domain-model/#limits-of-the-users-of-a-shared-ai">Domain model</a>.)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>UserSetting</code></td>
+<td>Per-user plugin settings.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>AppSettings</code></td>
+<td>Settings for the whole installation (administrators).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><code translate="no" v-pre>User</code>, <code translate="no" v-pre>Resource</code> and <code translate="no" v-pre>Usage</code> are not extendable.</p>
+<div id="where-attributes-are-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">JsonObject attributes = entity.getAttributes();       // never null after loading; a new entity starts with {}</code></pre>
+</doc-codeblock></div>
+<h2 id="storing-and-reading-data">Storing and reading data</h2>
+<p>Use one top-level key per plugin, named after the plugin&#x27;s package, and put a JSON tree of your own model classes
+under it. Follow this pattern:</p>
+<div id="storing-and-reading-data-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">public class NotesData {
+    public static final String KEY = &quot;com.example.lingollm.languagenotes&quot;;
+    ...
+}
+
+public NotesData getNotes(Language language) {
+    JsonObject attrs = language.getAttributes();
+    if (attrs != null &amp;&amp; attrs.has(NotesData.KEY)) {
+        return gson.fromJson(attrs.get(NotesData.KEY), NotesData.class);
+    }
+    return null;
+}
+
+public void saveNotes(Language language, NotesData data) throws Exception {
+    Language fresh = languageService.find(language.getId());            // load before you change
+    fresh.getAttributes().add(NotesData.KEY, gson.toJsonTree(data));
+    languageService.save(fresh);
+}</code></pre>
+</doc-codeblock></div>
+<p>Rules:</p>
+<ul>
+<li>
+<p><strong>Save through the entity&#x27;s service</strong> - <code translate="no" v-pre>save(...)</code>, not <code translate="no" v-pre>saveWithoutEvent(...)</code>. See
+<doc-anchor-trigger to="#how-attributes-are-stored">How attributes are stored</doc-anchor-trigger> for why.</p>
+</li>
+<li>
+<p><strong>Load before you change.</strong> Entities held by the UI are detached copies, and the one you got from a decorator may
+be older than the database. Reload it (<code translate="no" v-pre>service.find(entity)</code> or <code translate="no" v-pre>find(id)</code>), change the attributes, save it, and
+use the returned object from then on. Saving an old copy overwrites changes made since - to the plugin&#x27;s data and
+to the rest of the entity.</p>
+<p>When several components edit parts of one JSON tree, each change should re-read the stored tree, change only its part
+and save it, not save a copy it loaded earlier.</p>
+</li>
+<li>
+<p><strong>Version your data.</strong> There are no migrations; if the format changes, read old formats too (a <code translate="no" v-pre>version</code> field in
+your JSON tree makes this easy) and never fail on data you don&#x27;t understand.</p>
+</li>
+<li>
+<p><strong>Keep it small.</strong> The whole JSON object is serialized on every save of the entity, and some entities are saved
+often - a chat message may be saved as it is edited. Megabytes of history in a message&#x27;s attributes slow the save down;
+keep history in one place (the profile) rather than in every message.</p>
+</li>
+</ul>
+<h3 id="settings">Settings</h3>
+<ul>
+<li>
+<p>Per user: <code translate="no" v-pre>settingService.getOrCreate(UserSetting.class)</code> returns the current user&#x27;s settings; store under your
+key, save with <code translate="no" v-pre>settingService.save(userSetting)</code>. To add the settings to the <em>Settings</em> screen, see
+<a href="../ui-extensions/#settings-panels">Extending the UI → Settings panels</a>.</p>
+</li>
+<li>
+<p>Whole installation: <code translate="no" v-pre>AppSettings</code> the same way, only administrators should change it.</p>
+</li>
+</ul>
+<h3 id="keys-used-by-the-application">Keys used by the application</h3>
+<p>The application itself uses <code translate="no" v-pre>attributes</code> too. Don&#x27;t use these keys:</p>
+<retype-table copy-text="| Key | Entity | Content |
+|---|---|---|
+| `languageSpecificData_*` | `Language` | The data of the language itself (`Language.languageSpecificData`, injected with the prefix `languageSpecificData`). |
+| `note`, `defaults` | `Language` | The note of the profile and the defaults it was created with. |
+| `rootPrompt`, `prompt`, `contents`, `attachments` | `FreeChat`, `FreeChatMessage` | `@ExtendedAttribute` fields of the chats (fields, not `attributes`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Key</th>
+<th>Entity</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>languageSpecificData_*</code></td>
+<td><code translate="no" v-pre>Language</code></td>
+<td>The data of the language itself (<code translate="no" v-pre>Language.languageSpecificData</code>, injected with the prefix <code translate="no" v-pre>languageSpecificData</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>note</code>, <code translate="no" v-pre>defaults</code></td>
+<td><code translate="no" v-pre>Language</code></td>
+<td>The note of the profile and the defaults it was created with.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>rootPrompt</code>, <code translate="no" v-pre>prompt</code>, <code translate="no" v-pre>contents</code>, <code translate="no" v-pre>attachments</code></td>
+<td><code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code></td>
+<td><code translate="no" v-pre>@ExtendedAttribute</code> fields of the chats (fields, not <code translate="no" v-pre>attributes</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h2 id="how-attributes-are-stored">How attributes are stored</h2>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">flowchart LR
+    subgraph Entity[&quot;Entity in memory&quot;]
+        A[&quot;attributes&lt;br/&gt;{ &amp;quot;com.example.x&amp;quot;: {...} }&quot;]
+        F[&quot;@ExtendedAttribute fields&lt;br/&gt;e.g. Language.note&quot;]
+    end
+    Col[(&quot;extendedContent&lt;br/&gt;BLOB column&quot;)]
+    Entity --&gt;|&quot;JpaExtendableRepository.save&lt;br/&gt;ExtendableEntityListener.serialize&quot;| Col
+    Col --&gt;|&quot;@PostLoad&lt;br/&gt;ExtendableEntityListener.deserialize&quot;| Entity</pre></div>
+<p><code translate="no" v-pre>attributes</code> is not a column. The entity has one <code translate="no" v-pre>extendedContent</code> column (bytes, UTF-8 JSON), and
+<code translate="no" v-pre>ExtendableEntityListener</code> converts between the two:</p>
+<ul>
+<li>
+<p><strong>On save</strong> (<code translate="no" v-pre>JpaExtendableRepository.save</code>) it builds one JSON object: each <code translate="no" v-pre>@ExtendedAttribute</code> field of the
+entity under its field name, as a string, and each key of <code translate="no" v-pre>attributes</code> with the prefix <code translate="no" v-pre>attributes_</code>.</p>
+</li>
+<li>
+<p><strong>On load</strong> (<code translate="no" v-pre>@PostLoad</code>) and after every save it fills the fields and <code translate="no" v-pre>attributes</code> back from that JSON.</p>
+</li>
+</ul>
+<p>The column of a language profile looks like this:</p>
+<div id="how-attributes-are-stored-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-json"><code v-pre class="language-json">{
+  &quot;note&quot;: &quot;evening class&quot;,
+  &quot;defaults&quot;: &quot;{...}&quot;,
+  &quot;languageSpecificData_kana&quot;: &quot;hiragana&quot;,
+  &quot;attributes_com.example.lingollm.languagenotes&quot;: &quot;Verbs of motion next week&quot;
+}</code></pre>
+</doc-codeblock></div>
+<p>Two things follow from this:</p>
+<ul>
+<li>
+<p><code translate="no" v-pre>saveWithoutEvent</code> (used by backup restore, which writes <code translate="no" v-pre>extendedContent</code> directly) <strong>does not serialize</strong>:
+changes to <code translate="no" v-pre>attributes</code> saved that way are lost. Always use <code translate="no" v-pre>save</code>.</p>
+</li>
+<li>
+<p>The <code translate="no" v-pre>_fulltext</code> column that is written next to <code translate="no" v-pre>extendedContent</code> is built only from the application&#x27;s
+<code translate="no" v-pre>@Fulltextable</code> fields. A plugin&#x27;s <code translate="no" v-pre>attributes</code> are not in it and can&#x27;t be added to it.</p>
+</li>
+<li>
+<p><code translate="no" v-pre>@ExtendedAttribute</code> is the application&#x27;s own way of adding fields to an entity without a migration - many fields
+of <code translate="no" v-pre>Language</code>, <code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code>, <code translate="no" v-pre>AI</code> and the settings are stored like this. It works for <code translate="no" v-pre>String</code>, the
+numeric types, <code translate="no" v-pre>boolean</code>, <code translate="no" v-pre>Date</code> and enums, stored as strings (dates as ISO-8601 instants in UTC).
+<code translate="no" v-pre>@ExtendedAttribute(inject = true, injectPrefix = ...)</code> on a <code translate="no" v-pre>JsonObject</code> field spreads its keys with that prefix,
+which is how <code translate="no" v-pre>attributes</code> itself is declared. This is for application code: a plugin can&#x27;t add fields to an entity
+class, it uses <code translate="no" v-pre>attributes</code>.</p>
+</li>
+</ul>
+<h2 id="where-the-data-goes">Where the data goes</h2>
+<retype-table copy-text="| Operation | Attributes |
+|---|---|
+| Database backup / restore (*Admin → Database Backups*) | Included - it's the whole database file. |
+| Soft delete, restore from the trash | Stay with the entity. |
+| Purge (*Admin → Cleanup*) | Gone with the row. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Operation</th>
+<th>Attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Database backup / restore (<em>Admin → Database Backups</em>)</td>
+<td>Included - it&#x27;s the whole database file.</td>
+</tr>
+<tr>
+<td>Soft delete, restore from the trash</td>
+<td>Stay with the entity.</td>
+</tr>
+<tr>
+<td>Purge (<em>Admin → Cleanup</em>)</td>
+<td>Gone with the row.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Plan for the cases where your data does not follow: nothing copies a profile yet, and there is no export of a profile or
+a chat, so data on them is only in the database and its backups.</p>
+<h2 id="references-to-other-entities">References to other entities</h2>
+<p>If your data refers to another entity, store its <code translate="no" v-pre>uuid</code> (or <code translate="no" v-pre>id</code>). The <em>Cleanup</em> page of the administration purges
+soft-deleted rows (<a href="../../domain-model/">Domain model</a>), and it knows only the references the application declares
+(<code translate="no" v-pre>@CleanupReference</code>) - ids inside a plugin&#x27;s attributes are invisible to it. Two consequences:</p>
+<ul>
+<li>
+<p>A deleted entity your data points to can be purged. Always handle a reference that resolves to nothing or to a
+deleted entity. Fall back to another provider when the configured one is missing or deleted:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">AI configuredAi = aiService.find(setting.getSelectedAiId());
+if (configuredAi != null &amp;&amp; !configuredAi.isDeleted()) {
+    return configuredAi;
+}
+return aiService.find(userSetting.getDefaultModel());</code></pre>
+</doc-codeblock></div>
+</li>
+<li>
+<p>If a reference must keep its target alive, or must be cleared when the target is purged, register a
+<code translate="no" v-pre>CleanupService.CleanupContributor</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">cleanupContributor = new CleanupService.CleanupContributor() {
+    @Override
+    public void collectReferences(Set&lt;CleanupService.EntityKey&gt; candidates, CleanupService.BlockSink sink) {
+        // during Analyze / Purge: block candidates the plugin still references
+        for (Long aiId : idsOfProvidersMyPluginUses()) {
+            CleanupService.EntityKey key = new CleanupService.EntityKey(AI.class, aiId);
+            if (candidates.contains(key)) {
+                sink.block(key, &quot;used by My Plugin&quot;);      // shown as the reason on the Cleanup page
+            }
+        }
+    }
+
+    @Override
+    public void beforePurge(Set&lt;CleanupService.EntityKey&gt; purged) {
+        // in the purge transaction, before the rows are removed: drop references to them
+    }
+};
+cleanupService.registerContributor(cleanupContributor);    // onExtensionLoad
+cleanupService.unregisterContributor(cleanupContributor);  // onExtensionUnload</code></pre>
+</doc-codeblock></div>
+<p><code translate="no" v-pre>EntityKey</code> uses the root entity class of a hierarchy (<code translate="no" v-pre>AI</code>, not <code translate="no" v-pre>OpenAICompatible</code>). Cleanup runs for the whole
+installation, not for one user - don&#x27;t use <code translate="no" v-pre>currentUser</code> in a contributor.</p>
+</li>
+</ul>
+<p>When resolving anything that came from data the user can edit or import, use <code translate="no" v-pre>findForUser(uuid)</code> so that one user&#x27;s
+data can&#x27;t point a plugin at another user&#x27;s entity.</p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/example/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Example plugin</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/ui-extensions/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Extending the UI</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Extended attributes", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/developer/plugins/extended-attributes.md" }</script>
+</body>
+</html>

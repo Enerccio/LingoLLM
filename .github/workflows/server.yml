@@ -1,0 +1,237 @@
+# Builds the server artifacts: the WAR and the Docker image (linux/amd64 + linux/arm64).
+#
+# Tests run in desktop.yml (the test job), this workflow only checks that everything builds and starts.
+#
+# Published on master and v* tags (not for pull requests):
+#   ghcr.io/<owner>/lingollm:edge                    latest master
+#   ghcr.io/<owner>/lingollm:<version>, :<major>.<minor>, :latest     v* tags
+# Attached to the GitHub release of a v* tag: lingollm-<version>.war.
+
+name: Server
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'lingollm/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - 'docker-entrypoint.sh'
+      - '.dockerignore'
+      - '.github/workflows/server.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: server-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: '25'
+  MAVEN_ARGS: '-B -ntp'
+
+jobs:
+  build:
+    name: WAR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # git-commit-id-plugin reads commit and closest tag
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Check version matches tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: lingollm
+        run: |
+          pom_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pom_version" != "$tag_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the version in pom.xml ($pom_version). Set <version>$tag_version</version> and tag again."
+            exit 1
+          fi
+
+      - name: Build the application
+        run: mvn -DskipTests package
+
+      - name: Collect artifacts
+        run: |
+          mkdir dist
+          cp lingollm/target/lingollm-*.war dist/
+          ls -l dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingollm-server
+          path: dist/*
+          if-no-files-found: error
+          # the WAR is already compressed
+          compression-level: 0
+          retention-days: 14
+
+  docker:
+    name: Docker ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            os: ubuntu-latest
+          - platform: linux/arm64
+            os: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Image name
+        # registry references must be lower case, the repository name isn't
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the image
+        # each platform builds natively (the Maven stage is slow under emulation); the image is loaded for the smoke test
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          load: true
+          tags: lingollm-smoke
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,scope=${{ matrix.platform }},mode=max
+
+      - name: Smoke test
+        # the container must start and serve LingoLLM, with the data folder as a bind mount created by Docker (root-owned)
+        run: |
+          mkdir "$RUNNER_TEMP/data"
+          docker run -d --name smoke -p 18080:8080 \
+            -e JAVA_TOOL_OPTIONS="-Duser.home=/var/lingollm" \
+            -v "$RUNNER_TEMP/data:/var/lingollm/.lingollm" lingollm-smoke
+          for i in $(seq 1 180); do
+            if curl -s "http://127.0.0.1:18080/" | grep -q "<title>LingoLLM</title>"; then
+              echo "LingoLLM is up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "LingoLLM did not start"
+          docker logs smoke
+          exit 1
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push by digest
+        # the tags are put on the multi-platform manifest by the merge job
+        if: github.event_name != 'pull_request'
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          digest="${{ steps.push.outputs.digest }}"
+          touch "$RUNNER_TEMP/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ strategy.job-index }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish image
+    if: github.event_name != 'pull_request'
+    needs: [build, docker]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: digests-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/digests
+
+      - name: Image name
+        # registry references must be lower case, the repository name isn't
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=edge,branch=master
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create the multi-platform manifest
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          # shellcheck disable=SC2046  # both substitutions expand to several arguments on purpose
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect
+        run: docker buildx imagetools inspect "$(jq -r '.tags[0]' <<< "$DOCKER_METADATA_OUTPUT_JSON")"
+
+  release:
+    name: Attach to release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: lingollm-server
+          path: dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

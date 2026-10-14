@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-root" content="/LingoLLM">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Example plugin</title>
+    <meta name="title" content="Example plugin">
+    <meta name="description" content="This page builds a small plugin from scratch - Language Notes, which adds a notes field to every language profile - and explains each piece. The code">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://enerccio.github.io/LingoLLM/developer/plugins/example/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://enerccio.github.io/LingoLLM/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/example/">
+    <meta property="og:title" content="Example plugin">
+    <meta property="og:description" content="This page builds a small plugin from scratch - Language Notes, which adds a notes field to every language profile - and explains each piece. The code">
+    <meta property="og:site_name" content="LingoLLM">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://enerccio.github.io/LingoLLM/developer/plugins/example/">
+    <meta name="twitter:title" content="Example plugin">
+    <meta name="twitter:description" content="This page builds a small plugin from scratch - Language Notes, which adds a notes field to every language profile - and explains each piece. The code">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://enerccio.github.io/LingoLLM/developer/plugins/example.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://enerccio.github.io/LingoLLM/" class="flex items-center leading-snug text-2xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">LingoLLM</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">Manual</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                </svg>
+                                <span>GitHub</span>
+                            </a>
+                        </li>
+                        <li class="mr-6">
+                            <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                        </li>
+    
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                        <nav>
+                            <ul class="flex flex-wrap justify-center items-center">
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="block shrink-0 mr-1.5" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
+                                        </svg>
+                                        <span>GitHub</span>
+                                    </a>
+                                </li>
+                                <li class="mr-6">
+                                    <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text hover:text-header-text-hover" href="https://github.com/Enerccio/LingoLLM/releases">Releases</a>
+                                </li>
+        
+                            </ul>
+                        </nav>
+                    </div>
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="example-plugin">Example plugin</h1>
+<p>This page builds a small plugin from scratch - <em>Language Notes</em>, which adds a notes field to every language profile -
+and explains each piece. The code compiles against the classes of LingoLLM 1.0.0 (it was compiled while this page was
+written, but it is an example: bundle it and try it before relying on it).</p>
+<h2 id="what-it-does">What it does</h2>
+<ul>
+<li>Below the screen of the selected language, the <strong>Learning</strong> tab shows a text area <em>Notes</em>.</li>
+<li>The text is stored in the <code translate="no" v-pre>attributes</code> of the language profile, so it is part of the database and its backups, and
+nothing in the database schema changes.</li>
+</ul>
+<p>Three things are used: a <strong>decorator</strong> on an <code translate="no" v-pre>@Extendable</code> method of the application (<code translate="no" v-pre>LanguagePart.showLanguage</code>), an
+<strong>attribute</strong> of an entity, and a <strong>service</strong> injected into the plugin class with <code translate="no" v-pre>@Configurable</code>.</p>
+<h2 id="project">Project</h2>
+<div id="project-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">languagenotes/
+├── pom.xml
+└── src/main/java/com/example/lingollm/languagenotes/
+    ├── LanguageNotesActivator.java
+    ├── LanguageNotesExtension.java
+    └── NotesService.java</code></pre>
+</doc-codeblock></div>
+<p>The <code translate="no" v-pre>pom.xml</code> is the one described in <a href="../overview/#pomxml">Plugin basics</a>: <code translate="no" v-pre>bundle</code> packaging, the classes of the
+application as a <code translate="no" v-pre>provided</code> dependency, AspectJ for <code translate="no" v-pre>@Configurable</code>, and the bundle plugin with</p>
+<ul>
+<li><code translate="no" v-pre>Bundle-Activator</code> <code translate="no" v-pre>com.example.lingollm.languagenotes.LanguageNotesActivator</code>,</li>
+<li><code translate="no" v-pre>Import-Package</code> <code translate="no" v-pre>!com.example.lingollm.languagenotes.*</code> and <code translate="no" v-pre>Export-Package</code> <code translate="no" v-pre>com.example.lingollm.languagenotes.*</code>.</li>
+</ul>
+<h2 id="the-activator">The activator</h2>
+<p>Registers the extension as an OSGi service - nothing else:</p>
+<div id="the-activator-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">import com.github.enerccio.lingollm.extensions.LingoLLMExtension;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
+public class LanguageNotesActivator implements BundleActivator {
+
+    private ServiceRegistration&lt;LingoLLMExtension&gt; registration;
+
+    @Override
+    public void start(BundleContext context) {
+        registration = context.registerService(LingoLLMExtension.class, new LanguageNotesExtension(), null);
+    }
+
+    @Override
+    public void stop(BundleContext context) {
+        if (registration != null) {
+            registration.unregister();
+            registration = null;
+        }
+    }
+}</code></pre>
+</doc-codeblock></div>
+<h2 id="the-service">The service</h2>
+<p>A plain class that is not a Spring bean, but is annotated <code translate="no" v-pre>@Configurable</code>: because the plugin is compiled with the
+AspectJ compiler, Spring injects the <code translate="no" v-pre>@Autowired</code> field from the application&#x27;s context when the object is created with
+<code translate="no" v-pre>new</code>. The notes are one value under a key of the profile&#x27;s <code translate="no" v-pre>attributes</code>:</p>
+<div id="the-service-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">import com.github.enerccio.lingollm.domain.model.impl.Language;
+import com.github.enerccio.lingollm.domain.service.LanguageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+/**
+ * Keeps the notes in the attributes of the language profile. @Configurable: the field is injected by Spring.
+ */
+@Configurable
+public class NotesService {
+
+    static final String KEY = &quot;com.example.lingollm.languagenotes&quot;;
+
+    @Autowired
+    private LanguageService languageService;
+
+    public String load(Language language) throws Exception {
+        // the profile held by the UI may be stale: read the stored one
+        Language stored = languageService.find(language.getId());
+        if (stored == null || !stored.getAttributes().has(KEY)) {
+            return &quot;&quot;;
+        }
+        return stored.getAttributes().get(KEY).getAsString();
+    }
+
+    public void save(Language language, String notes) throws Exception {
+        Language stored = languageService.find(language.getId());
+        stored.getAttributes().addProperty(KEY, notes);
+        languageService.save(stored);   // attributes are persisted only by the service's save
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Two rules from <a href="../extended-attributes/">Extended attributes</a> are in the code: the key is namespaced with the plugin
+(<code translate="no" v-pre>com.example.lingollm.languagenotes</code>), and the profile is read again before it is changed - the object the UI holds
+may be stale, and the attributes are written only by <code translate="no" v-pre>save</code> of the service.</p>
+<h2 id="the-extension">The extension</h2>
+<div id="the-extension-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-java"><code v-pre class="language-java">import com.github.enerccio.lingollm.domain.model.impl.Language;
+import com.github.enerccio.lingollm.domain.service.ExtensionService;
+import com.github.enerccio.lingollm.domain.service.ExtensionService.ExtendableMethodContext;
+import com.github.enerccio.lingollm.domain.service.ExtensionService.ExtensionDecorator;
+import com.github.enerccio.lingollm.domain.service.OsgiService;
+import com.github.enerccio.lingollm.extensions.LingoLLMExtension;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.textfield.TextArea;
+import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+
+public class LanguageNotesExtension implements LingoLLMExtension {
+
+    private static final String LANGUAGE_PART = &quot;com.github.enerccio.lingollm.ui.workspace.parts.LanguagePart&quot;;
+    private static final String MARKER = &quot;com.example.lingollm.languagenotes.notes&quot;;
+
+    private Logger log;
+    private ExtensionDecorator decorator;
+    private final NotesService notesService = new NotesService();
+
+    @Override
+    public void onExtensionLoad(Bundle bundle, OsgiService parentService, ExtensionService extensionService) {
+        log = parentService.createLogger(bundle);
+
+        decorator = new ExtensionDecorator() {
+            @Override
+            public void onMethodEnter(Object instrumented, ExtendableMethodContext context) {
+            }
+
+            @Override
+            public void onMethodLeave(Object instrumented, ExtendableMethodContext context, Throwable throwing) throws Exception {
+                if (throwing != null) {
+                    return;
+                }
+                Language language = context.getMethodArgument(&quot;language&quot;, Language.class);
+                Div content = context.getReflectiveFieldValue(instrumented, &quot;content&quot;, Div.class);
+                if (language == null || content == null || ComponentUtil.getData(content, MARKER) != null) {
+                    return;     // no profile, or our notes are already there
+                }
+
+                TextArea notes = new TextArea(&quot;Notes&quot;);
+                notes.setWidthFull();
+                notes.setValue(notesService.load(language));
+                notes.addValueChangeListener(e -&gt; {
+                    try {
+                        notesService.save(language, e.getValue());
+                    } catch (Exception ex) {
+                        log.error(&quot;Cannot save the notes of {}&quot;, language.getId(), ex);
+                    }
+                });
+                content.add(notes);
+                ComponentUtil.setData(content, MARKER, notes);
+            }
+        };
+
+        try {
+            extensionService.registerDecorator(decorator, LANGUAGE_PART, &quot;showLanguage&quot;);
+        } catch (Exception e) {
+            throw new IllegalStateException(&quot;Language Notes failed to load&quot;, e);
+        }
+    }
+
+    @Override
+    public void onExtensionUnload(Bundle bundle, OsgiService parentService, ExtensionService extensionService) {
+        extensionService.unregisterDecorator(decorator);
+        // the text areas of the open pages stay until the page is reloaded
+    }
+}</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>
+<p><strong>The hook.</strong> <code translate="no" v-pre>LanguagePart.showLanguage(language)</code> builds the screen of a language into the <code translate="no" v-pre>content</code> field every
+time a profile is selected, after emptying it. A decorator registered with <code translate="no" v-pre>registerDecorator(decorator, className, &quot;showLanguage&quot;)</code> runs <code translate="no" v-pre>onMethodLeave</code> after the method; the profile is its argument <code translate="no" v-pre>language</code>, the
+container is the field <code translate="no" v-pre>content</code> (<a href="../extendable/">@Extendable hooks</a> explains the context).</p>
+</li>
+<li>
+<p><strong>Idempotence.</strong> The method can run many times; <code translate="no" v-pre>ComponentUtil.setData(content, MARKER, notes)</code> marks the container so
+the field is not added twice if the method ran again without emptying it.</p>
+</li>
+<li>
+<p><strong>Settings and state</strong> are read when needed, not captured: the listener saves to the profile it was created for
+(<code translate="no" v-pre>language</code>), and a new profile gets a new text area.</p>
+</li>
+<li>
+<p><strong>The logger</strong> comes from <code translate="no" v-pre>parentService.createLogger(bundle)</code>, not from <code translate="no" v-pre>LoggerFactory</code>, so the lines reach the
+extension log shown in <em>Admin → Extensions → Log</em> (<a href="../overview/#logging">Plugin basics</a>).</p>
+</li>
+<li>
+<p><strong>Unloading.</strong> <code translate="no" v-pre>onExtensionUnload</code> removes the decorator. The text areas that are already in open pages stay until the
+page is reloaded; a plugin that must remove its components uses <code translate="no" v-pre>OsgiService.bindAttachableComponent</code>, see
+<a href="../ui-extensions/#unloading">Extending the UI</a>.</p>
+</li>
+<li>
+<p><strong>Phone.</strong> <code translate="no" v-pre>LanguagePart</code> is the same class in the desktop and the phone layout, so the plugin works in both.</p>
+</li>
+</ul>
+<h2 id="build-and-load">Build and load</h2>
+<div id="build-and-load-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">mvn -N install                    # once, in the repository root
+cd lingollm &amp;&amp; mvn install -DskipTests -Dvaadin.skip=true
+cd /path/to/languagenotes &amp;&amp; mvn package</code></pre>
+</doc-codeblock></div>
+<p>Then load <code translate="no" v-pre>target/languagenotes-1.0.0.jar</code> in <em>Admin → Extensions</em> of a running LingoLLM (or copy it to
+<code translate="no" v-pre>~/.lingollm/extensions</code> before the start). LingoLLM <a href="../extendable/#verification-before-loading">verifies</a> the names the
+decorator uses (<code translate="no" v-pre>LanguagePart</code>, <code translate="no" v-pre>showLanguage</code>, <code translate="no" v-pre>language</code>, <code translate="no" v-pre>content</code>) before it starts the extension; a typo is
+reported there instead of silently doing nothing.</p>
+<h2 id="what-to-try-next">What to try next</h2>
+<ul>
+<li>
+<p>Add the same field to the phone-only screens, or to the <em>Settings</em> tab: decorate <code translate="no" v-pre>UserPart.refresh</code> and <code translate="no" v-pre>save</code>
+(<a href="../ui-extensions/#settings-panels">Extending the UI</a>).</p>
+</li>
+<li>
+<p>Add a language: implement <code translate="no" v-pre>ExtensionHasLocalization</code> and return a <code translate="no" v-pre>LocalizationBundle</code>
+(<a href="../overview/#extension-events">Plugin basics</a>).</p>
+</li>
+<li>
+<p>Add a tab to the workspace by decorating <code translate="no" v-pre>DesktopWorkspace.create</code> (and <code translate="no" v-pre>PhoneWorkspace.create</code>).</p>
+</li>
+</ul>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/extendable/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">@Extendable hooks</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../developer/plugins/extended-attributes/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">Extended attributes</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright 2026. MIT License.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Example plugin", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/developer/plugins/example.md" }</script>
+</body>
+</html>

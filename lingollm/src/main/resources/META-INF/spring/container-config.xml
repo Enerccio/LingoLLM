@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean name="localization" class="com.github.enerccio.lingollm.loc.LocalizationImpl">
+        <property name="bundles">
+            <list>
+                <bean class="com.github.enerccio.lingollm.loc.LocalizationBundleEN" />
+            </list>
+        </property>
+    </bean>
+
+    <bean name="configuration" class="com.github.enerccio.lingollm.Configuration">
+        <property name="allowPersistentLogin" value="${allowPersistentLogin:true}" />
+        <property name="persistentLoginInfoTTL" value="${persistentLoginTTL:true}" />
+        <property name="trustedProxies" value="${trustedProxies:}" />
+    </bean>
+
+    <bean name="applicationPoint" class="com.github.enerccio.lingollm.bound.ApplicationPoint" />
+
+    <bean name="sessionManager" class="com.github.enerccio.lingollm.bound.SessionManager" />
+
+    <bean name="sessionPoint" class="com.github.enerccio.lingollm.bound.SessionPoint" scope="session">
+        <aop:scoped-proxy />
+    </bean>
+
+    <bean name="user" class="com.github.enerccio.lingollm.domain.security.model.User" scope="session">
+        <aop:scoped-proxy />
+    </bean>
+
+    <!-- the language profile the session works with, set by the language selector (like the user, only a reference) -->
+    <bean name="language" class="com.github.enerccio.lingollm.domain.model.impl.Language" scope="session">
+        <aop:scoped-proxy />
+    </bean>
+
+    <bean name="applicationInitializer" class="com.github.enerccio.lingollm.bound.ApplicationInitializer">
+        <property name="appVersion" value="1" />
+        <property name="dbVersion" value="1" />
+        <property name="migrations">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+</beans>

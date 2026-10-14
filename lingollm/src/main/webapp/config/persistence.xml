@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="PU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Entity Classes -->
+        <class>com.github.enerccio.lingollm.domain.security.model.User</class>
+
+        <class>com.github.enerccio.lingollm.domain.model.impl.Resource</class>
+        <class>com.github.enerccio.lingollm.domain.model.Setting</class>
+
+        <!-- data entities -->
+        <class>com.github.enerccio.lingollm.domain.model.impl.AI</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.Usage</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.Language</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.FreeChat</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.FreeChatMessage</class>
+
+        <class>com.github.enerccio.lingollm.domain.model.impl.OpenAICompatible</class>
+
+        <!-- settings -->
+        <class>com.github.enerccio.lingollm.domain.model.impl.settings.AppSettings</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.settings.UserSetting</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.dialect" value="com.github.enerccio.lingollm.SaneSQLiteDialect" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
+        </properties>
+    </persistence-unit>
+</persistence>

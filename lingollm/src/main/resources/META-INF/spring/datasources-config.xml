@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" depends-on="configuration" >
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="#{configuration.resolveDb('lingollm.sqlite')}"/>
+        <property name="username" value="" />
+        <property name="password" value="" />
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
+        <property name="numTestsPerEvictionRun" value="3"/>
+        <property name="minEvictableIdleTimeMillis" value="1800000"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="20" />
+    </bean>
+
+    <!-- shared with the database restore on start (Configuration.applyPendingRestore) -->
+    <bean id="flywayConfiguration" class="com.github.enerccio.lingollm.DatabaseCheck" factory-method="flywayConfiguration">
+        <constructor-arg index="0" ref="dataSource"/>
+    </bean>
+
+    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate" >
+        <constructor-arg index="0" ref="flywayConfiguration" />
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="ds"/>
+    </bean>
+
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
+        <property name="persistenceUnitName" value="PU"/>
+        <property name="persistenceXmlLocation" value="config/persistence.xml" />
+        <property name="dataSource" ref="ds"/>
+        <property name="jpaPropertyMap">
+            <map>
+                <!-- lets Spring create (and autowire) JPA converters, e.g. EncryptedStringConverter -->
+                <entry key="hibernate.resource.beans.container">
+                    <bean class="org.springframework.orm.jpa.hibernate.SpringBeanContainer" autowire="constructor" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="ds" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <constructor-arg ref="dataSource" />
+    </bean>
+
+    <bean id="em" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+        <property name = "entityManagerFactory" ref="emf"/>
+    </bean>
+
+    <tx:annotation-driven/>
+
+    <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" >
+        <property name="entityManagerFactory" ref="emf"/>
+        <property name="jpaDialect" ref="jpaDialect"/>
+        <qualifier value="common" />
+    </bean>
+
+</beans>
