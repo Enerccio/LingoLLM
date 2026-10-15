@@ -25,6 +25,7 @@ Some entities have a name in the UI that differs from the class. The UI and this
 | `Language` | `languages` | Language profile |
 | `Languages` (enum) | - | Language (the template of a profile) |
 | `FreeChat`, `FreeChatMessage` | `free_chats`, `free_chat_messages` | Free chat, message |
+| `Test`, `TestQuestionGroup`, `TestQuestion`, `TestResult`, `TestQuestionResult` | `tests`, `test_question_groups`, `test_questions`, `test_results`, `test_question_results` | Test, its groups of questions, the questions, an attempt at it, the answers of an attempt |
 | `AI`, `OpenAICompatible` | `ais`, `ais_openaicompat` | Inference provider |
 | `Usage` | `usages` | Tokens sent / generated column of the Inference Providers tab |
 | `Setting`, `AppSettings`, `UserSetting` | `settings` | Settings page, admin settings |
@@ -48,6 +49,13 @@ erDiagram
     FreeChat ||--o{ FreeChatMessage : "parentChat"
     FreeChatMessage |o--o{ FreeChatMessage : "parent / children"
     FreeChatMessage }o..o{ Resource : "attachments (uuid in JSON)"
+    Language ||--o{ Test : "language"
+    Test ||--o{ TestQuestionGroup : "parentTest"
+    Test ||--o{ TestQuestion : "parentTest"
+    TestQuestionGroup ||--o{ TestQuestion : "questionGroup"
+    Test ||--o{ TestResult : "test"
+    TestResult ||--o{ TestQuestionResult : "testResult"
+    TestQuestion ||--o{ TestQuestionResult : "question"
     UserSetting }o..o| Language : "lastLanguage (id)"
     UserSetting }o..o| AI : "defaultModel (id)"
 ```
@@ -90,6 +98,11 @@ classDiagram
     ExtendableEntity <|-- Setting
     LanguageBoundEntity <|-- FreeChat
     LanguageBoundEntity <|-- FreeChatMessage
+    LanguageBoundEntity <|-- Test
+    LanguageBoundEntity <|-- TestQuestionGroup
+    LanguageBoundEntity <|-- TestQuestion
+    LanguageBoundEntity <|-- TestResult
+    LanguageBoundEntity <|-- TestQuestionResult
     AI <|-- OpenAICompatible
     Setting <|-- AppSettings
     Setting <|-- UserSetting
@@ -118,9 +131,11 @@ when it is not a hard delete, soft delete those rows first (the `OWNED_BY` / `OW
 
 | Deleted | Also deleted |
 |---|---|
-| `Language` | its `FreeChat`s and `FreeChatMessage`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
+| `Language` | its `FreeChat`s, `FreeChatMessage`s, `Test`s, `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
 | `FreeChat` | its `FreeChatMessage`s (`FreeChatMessageService.softDeleteForChat`) |
 | `FreeChatMessage` | nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent |
+| `Test` | its `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s, soft or hard like the test (`deleteForTest` of their services, bulk) |
+| `TestResult` | its `TestQuestion`s, soft or hard (`TestQuestionResultService.deleteForTestResult`) |
 | `AI` | its `Usage`s |
 
 Objects that only *reference* the deleted one (a default model, the last language profile) are not deleted. A hard
@@ -200,6 +215,19 @@ session, see below.
 |---|---|---|
 | `FreeChat` | `free_chats` | `rootPrompt`, `prompt` (extended attributes). |
 | `FreeChatMessage` | `free_chat_messages` | `parentChat` (`OWNED_BY`; a column that cleanup sets to null before the purge, so it is nullable), `parent` (the message it answers, `OWNED_BY`; null for the first message), `contents` and `attachments` (extended attributes). |
+
+Tests are language bound too:
+
+| Entity | Table | Fields |
+|---|---|---|
+| `Test` | `tests` | `name`, `description` (extended attributes). |
+| `TestQuestionGroup` | `test_question_groups` | `parentTest` (`OWNED_BY`), `ordinal` (column, the order in the test), `factory` (extended attribute: class name of the `TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`). What the group shows to all its questions (a text to read, instructions) is kept by its handler under `$groupData` in the attributes. |
+| `TestQuestion` | `test_questions` | `parentTest` (`OWNED_BY`), `questionGroup` (`OWNED_BY`), `ordinal` (column, the order in the group; a test is shown by the ordinal of the group, then of the question), `factory` (extended attribute: class name of the `TestQuestionFactory` that handles the question, resolved by `TestQuestionFactoryRegistry`). |
+| `TestResult` | `test_results` | `test` (`OWNED_BY`), `score`, `maxScore` (extended attributes). One attempt at a test. |
+| `TestQuestionResult` | `test_question_results` | `testResult` (`OWNED_BY`), `question` (`OWNED_BY`), `answer`, `verdict` (`TestVerdict`: CORRECT, PARTIAL, WRONG), `gradedBy` (`GradedBy`: SERVER when the server compared the answer with `TestQuestion.answers`, LLM when the model judged it) and `feedback` (extended attributes). |
+
+`findByTest` / `findByTestResult` of the services list the children (they refuse a parent of another user). The deletes cascade
+as in the table above, hard or soft, with bulk statements.
 
 `FreeChatMessage` attachments are **loose**: the JSON holds `ImageAttachment(resource uuid, caption)`, there is no foreign key to `Resource`,
 so deleting or replacing a resource never touches a message (and cleanup does not know the link). The messages of a chat form a

@@ -12,6 +12,17 @@ anything specific to its stories); the database starts at `V1`.
 
 ### Added
 
+- Tests: language bound entities `Test`, `TestQuestion`, `TestResult` (an attempt) and `TestQuestionResult` (an answer)
+  with their repositories and services (tables added to `V1`). Deleting a test, soft or hard, deletes its questions,
+  attempts and answers; deleting an attempt deletes its answers; deleting a language profile soft deletes them too.
+- Question groups: `TestQuestionGroup` (a group of questions of a test that share something, e.g. a text to read; the
+  questions are ordered by the ordinal of the group, then their own) with `TestQuestionGroupService`. Like questions,
+  groups have a factory (`TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`; built-in
+  `PlainGroupFactory` and `ReadingTextGroupFactory`), so extensions can add group types (audio...). Deleting a test
+  deletes its groups too (table `test_question_groups` and column `test_questions.questionGroup_id` in `V1`).
+- Test questions: `TestQuestion.factory` names the `TestQuestionFactory` (`SingleChoiceFactory`, `MultipleChoiceFactory`,
+  `ReadingComprehensionWithSingleChoiceFactory`, `ReadingComprehensionWithMultipleChoicesFactory`) and `TestQuestionFactoryRegistry` resolves and caches factories by class name. Extensions register
+  their own factories with `register` and remove them with `unregister` when unloaded.
 - `@ExtendedAttribute(inject = true)` also works on POJO fields (and lists, maps...), not only on `JsonObject`: they are
   converted with Gson, an object is flattened by its top-level properties.
 - Extension **Gemma 4 tools fix** (`lingollm/plugins/gemma4toolsfix`), ported from Marginalia: results of function calls

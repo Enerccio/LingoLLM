@@ -79,6 +79,50 @@
         <property name="repository" ref="freeChatMessageRepository" />
     </bean>
 
+    <bean id="testRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaTestRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestServiceImpl">
+        <property name="repository" ref="testRepository" />
+    </bean>
+
+    <bean id="testQuestionGroupRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaTestQuestionGroupRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionGroupServiceImpl">
+        <property name="repository" ref="testQuestionGroupRepository" />
+    </bean>
+
+    <bean id="testQuestionRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaTestQuestionRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionServiceImpl">
+        <property name="repository" ref="testQuestionRepository" />
+    </bean>
+
+    <bean id="testResultRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaTestResultRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestResultServiceImpl">
+        <property name="repository" ref="testResultRepository" />
+    </bean>
+
+    <bean id="testQuestionResultRepository" class="com.github.enerccio.lingollm.domain.repository.impl.JpaTestQuestionResultRepository">
+        <property name="entityManager" ref="em"/>
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionResultServiceImpl">
+        <property name="repository" ref="testQuestionResultRepository" />
+    </bean>
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionFactoryRegistryImpl" />
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionGroupFactoryRegistryImpl" />
+
     <bean class="com.github.enerccio.lingollm.domain.service.impl.DatabaseBackupServiceImpl" />
 
     <bean class="com.github.enerccio.lingollm.domain.service.impl.OsgiServiceImpl" />

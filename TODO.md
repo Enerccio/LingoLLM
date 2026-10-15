@@ -4,8 +4,7 @@ Planned work for LingoLLM. Ideas that need a decision first are marked with a qu
 
 ## Learning
 
-- [ ] Free chat screen in the `Learning` tab (the inference layer, `stream` and function calls, is ready): a list of the chats of the selected profile, a message tree with
-      branching (regenerate, swipe) like the story of Marginalia, attachments from the Resources tab.
+- [ ] Free chat screen in the `Learning` tab (the inference layer, `stream` and function calls, is ready): a list of the chats of the selected profile
 - [ ] Prompts: `FreeChat.rootPrompt` and `prompt` are stored but unused; decide on templates (Handlebars as in
       Marginalia?) and fill `LanguageDefaults.freeChatTemplate` for Japanese and German.
 - [ ] Language specific screens (`ui/lang/languages/*`): exercises, vocabulary, progress in

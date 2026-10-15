@@ -186,6 +186,11 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.ENUM_DOMAIN_MESSAGE, "Message");
         setValue(L.ENUM_DOMAIN_RESOURCE, "Resource");
         setValue(L.ENUM_DOMAIN_SETTING, "Setting");
+        setValue(L.ENUM_DOMAIN_TEST, "Test");
+        setValue(L.ENUM_DOMAIN_TEST_QUESTION, "Test question");
+        setValue(L.ENUM_DOMAIN_TEST_QUESTION_GROUP, "Test question group");
+        setValue(L.ENUM_DOMAIN_TEST_RESULT, "Test result");
+        setValue(L.ENUM_DOMAIN_TEST_QUESTION_RESULT, "Test answer");
         setValue(L.ENUM_BUNDLE_STATE_UNINSTALLED, "Uninstalled");
         setValue(L.ENUM_BUNDLE_STATE_INSTALLED, "Installed");
         setValue(L.ENUM_BUNDLE_STATE_RESOLVED, "Resolved");

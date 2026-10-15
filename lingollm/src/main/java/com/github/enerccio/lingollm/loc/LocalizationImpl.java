@@ -8,6 +8,11 @@ import com.github.enerccio.lingollm.domain.model.impl.AI;
 import com.github.enerccio.lingollm.domain.model.impl.FreeChat;
 import com.github.enerccio.lingollm.domain.model.impl.FreeChatMessage;
 import com.github.enerccio.lingollm.domain.model.impl.Resource;
+import com.github.enerccio.lingollm.domain.model.impl.Test;
+import com.github.enerccio.lingollm.domain.model.impl.TestQuestion;
+import com.github.enerccio.lingollm.domain.model.impl.TestQuestionGroup;
+import com.github.enerccio.lingollm.domain.model.impl.TestQuestionResult;
+import com.github.enerccio.lingollm.domain.model.impl.TestResult;
 import com.github.enerccio.lingollm.domain.security.model.User;
 import com.github.enerccio.lingollm.domain.traits.CleanupReference;
 import org.slf4j.Logger;
@@ -104,6 +109,11 @@ public class LocalizationImpl implements Localization, InitializingBean {
         domainObjects.put(FreeChatMessage.class, L.ENUM_DOMAIN_MESSAGE);
         domainObjects.put(Resource.class, L.ENUM_DOMAIN_RESOURCE);
         domainObjects.put(Setting.class, L.ENUM_DOMAIN_SETTING);
+        domainObjects.put(Test.class, L.ENUM_DOMAIN_TEST);
+        domainObjects.put(TestQuestion.class, L.ENUM_DOMAIN_TEST_QUESTION);
+        domainObjects.put(TestQuestionGroup.class, L.ENUM_DOMAIN_TEST_QUESTION_GROUP);
+        domainObjects.put(TestResult.class, L.ENUM_DOMAIN_TEST_RESULT);
+        domainObjects.put(TestQuestionResult.class, L.ENUM_DOMAIN_TEST_QUESTION_RESULT);
         domainObjects.put(User.class, L.LABEL_USER);
     }
 

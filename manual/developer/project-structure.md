@@ -51,7 +51,7 @@ lingollm/
 ├── src/main/java/                application code
 ├── src/main/resources/           Spring XML, the Flyway migration, log4j, Vaadin build info
 ├── src/main/resources-release/   WAR-only resources: the release log4j.properties
-├── src/main/resources-raw/       copied into WEB-INF/classes without filtering (empty)
+├── src/main/resources-raw/       on the classpath and copied into WEB-INF/classes without filtering (`japanese/joyo.csv`)
 ├── src/main/webapp/config/       configuration.properties, persistence.xml
 ├── src/main/frontend/            CSS for the Vaadin frontend
 ├── src/desktop/                  desktop launcher and launch scripts (not part of the WAR)
@@ -109,6 +109,7 @@ Application code lives in `com.github.enerccio.lingollm` (paths below are relati
 | `Setting` | Base of settings, single table `settings` with a `DTYPE` discriminator. |
 | `impl/Language` | A language profile of a user. |
 | `impl/FreeChat`, `impl/FreeChatMessage` | A free conversation and its messages (a tree through `parent`). |
+| `impl/Test`, `impl/TestQuestionGroup`, `impl/TestQuestion`, `impl/TestResult`, `impl/TestQuestionResult` | A test, its questions, an attempt at it and the answers of the attempt. |
 | `impl/AI`, `impl/OpenAICompatible` | Inference providers (`AI` is the base, `OpenAICompatible` the only type). |
 | `impl/Resource` | Uploaded files stored by hash; `clazz` + `objectId` loosely note what uses it. Listed in the Resources tab. |
 | `impl/Usage` | What a user used of an AI (tokens, requests, tokens since the last reset of their limit). |
@@ -138,6 +139,8 @@ Interfaces in `domain.service`, implementations in `domain.service.impl`:
 |---|---|
 | `BaseService`, `OwnedService`, `ExtendableService`, `LanguageBoundService` | Generic CRUD, soft delete, lookups restricted to the current user (and to a language profile). |
 | `LanguageService`, `FreeChatService`, `FreeChatMessageService` | Language profiles, free chats and their messages. |
+| `TestQuestionFactoryRegistry`, `TestQuestionGroupFactoryRegistry` | The `TestQuestionFactory`s and `TestQuestionGroupFactory`s by class name (built-in ones are loaded and cached on first use, extensions register theirs). |
+| `TestService`, `TestQuestionGroupService`, `TestQuestionService`, `TestResultService`, `TestQuestionResultService` | Tests, their questions, attempts and answers (deleting a test deletes the rest). |
 | `AIService`, `SettingService`, `ResourceService` | Inference providers, settings, files. |
 | `AILimitService` | The per-user limits of a shared AI: the owning administrator sets them, `check` refuses a request of a user who is over their limit, `getStatus` is for the user's own view. |
 | `UsageService` | Tokens a user used with an AI (`Usage`, one per AI and user); `findAllUsages()` lists everybody's for administrators. |

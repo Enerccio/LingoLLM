@@ -20,6 +20,11 @@
         <class>com.github.enerccio.lingollm.domain.model.impl.Language</class>
         <class>com.github.enerccio.lingollm.domain.model.impl.FreeChat</class>
         <class>com.github.enerccio.lingollm.domain.model.impl.FreeChatMessage</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.Test</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.TestQuestionGroup</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.TestQuestion</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.TestResult</class>
+        <class>com.github.enerccio.lingollm.domain.model.impl.TestQuestionResult</class>
 
         <class>com.github.enerccio.lingollm.domain.model.impl.OpenAICompatible</class>
 

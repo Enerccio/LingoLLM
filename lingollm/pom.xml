@@ -323,6 +323,16 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- on the classpath for tests and jetty:run too, not only in the WAR (see the maven-war-plugin) -->
+      <resource>
+        <directory>src/main/resources-raw</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>pl.project13.maven</groupId>

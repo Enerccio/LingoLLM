@@ -222,3 +222,128 @@ INSERT INTO free_chat_messages_SEQ (next_val) VALUES (1);
 
 create index ix_free_chat_messages_chat on free_chat_messages (parentChat_id, creation);
 create index ix_free_chat_messages_parent on free_chat_messages (parent_id);
+
+create table tests
+(
+    id              bigint      not null
+        primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null
+        unique,
+    extendedContent blob,
+    _fulltext       clob,
+    language_id     bigint,
+    userId          bigint
+);
+
+create table tests_SEQ
+(
+    next_val bigint
+);
+INSERT INTO tests_SEQ (next_val) VALUES (1);
+
+create index ix_tests_language on tests (userId, language_id, is_deleted);
+
+create table test_question_groups
+(
+    id              bigint      not null
+        primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null
+        unique,
+    extendedContent blob,
+    _fulltext       clob,
+    language_id     bigint,
+    ordinal         integer,
+    parentTest_id   bigint,
+    userId          bigint
+);
+
+create table test_question_groups_SEQ
+(
+    next_val bigint
+);
+INSERT INTO test_question_groups_SEQ (next_val) VALUES (1);
+
+create index ix_test_question_groups_test on test_question_groups (parentTest_id, ordinal);
+
+create table test_questions
+(
+    id              bigint      not null
+        primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null
+        unique,
+    extendedContent blob,
+    _fulltext       clob,
+    language_id     bigint,
+    ordinal         integer,
+    parentTest_id   bigint,
+    questionGroup_id bigint,
+    userId          bigint
+);
+
+create table test_questions_SEQ
+(
+    next_val bigint
+);
+INSERT INTO test_questions_SEQ (next_val) VALUES (1);
+
+create index ix_test_questions_test on test_questions (parentTest_id, ordinal);
+create index ix_test_questions_group on test_questions (questionGroup_id, ordinal);
+
+create table test_results
+(
+    id              bigint      not null
+        primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null
+        unique,
+    extendedContent blob,
+    _fulltext       clob,
+    language_id     bigint,
+    test_id         bigint,
+    userId          bigint
+);
+
+create table test_results_SEQ
+(
+    next_val bigint
+);
+INSERT INTO test_results_SEQ (next_val) VALUES (1);
+
+create index ix_test_results_test on test_results (test_id, creation);
+
+create table test_question_results
+(
+    id              bigint      not null
+        primary key,
+    creation        timestamp,
+    is_deleted      boolean     not null,
+    modification    timestamp,
+    uuid            varchar(36) not null
+        unique,
+    extendedContent blob,
+    _fulltext       clob,
+    language_id     bigint,
+    testResult_id   bigint,
+    question_id     bigint,
+    userId          bigint
+);
+
+create table test_question_results_SEQ
+(
+    next_val bigint
+);
+INSERT INTO test_question_results_SEQ (next_val) VALUES (1);
+
+create index ix_test_question_results_result on test_question_results (testResult_id, creation);
+create index ix_test_question_results_question on test_question_results (question_id);
