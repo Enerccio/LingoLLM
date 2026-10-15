@@ -207,6 +207,12 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.ENUM_RESET_MONTHLY, "Monthly");
         setValue(L.ENUM_LANGUAGE_JAPANESE, "Japanese");
         setValue(L.ENUM_LANGUAGE_GERMAN, "German");
+        setValue(L.ENUM_CEFR_A1, "A1 - Beginner");
+        setValue(L.ENUM_CEFR_A2, "A2 - Elementary");
+        setValue(L.ENUM_CEFR_B1, "B1 - Intermediate");
+        setValue(L.ENUM_CEFR_B2, "B2 - Upper intermediate");
+        setValue(L.ENUM_CEFR_C1, "C1 - Advanced");
+        setValue(L.ENUM_CEFR_C2, "C2 - Proficient");
 
 
         // --- ERROR ---

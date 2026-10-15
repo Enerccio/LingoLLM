@@ -12,6 +12,9 @@ anything specific to its stories); the database starts at `V1`.
 
 ### Added
 
+- Language profiles have the level the user says they have: `Language.userGrade` (`CEFR`, A1-C2, each with a short
+  description for the model) and `Language.userGradeFineDetails` (free text). No screen sets them yet. The levels have
+  localized names (`ENUM_CEFR_*`, `Localization.getCefrLevel`).
 - Tests: language bound entities `Test`, `TestQuestion`, `TestResult` (an attempt) and `TestQuestionResult` (an answer)
   with their repositories and services (tables added to `V1`). Deleting a test, soft or hard, deletes its questions,
   attempts and answers; deleting an attempt deletes its answers; deleting a language profile soft deletes them too.

@@ -1,5 +1,6 @@
 package com.github.enerccio.lingollm.domain.model.impl;
 
+import com.github.enerccio.lingollm.domain.collections.CEFR;
 import com.github.enerccio.lingollm.domain.collections.Languages;
 import com.github.enerccio.lingollm.domain.model.ExtendableEntity;
 import com.github.enerccio.lingollm.domain.traits.ExtendedAttribute;
@@ -28,6 +29,16 @@ public class Language extends ExtendableEntity {
     @ExtendedAttribute
     @Transient
     private String defaults;
+
+    /** The level the user says they have in this language. */
+    @ExtendedAttribute
+    @Transient
+    private CEFR userGrade;
+
+    /** Free text on top of {@link #userGrade}: what the user can and cannot do, strong and weak points. */
+    @ExtendedAttribute
+    @Transient
+    private String userGradeFineDetails;
 
     /**
      * Data only the {@link Languages language} knows (its own exercises, progress...). Injected, so its keys are
@@ -75,5 +86,21 @@ public class Language extends ExtendableEntity {
 
     public void setLanguageSpecificData(JsonObject languageSpecificData) {
         this.languageSpecificData = languageSpecificData;
+    }
+
+    public CEFR getUserGrade() {
+        return userGrade;
+    }
+
+    public void setUserGrade(CEFR userGrade) {
+        this.userGrade = userGrade;
+    }
+
+    public String getUserGradeFineDetails() {
+        return userGradeFineDetails;
+    }
+
+    public void setUserGradeFineDetails(String userGradeFineDetails) {
+        this.userGradeFineDetails = userGradeFineDetails;
     }
 }

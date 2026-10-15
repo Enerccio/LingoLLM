@@ -56,15 +56,15 @@ public final class JavascriptLibrary {
      * Resolves to {@code x;y;w;h} of the element, x and y relative to the document.
      */
     public static PendingJavaScriptResult getPositionAndSize(Element element) {
-        return element.executeJs("" +
-                "return (function () { \n" +
-                "   var w = $0.clientWidth; \n" +
-                "   var h = $0.clientHeight; \n" +
-                "   var bb = $0.getBoundingClientRect(); \n" +
-                "   var x = bb.left + window.scrollX; \n" +
-                "   var y = bb.top + window.scrollY; \n" +
-                "   return '' + x + ';' + y + ';' + w + ';' + h; \n" +
-                "} ())", element);
+        return element.executeJs("""
+                return (function () {
+                   var w = $0.clientWidth;
+                   var h = $0.clientHeight;
+                   var bb = $0.getBoundingClientRect();
+                   var x = bb.left + window.scrollX;
+                   var y = bb.top + window.scrollY;
+                   return '' + x + ';' + y + ';' + w + ';' + h;
+                } ())""", element);
     }
 
     // --- scrolling ---

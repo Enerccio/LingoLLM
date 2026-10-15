@@ -275,8 +275,9 @@ public class Configuration implements InitializingBean {
             if (hadDatabase) {
                 moveWithSideFiles(preRestore, db);
             }
-            log.error("Restored database failed to migrate, the previous database was put back. The rejected file was "
-                    + "moved to {}", rejected.getAbsolutePath(), e);
+            log.error("""
+                    Restored database failed to migrate, the previous database was put back. The rejected file was \
+                    moved to {}""", rejected.getAbsolutePath(), e);
             return;
         }
         log.warn("Database restored from pending backup, previous database moved to {}", preRestore.getAbsolutePath());

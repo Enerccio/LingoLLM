@@ -62,8 +62,9 @@ public class JpaUsageRepository extends JpaOwnedRepository<Usage> implements Usa
     @Override
     public int resetPeriod(AI ai, User user, Date periodStart) {
         return getEntityManager()
-                .createQuery("UPDATE Usage u SET u.periodPrefillTokens = 0, u.periodGeneratedTokens = 0 "
-                        + "WHERE u.ai.id = :ai AND u.owner.id = :owner AND u.deleted = false AND u.lastUsed < :start")
+                .createQuery("""
+                        UPDATE Usage u SET u.periodPrefillTokens = 0, u.periodGeneratedTokens = 0 \
+                        WHERE u.ai.id = :ai AND u.owner.id = :owner AND u.deleted = false AND u.lastUsed < :start""")
                 .setParameter("start", periodStart)
                 .setParameter("ai", ai.getId())
                 .setParameter("owner", user.getId())

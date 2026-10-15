@@ -121,8 +121,9 @@ public class ExtensionServiceImpl implements ExtensionService {
             Pair<Object, Class<?>> registeredPair = localVariables.get(name);
             if (registeredPair == null) {
                 throw new ModCompatibilityException(String.format(
-                        "Required component variable '%s' was not found in %s. " +
-                                "The core UI code may have been refactored or renamed.",
+                        """
+                                Required component variable '%s' was not found in %s. \
+                                The core UI code may have been refactored or renamed.""",
                         name, targetInstance.getClass().getSimpleName()
                 ));
             }
@@ -162,8 +163,9 @@ public class ExtensionServiceImpl implements ExtensionService {
             Pair<Object, Class<?>> registeredPair = methodArguments.get(name);
             if (registeredPair == null) {
                 throw new ModCompatibilityException(String.format(
-                        "Required component argument '%s' was not found in %s. " +
-                                "The core UI code may have been refactored or renamed.",
+                        """
+                                Required component argument '%s' was not found in %s. \
+                                The core UI code may have been refactored or renamed.""",
                         name, targetInstance.getClass().getSimpleName()
                 ));
             }
@@ -251,8 +253,9 @@ public class ExtensionServiceImpl implements ExtensionService {
         private void requireReturn(String action) {
             if (!hasReturn) {
                 throw new ModCompatibilityException(String.format(
-                        "The extension wanted to %s the return value of a method of %s, which has none yet: the method " +
-                                "is void, throws, or this is onMethodEnter.",
+                        """
+                                The extension wanted to %s the return value of a method of %s, which has none yet: the method \
+                                is void, throws, or this is onMethodEnter.""",
                         action, targetInstance.getClass().getSimpleName()));
             }
         }
@@ -271,8 +274,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 Method method = ReflectUtils.getMethod(object.getClass(), methodName, argumentTypes);
                 if (method == null) {
                     throw new ModCompatibilityException(String.format(
-                            "Required methodName '%s' was not found in %s. " +
-                                    "The core UI code may have been refactored or renamed.",
+                            """
+                                    Required methodName '%s' was not found in %s. \
+                                    The core UI code may have been refactored or renamed.""",
                             methodName, targetInstance.getClass().getSimpleName()
                     ));
                 }
@@ -293,8 +297,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 throw e;
             } catch (Throwable t) {
                 throw new ModCompatibilityException(String.format(
-                        "Required methodName '%s' was not found in %s. " +
-                                "The core UI code may have been refactored or renamed.",
+                        """
+                                Required methodName '%s' was not found in %s. \
+                                The core UI code may have been refactored or renamed.""",
                         methodName, targetInstance.getClass().getSimpleName()
                 ));
             }
@@ -307,8 +312,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 Field f = ReflectUtils.getField(object.getClass(), field);
                 if (f == null) {
                     throw new ModCompatibilityException(String.format(
-                            "Required field '%s' was not found in %s. " +
-                                    "The core UI code may have been refactored or renamed.",
+                            """
+                                    Required field '%s' was not found in %s. \
+                                    The core UI code may have been refactored or renamed.""",
                             field, targetInstance.getClass().getSimpleName()
                     ));
                 }
@@ -324,8 +330,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 throw e;
             } catch (Throwable t) {
                 throw new ModCompatibilityException(String.format(
-                        "Required field '%s' was not found in %s. " +
-                                "The core UI code may have been refactored or renamed.",
+                        """
+                                Required field '%s' was not found in %s. \
+                                The core UI code may have been refactored or renamed.""",
                         field, targetInstance.getClass().getSimpleName()
                 ));
             }
@@ -337,8 +344,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 Field f = ReflectUtils.getField(object.getClass(), field);
                 if (f == null) {
                     throw new ModCompatibilityException(String.format(
-                            "Required field '%s' was not found in %s. " +
-                                    "The core UI code may have been refactored or renamed.",
+                            """
+                                    Required field '%s' was not found in %s. \
+                                    The core UI code may have been refactored or renamed.""",
                             field, targetInstance.getClass().getSimpleName()
                     ));
                 }
@@ -352,8 +360,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 f.set(object, value);
             } catch (Throwable t) {
                 throw new ModCompatibilityException(String.format(
-                        "Required field '%s' was not found in %s. " +
-                                "The core UI code may have been refactored or renamed.",
+                        """
+                                Required field '%s' was not found in %s. \
+                                The core UI code may have been refactored or renamed.""",
                         field, targetInstance.getClass().getSimpleName()
                 ));
             }

@@ -60,8 +60,9 @@ public class OpenAICompatibleInferenceService implements InferenceService, Initi
     public static final int DEFAULT_MAX_RETRIES = 2;
 
     private static final Pattern CONTEXT_OVERFLOW = Pattern.compile(
-            "context[ _-]?(length|window|size)|maximum context|too many tokens|token limit|prompt is too long"
-                    + "|context.{0,30}too (long|large)|too (long|large).{0,30}context|exceeds? .{0,40}(context|tokens)",
+            """
+                    context[ _-]?(length|window|size)|maximum context|too many tokens|token limit|prompt is too long\
+                    |context.{0,30}too (long|large)|too (long|large).{0,30}context|exceeds? .{0,40}(context|tokens)""",
             Pattern.CASE_INSENSITIVE);
 
     @Autowired

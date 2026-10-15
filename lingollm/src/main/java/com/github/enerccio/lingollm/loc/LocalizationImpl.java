@@ -41,6 +41,7 @@ public class LocalizationImpl implements Localization, InitializingBean {
     private final Map<ResetStrategy, L> resetStrategies = new HashMap<>();
     private final Map<CleanupReference.Policy, L> cleanupPolicies = new HashMap<>();
     private final Map<Languages, L> languageNames = new EnumMap<>(Languages.class);
+    private final Map<CEFR, L> cefrLevels = new EnumMap<>(CEFR.class);
     private final Map<Class<?>, L> domainObjects = new HashMap<>();
 
     public LocalizationImpl() {
@@ -102,6 +103,13 @@ public class LocalizationImpl implements Localization, InitializingBean {
 
         languageNames.put(Languages.JAPANESE, L.ENUM_LANGUAGE_JAPANESE);
         languageNames.put(Languages.GERMAN, L.ENUM_LANGUAGE_GERMAN);
+
+        cefrLevels.put(CEFR.A1, L.ENUM_CEFR_A1);
+        cefrLevels.put(CEFR.A2, L.ENUM_CEFR_A2);
+        cefrLevels.put(CEFR.B1, L.ENUM_CEFR_B1);
+        cefrLevels.put(CEFR.B2, L.ENUM_CEFR_B2);
+        cefrLevels.put(CEFR.C1, L.ENUM_CEFR_C1);
+        cefrLevels.put(CEFR.C2, L.ENUM_CEFR_C2);
 
         domainObjects.put(AI.class, L.LABEL_MODEL);
         domainObjects.put(com.github.enerccio.lingollm.domain.model.impl.Language.class, L.LABEL_LANGUAGE_PROFILE);
@@ -283,6 +291,11 @@ public class LocalizationImpl implements Localization, InitializingBean {
     @Override
     public L getLanguageName(Languages language) {
         return languageNames.get(language);
+    }
+
+    @Override
+    public L getCefrLevel(CEFR level) {
+        return cefrLevels.get(level);
     }
 
     @Override

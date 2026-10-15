@@ -201,6 +201,8 @@ by the (empty) fields. The repository then reads the fields back from the JSON a
 | `language` | column (by name) | The template, `Languages` (`JAPANESE`, `GERMAN`): flag, defaults and the `LanguageUI` factory. Renaming a constant breaks existing data. |
 | `nameOverride` | column | The name the user gave the profile. |
 | `note` | extended attribute | Free text shown below the name. |
+| `userGrade` | extended attribute | The level the user says they have, `CEFR` (`A1`...`C2`, in `domain.collections`; `getDescription()` is a short text for the model). Null until set. |
+| `userGradeFineDetails` | extended attribute | Free text on top of the grade (what the user can and cannot do). |
 | `defaults` | extended attribute | JSON of `LanguageDefaults` as it was when the profile was created, so a later change of the defaults does not change old profiles. |
 | `languageSpecificData` | injected `JsonObject` | Whatever the language's own UI keeps (progress, settings), stored as `languageSpecificData_*`. |
 

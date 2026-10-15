@@ -428,7 +428,7 @@ flowchart LR
   request (startup, scheduled backups) or with a language that has no bundle (any more) the default language is
   used, and a text a bundle doesn't have is taken from the default language, so a bundle that lags behind the keys
   keeps working. Worker threads get the session through `ThreadCopyRequestAttributes` like the `user` bean. The names of the learnable
-  languages (`Languages`) are `ENUM_LANGUAGE_*` keys, see `Localization.getLanguageName`.
+  languages (`Languages`) are `ENUM_LANGUAGE_*` keys, see `Localization.getLanguageName`; the CEFR levels (`CEFR`) are `ENUM_CEFR_*` keys, see `Localization.getCefrLevel`.
 - **Choosing.** The language of a user is `UserSetting.language` (a language code, `null` for the default).
   `Main.proceedWithLogin` sets `SessionPoint.language` from it before the workspace is created, so the login page
   itself is always in the default language. The `LanguageSelector` at the bottom of the workspace (desktop sidebar,

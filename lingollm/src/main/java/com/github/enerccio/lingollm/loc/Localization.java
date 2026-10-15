@@ -34,6 +34,7 @@ public interface Localization {
     L getResetStrategy(ResetStrategy t);
     L getCleanupPolicy(CleanupReference.Policy t);
     L getLanguageName(Languages language);
+    L getCefrLevel(CEFR level);
 
     /**
      * Localized name of the kind of object an entity class stands for (language profile, chat...), subclasses use the name of
