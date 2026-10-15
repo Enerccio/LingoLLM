@@ -31,6 +31,16 @@ The selector is part of the *Learning* tab, so you cannot switch while another t
 
 ## What is in a profile
 
+Below the selector the **Learning** tab has the tabs of the profile (on a phone they scroll sideways):
+
+- **Level** - the level you have in the language, as a CEFR level from A1 to C2, and your impressions: what you can and
+  cannot do, your strong and weak points. The lessons are fitted to it. LingoLLM prefers that you take the grade test
+  (**Take Grade Test**, the robot button) instead of choosing the level by hand; fill it in yourself only when you are sure.
+  Click **Save** to keep it. The grade test itself is not available yet.
+- **Free chat** - not available yet.
+
+A profile that has no level yet shows only the **Level** tab; the other tabs unlock when you save the level.
+
 The language screens are still being built. The data model for **free chats** exists - a conversation is a tree of
 messages, and attachments are links to your [resources](resources.md) that survive the deletion of the resource - but
 there is no chat screen yet.

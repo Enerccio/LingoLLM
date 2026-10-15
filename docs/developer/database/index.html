@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845384888589">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845395895244">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845384888589" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845395895244" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845384888589" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845395895244" defer></script>
     <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
 </head>
 <body>
@@ -252,7 +252,18 @@ sqlite&gt; select id, nameOverride, cast(extendedContent as text) from languages
 <a href="../domain-model/#extendableentity---extended-attributes">extended attributes</a>. Timestamps (<code translate="no" v-pre>creation</code>,
 <code translate="no" v-pre>modification</code>, <code translate="no" v-pre>lastOpened</code>) are stored as milliseconds since the epoch, booleans as <code translate="no" v-pre>0</code> / <code translate="no" v-pre>1</code>.</p>
 <h2 id="startup-migrate-then-validate">Startup: migrate, then validate</h2>
-<ol>
+<ol start="0">
+<li>
+<p><strong>Reinitialization</strong>, a development aid for the time before 1.0.0, when <code translate="no" v-pre>V1__initial.sql</code> is edited instead of adding migrations: after changing <code translate="no" v-pre>V1</code>, start with a SQL file that reloads your test data (only with the VM argument <code translate="no" v-pre>-Dreinitialize-with-sql=/path/to/file.sql</code>, or the desktop launcher
+option <code translate="no" v-pre>--reinitialize-with-sql &lt;file&gt;</code>): <code translate="no" v-pre>Configuration.afterPropertiesSet</code> reads the script into memory, then wipes
+the content of the application folder (<code translate="no" v-pre>~/.lingollm</code>) before anything is created in it. The folder itself, <code translate="no" v-pre>secret.key</code>
+(so encrypted values in the script stay readable) and the launcher&#x27;s own <code translate="no" v-pre>desktop/</code> subfolder (the Jetty base of the
+running desktop app) stay. Nothing is deleted when the script is not a readable file or the folder is a filesystem root or the home folder.
+Then <code translate="no" v-pre>resolveDb</code> has Flyway create and migrate the database (the Flyway of step 2 has nothing left to do) and runs
+the script on it in one transaction (lines with only <code translate="no" v-pre>BEGIN</code>, <code translate="no" v-pre>COMMIT</code> or <code translate="no" v-pre>END</code> are dropped first, so a <code translate="no" v-pre>sqlite3 .dump</code> can be used; Spring <code translate="no" v-pre>ScriptUtils</code>: statements end with <code translate="no" v-pre>;</code>, so a trigger body with <code translate="no" v-pre>;</code> inside
+does not work). A script that fails is rolled back and stops the startup. <strong>The argument wipes the data at every start
+it is present for</strong>, so it has to be removed after the start.</p>
+</li>
 <li>
 <p>Before the data source is created, <code translate="no" v-pre>Configuration.resolveDb</code> swaps in a staged database restore, if there is one
 (see <doc-anchor-trigger to="#database-backups-and-restores">Database backups and restores</doc-anchor-trigger>). Then <code translate="no" v-pre>Configuration.backupBeforeMigration</code>

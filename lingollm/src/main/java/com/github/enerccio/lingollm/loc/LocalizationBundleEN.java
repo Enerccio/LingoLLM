@@ -172,6 +172,9 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.LABEL_LANGUAGE_PROFILE, "Language profile");
         setValue(L.LABEL_FREE_CHAT, "Free chat");
         setValue(L.LABEL_LEVEL_TEST, "Level test");
+        setValue(L.LABEL_LEVEL, "Level");
+        setValue(L.LABEL_YOUR_IMPRESSIONS, "Your impressions");
+        setValue(L.LABEL_TAKE_GRADE_TEST, "Take Grade Test");
 
 
         // --- ENUM ---
@@ -298,6 +301,10 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.MSG_DELETE_PERMANENTLY_BLOCKED, "Nothing was deleted. These objects can't be removed:");
         setValue(L.MSG_DELETE_PERMANENTLY_BLOCKED_ITEM, "%s \"%s\": %s");
         setValue(L.MSG_COPIED_TO_CLIPBOARD, "Copied to clipboard");
+        setValue(L.MSG_GRADE_TEST_RECOMMENDED, "Please take the grade test instead of filling in your level by hand, unless you are sure about it: the test measures it far better than a guess, and the lessons are fitted to it.");
+        setValue(L.MSG_GRADE_REQUIRED, "The other tabs unlock once your level is set.");
+        setValue(L.MSG_GRADE_SAVED, "Level saved.");
+        setValue(L.MSG_GRADE_TEST_NOT_AVAILABLE, "The grade test is not available yet.");
 
         // --- HELP ---
         setValue(L.HELP_BACKUP_SCHEDULE, "minute hour day-of-month month day-of-week - e.g. \"0 3 * * *\" every day at 3:00, \"0 */6 * * *\" every 6 hours, \"30 2 * * 1\" Mondays at 2:30. @daily, @weekly and @monthly work too.");

@@ -17,3 +17,5 @@ retype.manifest
 *.iml
 /target/
 /tmp/
+/dev.sql
+/lingollm/plugins/gemma4toolsfix/target/

@@ -44,6 +44,9 @@ public final class CssStyles {
     // --- Language profiles ---
     public static final String LANGUAGE_FLAG = "language-flag";
     public static final String LANGUAGE_NOTE = "language-note";
+    public static final String GRADE_FORM = "grade-form";
+    public static final String GRADE_ROW = "grade-row";
+    public static final String GRADE_COMBO = "grade-combo";
 
     // --- Resizable text area toggle icon ---
     public static final String RESIZABLE_TEXT_AREA_ICON = "resizable-text-area-icon";

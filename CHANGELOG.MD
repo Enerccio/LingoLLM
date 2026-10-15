@@ -12,6 +12,10 @@ anything specific to its stories); the database starts at `V1`.
 
 ### Added
 
+- `-Dreinitialize-with-sql=/path/to/file.sql` (desktop app: `--reinitialize-with-sql <file>`): before the database exists
+  `Configuration` wipes the content of the application folder (not `secret.key` and not the launcher's `desktop/` folder), Flyway creates and
+  migrates the database, the SQL file is run on it in one transaction, and the application continues. Nothing is deleted
+  when the file is not readable. `BEGIN`/`COMMIT` lines of the file (a `sqlite3` dump) are ignored. `Configuration.resolveDb` now declares `throws Exception`.
 - Level gauging test: `LanguageDefinitionService.createGaugeTest(language, ai, callback)` is asynchronous, returns a
   `CancellationToken` and has the model write 20 questions (5 about a text, 15 others: single and multiple choice, writing
   and word order) in one group, saved as a `Test` with its `TestQuestion`s only when the whole answer is valid. Languages
@@ -32,8 +36,13 @@ anything specific to its stories); the database starts at `V1`.
   question types can override it), `getLlmTypeName()` and `TestDefinitionSchemaGenerator`, which builds the schema of a
   whole test from a list of handlers. The data classes of the questions describe their fields with `@LLMField`.
 - Language profiles have the level the user says they have: `Language.userGrade` (`CEFR`, A1-C2, each with a short
-  description for the model) and `Language.userGradeFineDetails` (free text). No screen sets them yet. The levels have
-  localized names (`ENUM_CEFR_*`, `Localization.getCefrLevel`).
+  description for the model) and `Language.userGradeFineDetails` (free text). The levels have localized names
+  (`ENUM_CEFR_*`, `Localization.getCefrLevel`).
+- The *Learning* tab of a language profile is a tab sheet of `LanguageUIComponent`s built by `LanguageUIBase` (also on a
+  phone): **Level** (`GradeUIComponent`: the CEFR level, the user's impressions, a *Take Grade Test* button and a save
+  button; the button only says the test is not available yet) and **Free chat** (`FreeChatComponent`, empty for now). A
+  profile without a level has the other tabs frozen until the level is saved. A language adds its own tabs by
+  overriding `LanguageUIBase.createComponents()`. `LanguageUIComponent` has a new `refresh()`.
 - Tests: language bound entities `Test`, `TestQuestion`, `TestResult` (an attempt) and `TestQuestionResult` (an answer)
   with their repositories and services (tables added to `V1`). Deleting a test, soft or hard, deletes its questions,
   attempts and answers; deleting an attempt deletes its answers; deleting a language profile soft deletes them too.

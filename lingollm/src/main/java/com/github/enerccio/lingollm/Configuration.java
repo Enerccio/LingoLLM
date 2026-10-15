@@ -2,10 +2,13 @@ package com.github.enerccio.lingollm;
 
 import com.github.enerccio.lingollm.domain.security.model.User;
 import com.github.enerccio.lingollm.utils.ClientAddressResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.sqlite.SQLiteDataSource;
 
 import javax.crypto.Cipher;
@@ -14,8 +17,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -25,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Configuration implements InitializingBean {
 
@@ -38,8 +46,23 @@ public class Configuration implements InitializingBean {
      * How many copies made before a migration are kept, older ones are deleted.
      */
     private static final int PRE_MIGRATION_KEEP = 3;
+    /**
+     * VM argument ({@code -Dreinitialize-with-sql=/path/to/file.sql}): wipes the application folder on start, migrates a
+     * new database and runs the script on it, see {@link #setReinitializeWithSql}. For the desktop app it is the
+     * launcher option {@code --reinitialize-with-sql <file>}.
+     */
+    public static final String REINITIALIZE_PROPERTY = "reinitialize-with-sql";
+    // a line with nothing but BEGIN, COMMIT or END (TRANSACTION)
+    private static final Pattern TRANSACTION_CONTROL = Pattern.compile(
+            "^[ \\t]*(?:BEGIN(?:[ \\t]+(?:DEFERRED|IMMEDIATE|EXCLUSIVE))?(?:[ \\t]+TRANSACTION)?|COMMIT|END(?:[ \\t]+TRANSACTION)?)[ \\t]*;[ \\t]*$",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     private static final String[] SQLITE_SIDE_FILES = {"-wal", "-shm"};
     public static final String SECRET_KEY_FILE = "secret.key";
+    /**
+     * What of the application folder survives the wipe: the desktop launcher keeps the Jetty base of the running
+     * application in {@code desktop}, and the secret key stays so the encrypted values in the script can be read.
+     */
+    private static final Set<String> REINITIALIZE_KEEP = Set.of("desktop", SECRET_KEY_FILE);
     public static final String ENCRYPTED_PREFIX = "enc:";
     private static final String CIPHER = "AES/GCM/NoPadding";
     private static final int IV_LENGTH = 12;
@@ -56,6 +79,9 @@ public class Configuration implements InitializingBean {
     private File databaseFile;
     private boolean saveAsyncStacks = false;
     private SecretKeySpec secretKey;
+    private File reinitializeSqlFile;
+    // the script, read before the wipe (it may lie in the wiped folder); null when nothing is to be reinitialized
+    private String reinitializeSql;
 
     public Long getPersistentLoginInfoTTL() {
         return persistentLoginInfoTTL;
@@ -96,10 +122,26 @@ public class Configuration implements InitializingBean {
         this.folder = folder;
     }
 
+    /**
+     * Makes the next start reinitialize the application: the whole folder is wiped (before anything is created in it),
+     * the database is created and migrated by Flyway and the SQL file is run on it, then the application continues.
+     * When not set, the system property {@value #REINITIALIZE_PROPERTY} is used. <b>It destroys all data</b>, so the
+     * argument has to be removed after the start, or the data is wiped at every start.
+     */
+    public void setReinitializeWithSql(File reinitializeSqlFile) {
+        this.reinitializeSqlFile = reinitializeSqlFile;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         if (folder == null) {
             folder = new File(System.getProperty("user.home"), ".lingollm");
+        }
+        if (reinitializeSqlFile == null && StringUtils.isNotBlank(System.getProperty(REINITIALIZE_PROPERTY))) {
+            reinitializeSqlFile = new File(System.getProperty(REINITIALIZE_PROPERTY).trim());
+        }
+        if (reinitializeSqlFile != null) {
+            wipeForReinitialization();
         }
         if (!folder.exists() && !folder.mkdirs()) {
             throw new RuntimeException("Cannot create folder " + folder.getAbsolutePath());
@@ -114,6 +156,82 @@ public class Configuration implements InitializingBean {
             databaseBackupFolder.mkdirs();
 
         secretKey = loadOrCreateSecretKey(new File(folder, SECRET_KEY_FILE));
+    }
+
+    /**
+     * Wipes the application folder for {@link #setReinitializeWithSql}. Nothing is touched unless the script can be
+     * read and the folder is not one that must never be wiped (a filesystem root, the home folder), so a typo does
+     * not leave the user with neither data nor a script. The script is read first because it may be in the folder.
+     * The folder itself stays (it may be a mount point).
+     */
+    private void wipeForReinitialization() throws IOException {
+        File sqlFile = reinitializeSqlFile.getAbsoluteFile();
+        if (!sqlFile.isFile() || !sqlFile.canRead()) {
+            throw new IllegalStateException("Cannot reinitialize, the SQL file " + sqlFile + " (VM argument -D"
+                    + REINITIALIZE_PROPERTY + ") is not a readable file; nothing was deleted");
+        }
+        Path target = folder.getAbsoluteFile().toPath().normalize();
+        Path home = Path.of(System.getProperty("user.home")).toAbsolutePath().normalize();
+        if (target.getParent() == null || target.equals(home)) {
+            throw new IllegalStateException("Cannot reinitialize, refusing to wipe " + target + "; nothing was deleted");
+        }
+        reinitializeSql = Files.readString(sqlFile.toPath(), StandardCharsets.UTF_8);
+
+        log.warn("Reinitializing: wiping everything in {} (except {}), the database will be created again and {} run on it",
+                target, REINITIALIZE_KEEP, sqlFile);
+        if (Files.isDirectory(target)) {
+            try (var children = Files.list(target)) {
+                for (Path child : children.toList()) {
+                    if (!REINITIALIZE_KEEP.contains(child.getFileName().toString())) {
+                        deleteRecursively(child);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void deleteRecursively(Path path) throws IOException {
+        // links are deleted, never followed
+        Files.walkFileTree(path, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                if (e != null) {
+                    throw e;
+                }
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    /**
+     * Creates the database of a reinitialization: Flyway migrates it exactly like on a normal start (so the application's
+     * own Flyway has nothing left to do), then the script is run in one transaction. A script that fails stops the
+     * start, the database stays as migrated, without the script.
+     */
+    private void reinitializeDatabase(File db) throws Exception {
+        // the script runs in a transaction of its own, so the ones a dump of sqlite3 wraps itself in would fail
+        String sql = TRANSACTION_CONTROL.matcher(reinitializeSql).replaceAll("");
+        reinitializeSql = null;
+        migrate(db);
+        try (Connection connection = DriverManager.getConnection(jdbcUrl(db))) {
+            connection.setAutoCommit(false);
+            try {
+                ScriptUtils.executeSqlScript(connection, new ByteArrayResource(sql.getBytes(StandardCharsets.UTF_8)));
+                connection.commit();
+            } catch (Exception e) {
+                connection.rollback();
+                throw new IllegalStateException("The SQL file " + reinitializeSqlFile.getAbsolutePath()
+                        + " failed, the database is migrated but empty: " + e.getMessage(), e);
+            }
+        }
+        log.warn("The database was reinitialized from {}", reinitializeSqlFile.getAbsolutePath());
     }
 
     /**
@@ -178,8 +296,11 @@ public class Configuration implements InitializingBean {
         }
     }
 
-    public String resolveDb(String db) throws IOException {
+    public String resolveDb(String db) throws Exception {
         databaseFile = new File(folder, db);
+        if (reinitializeSql != null) {
+            reinitializeDatabase(databaseFile);
+        }
         applyPendingRestore(databaseFile);
         backupBeforeMigration(databaseFile);
         return jdbcUrl(databaseFile);

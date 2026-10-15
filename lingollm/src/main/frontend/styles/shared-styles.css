@@ -198,3 +198,23 @@ vaadin-markdown span {
     font-size: var(--lumo-font-size-xs);
     color: var(--lumo-secondary-text-color);
 }
+
+/* The level of a language profile: one column on a phone, the row of the level and the test button wraps */
+.grade-form {
+    width: 100%;
+    max-width: 720px;
+    box-sizing: border-box;
+}
+
+.grade-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--lumo-space-s);
+    width: 100%;
+}
+
+.grade-combo {
+    flex: 1 1 14em;
+    min-width: 0;
+}

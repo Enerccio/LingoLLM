@@ -74,6 +74,10 @@ public final class DesktopLauncher {
             // LingoLLM keeps its data in ${user.home}/.lingollm, same as -Duser.home in the Docker setup
             System.setProperty("user.home", options.home.toAbsolutePath().toString());
         }
+        if (options.reinitializeSql != null) {
+            // read by Configuration in the application, which runs in this JVM
+            System.setProperty("reinitialize-with-sql", options.reinitializeSql.toAbsolutePath().toString());
+        }
         Path dataDir = Path.of(System.getProperty("user.home"), ".lingollm");
         Path desktopDir = dataDir.resolve("desktop");
         Files.createDirectories(desktopDir);
@@ -457,6 +461,9 @@ public final class DesktopLauncher {
                   --port <port>     port to listen on (default %d, a free one is picked when taken)
                   --host <address>  address to listen on (default 127.0.0.1, others expose the app to the network)
                   --home <dir>      directory that holds .lingollm data (default: your home directory)
+                  --reinitialize-with-sql <file>
+                                    DELETES all LingoLLM data (except the launcher's own files), creates the database again
+                                    and runs the SQL file on it; give it for one start only
                   --no-browser      don't open the browser
                   --no-tray         no tray icon / window, stop with Ctrl+C
                   --help            show this help
@@ -466,6 +473,7 @@ public final class DesktopLauncher {
         boolean portExplicit;
         String host = "127.0.0.1";
         Path home;
+        Path reinitializeSql;
         boolean openBrowser = true;
         boolean controls = true;
         boolean help;
@@ -489,6 +497,7 @@ public final class DesktopLauncher {
                     }
                     case "--host" -> options.host = value(list, ++i, arg);
                     case "--home" -> options.home = Path.of(value(list, ++i, arg));
+                    case "--reinitialize-with-sql" -> options.reinitializeSql = Path.of(value(list, ++i, arg));
                     case "--no-browser" -> options.openBrowser = false;
                     case "--no-tray" -> options.controls = false;
                     case "--help", "-h" -> options.help = true;

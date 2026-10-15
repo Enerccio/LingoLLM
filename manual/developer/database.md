@@ -68,6 +68,15 @@ sqlite> select id, nameOverride, cast(extendedContent as text) from languages;
 
 ## Startup: migrate, then validate
 
+0. **Reinitialization**, a development aid for the time before 1.0.0, when `V1__initial.sql` is edited instead of adding migrations: after changing `V1`, start with a SQL file that reloads your test data (only with the VM argument `-Dreinitialize-with-sql=/path/to/file.sql`, or the desktop launcher
+   option `--reinitialize-with-sql <file>`): `Configuration.afterPropertiesSet` reads the script into memory, then wipes
+   the content of the application folder (`~/.lingollm`) before anything is created in it. The folder itself, `secret.key`
+   (so encrypted values in the script stay readable) and the launcher's own `desktop/` subfolder (the Jetty base of the
+   running desktop app) stay. Nothing is deleted when the script is not a readable file or the folder is a filesystem root or the home folder.
+   Then `resolveDb` has Flyway create and migrate the database (the Flyway of step 2 has nothing left to do) and runs
+   the script on it in one transaction (lines with only `BEGIN`, `COMMIT` or `END` are dropped first, so a `sqlite3 .dump` can be used; Spring `ScriptUtils`: statements end with `;`, so a trigger body with `;` inside
+   does not work). A script that fails is rolled back and stops the startup. **The argument wipes the data at every start
+   it is present for**, so it has to be removed after the start.
 1. Before the data source is created, `Configuration.resolveDb` swaps in a staged database restore, if there is one
    (see [Database backups and restores](#database-backups-and-restores)). Then `Configuration.backupBeforeMigration`
    asks `DatabaseCheck.pendingMigrationFrom` whether the existing file is behind the newest bundled `V<n>` migration

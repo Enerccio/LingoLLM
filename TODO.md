@@ -4,6 +4,9 @@ Planned work for LingoLLM. Ideas that need a decision first are marked with a qu
 
 ## Learning
 
+- [ ] Screen for taking the level test: the *Take Grade Test* button of `GradeUIComponent` (tab *Level*) only shows that
+      the test is not available (the generation, `LanguageDefinitionService.createGaugeTest`, is ready); it needs the
+      choice of the AI, the screen for answering the questions and the evaluation that sets `Language.userGrade`.
 - [ ] Free chat screen in the `Learning` tab (the inference layer, `stream` and function calls, is ready): a list of the chats of the selected profile
 - [ ] Prompts: `FreeChat.rootPrompt` and `prompt` are stored but unused; decide on templates (Handlebars as in
       Marginalia?) and fill `LanguageDefaults.freeChatTemplate` for Japanese and German.

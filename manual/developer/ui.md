@@ -38,7 +38,7 @@ flowchart TB
 | Package | Contents |
 |---|---|
 | `ui.main` | `AppShellConfig`, `LingoLLMServlet`, `WebappApplicationInitializer`, `LoginCheckRoute`, `Main`, `CssRegistry`. |
-| `ui.workspace` | `Workspace` (interface), `DesktopWorkspace`, `WorkspaceComponent` (a tab), `LanguageUI` / `LanguageUIBase`. |
+| `ui.workspace` | `Workspace` (interface), `DesktopWorkspace`, `WorkspaceComponent` (a tab), `LanguageUI` / `LanguageUIBase` (a tab sheet of `LanguageUIComponent`s: `GradeUIComponent`, `FreeChatComponent`). |
 | `ui.workspace.parts`, `.admin` | One class per tab, and the admin panels. |
 | `ui.workspace.phone`, `.parts` | `PhoneWorkspace` and the phone specific tabs. |
 | `ui.lang`, `ui.lang.languages` | The learnable languages: defaults, flags, one `LanguageUI` each. |

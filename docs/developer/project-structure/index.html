@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845384888589">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845395895244">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,11 +38,11 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845384888589" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845395895244" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -323,7 +323,7 @@ add it as a module of the root <code translate="no" v-pre>pom.xml</code> when it
 <retype-table copy-text="| Package | Files |
 |---|---|
 | `ui.main` | `WebappApplicationInitializer` (creates the Spring context, registers the session listener), `LingoLLMServlet` (the `VaadinServlet`), `AppShellConfig` (push, theme, global CSS), `LoginCheckRoute` (login overlay, saved logins, first-start dialog), `Main` (route `/`), `CssRegistry` (CSS of extensions). |
-| `ui.workspace` | `Workspace` (interface of the workspace shown after login), `DesktopWorkspace` (its tabbed implementation with footer buttons), `WorkspaceComponent` (interface of its tabs), `LanguageUI` / `LanguageUIBase` (what the workspace shows for a language profile). |
+| `ui.workspace` | `Workspace` (interface of the workspace shown after login), `DesktopWorkspace` (its tabbed implementation with footer buttons), `WorkspaceComponent` (interface of its tabs), `LanguageUI` / `LanguageUIBase` (what the workspace shows for a language profile: a tab sheet of `LanguageUIComponent`s such as `GradeUIComponent` and `FreeChatComponent`). |
 | `ui.workspace.phone`, `ui.workspace.phone.parts` | `PhoneWorkspace` (an `AppLayout` with a drawer instead of the left-hand tabs), `PhoneAIPart`, `PhoneSettingsPart` (`UserPart` with a stacked header), `PhoneTrashPart` (trash with `PhoneTrashGrid`). |
 | `ui.workspace.parts` | One class per workspace tab: `LanguagePart` (Learning: the language selector and the `LanguageUI`), `UserPart` (Settings), `AIPart` (Inference Providers), `ResourcesPart`, `TrashPart`, `AdminPart`. |
 | `ui.workspace.parts.admin` | Admin panels with their own logic: `DatabaseBackupPanel`, `CleanupPanel`. |
@@ -347,7 +347,7 @@ add it as a module of the root <code translate="no" v-pre>pom.xml</code> when it
 </tr>
 <tr>
 <td><code translate="no" v-pre>ui.workspace</code></td>
-<td><code translate="no" v-pre>Workspace</code> (interface of the workspace shown after login), <code translate="no" v-pre>DesktopWorkspace</code> (its tabbed implementation with footer buttons), <code translate="no" v-pre>WorkspaceComponent</code> (interface of its tabs), <code translate="no" v-pre>LanguageUI</code> / <code translate="no" v-pre>LanguageUIBase</code> (what the workspace shows for a language profile).</td>
+<td><code translate="no" v-pre>Workspace</code> (interface of the workspace shown after login), <code translate="no" v-pre>DesktopWorkspace</code> (its tabbed implementation with footer buttons), <code translate="no" v-pre>WorkspaceComponent</code> (interface of its tabs), <code translate="no" v-pre>LanguageUI</code> / <code translate="no" v-pre>LanguageUIBase</code> (what the workspace shows for a language profile: a tab sheet of <code translate="no" v-pre>LanguageUIComponent</code>s such as <code translate="no" v-pre>GradeUIComponent</code> and <code translate="no" v-pre>FreeChatComponent</code>).</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>ui.workspace.phone</code>, <code translate="no" v-pre>ui.workspace.phone.parts</code></td>

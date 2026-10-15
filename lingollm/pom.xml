@@ -258,21 +258,12 @@
       <version>6.0.1</version>
     </dependency>
 
-
-
     <!-- image attachments: the JDK can't read WebP, uploads of it are converted to PNG (pure Java, read only) -->
     <dependency>
       <groupId>com.twelvemonkeys.imageio</groupId>
       <artifactId>imageio-webp</artifactId>
       <version>3.15.3</version>
     </dependency>
-
-
-
-
-
-
-
 
     <dependency>
       <groupId>org.flywaydb</groupId>

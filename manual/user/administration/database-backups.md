@@ -120,6 +120,32 @@ copy can't be made (for example the disk is full), the log says so and the upgra
 A migration that fails halfway is rolled back by itself and LingoLLM does not start; the copy is for an upgrade that
 went through but did something you don't want.
 
+## Starting from scratch with a SQL file
+
+For setting up a server or a test installation you can make LingoLLM delete all its data and start again from a SQL
+file (for example one with your users and models). Start it with the VM argument
+`-Dreinitialize-with-sql=/path/to/file.sql` (the desktop app: `--reinitialize-with-sql /path/to/file.sql`). On that start the
+whole `.lingollm` folder is emptied - database, backups, resources and extensions; only `secret.key`, the key that encrypts the API keys, stays -,
+the database is created, the file is run on it, and LingoLLM starts as usual. Nothing is deleted if the file cannot be read.
+
+To make such a file from an existing installation, dump only the data, with the column names so the file survives a
+change of the columns (the `sqlite3` command line tool, version 3.50 or newer):
+
+```sh
+DB=~/.lingollm/lingollm.sqlite
+for t in $(sqlite3 "$DB" "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name <> 'flyway_schema_history'"); do
+  sqlite3 "$DB" ".headers on" ".mode insert $t" "SELECT * FROM $t;"
+done > init.sql
+```
+
+A file made by `.dump` works too: its own `BEGIN`/`COMMIT` lines are ignored, because the file is run in one transaction anyway.
+
+!!!danger
+Everything is deleted, and it is deleted again at every start that has the argument. Take it out of the command
+line (or `docker-compose.yml`) once LingoLLM has started. Encrypted API keys in the file only work if they were
+encrypted with the `secret.key` that stays in the folder.
+!!!
+
 ## Moving to another computer
 
 1. Create a backup and **Download** it.

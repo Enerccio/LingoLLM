@@ -77,7 +77,7 @@ Application code lives in `com.github.enerccio.lingollm` (paths below are relati
 | Package | Files |
 |---|---|
 | `ui.main` | `WebappApplicationInitializer` (creates the Spring context, registers the session listener), `LingoLLMServlet` (the `VaadinServlet`), `AppShellConfig` (push, theme, global CSS), `LoginCheckRoute` (login overlay, saved logins, first-start dialog), `Main` (route `/`), `CssRegistry` (CSS of extensions). |
-| `ui.workspace` | `Workspace` (interface of the workspace shown after login), `DesktopWorkspace` (its tabbed implementation with footer buttons), `WorkspaceComponent` (interface of its tabs), `LanguageUI` / `LanguageUIBase` (what the workspace shows for a language profile). |
+| `ui.workspace` | `Workspace` (interface of the workspace shown after login), `DesktopWorkspace` (its tabbed implementation with footer buttons), `WorkspaceComponent` (interface of its tabs), `LanguageUI` / `LanguageUIBase` (what the workspace shows for a language profile: a tab sheet of `LanguageUIComponent`s such as `GradeUIComponent` and `FreeChatComponent`). |
 | `ui.workspace.phone`, `ui.workspace.phone.parts` | `PhoneWorkspace` (an `AppLayout` with a drawer instead of the left-hand tabs), `PhoneAIPart`, `PhoneSettingsPart` (`UserPart` with a stacked header), `PhoneTrashPart` (trash with `PhoneTrashGrid`). |
 | `ui.workspace.parts` | One class per workspace tab: `LanguagePart` (Learning: the language selector and the `LanguageUI`), `UserPart` (Settings), `AIPart` (Inference Providers), `ResourcesPart`, `TrashPart`, `AdminPart`. |
 | `ui.workspace.parts.admin` | Admin panels with their own logic: `DatabaseBackupPanel`, `CleanupPanel`. |
