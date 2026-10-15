@@ -60,18 +60,18 @@ class LanguageCrudTest extends ExtendableCrudContract<Language> {
     }
 
     @Test
-    void gaugeTestPromptIsTheOneOfTheProfileWhenSetAndTheDefaultOfTheLanguageOtherwise() throws Exception {
+    void createTestPromptIsTheOneOfTheProfileWhenSetAndTheDefaultOfTheLanguageOtherwise() throws Exception {
         Language profile = create();
-        assertThat(languageService.getGaugeTestPrompt(profile)).isEqualTo(Languages.JAPANESE.defaults.getGaugeTestPrompt());
-        assertThat(languageService.getGaugeTestPrompt(profile)).contains("{{questions}}");
+        assertThat(languageService.getCreateTestPrompt(profile)).isEqualTo(Languages.JAPANESE.defaults.getCreateTestPrompt());
+        assertThat(languageService.getCreateTestPrompt(profile)).contains("{{questions}}");
 
-        profile.getDefaults().setGaugeTestPrompt("My own {{language}} test");
+        profile.getDefaults().setCreateTestPrompt("My own {{language}} test");
         Language saved = languageService.find(languageService.save(profile));
-        assertThat(saved.getDefaults().getGaugeTestPrompt()).isEqualTo("My own {{language}} test");
-        assertThat(languageService.getGaugeTestPrompt(saved)).isEqualTo("My own {{language}} test");
+        assertThat(saved.getDefaults().getCreateTestPrompt()).isEqualTo("My own {{language}} test");
+        assertThat(languageService.getCreateTestPrompt(saved)).isEqualTo("My own {{language}} test");
 
-        saved.getDefaults().setGaugeTestPrompt("  ");
-        assertThat(languageService.getGaugeTestPrompt(saved)).isEqualTo(Languages.JAPANESE.defaults.getGaugeTestPrompt());
+        saved.getDefaults().setCreateTestPrompt("  ");
+        assertThat(languageService.getCreateTestPrompt(saved)).isEqualTo(Languages.JAPANESE.defaults.getCreateTestPrompt());
     }
 
     @Test

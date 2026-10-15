@@ -175,6 +175,16 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.LABEL_LEVEL, "Level");
         setValue(L.LABEL_YOUR_IMPRESSIONS, "Your impressions");
         setValue(L.LABEL_TAKE_GRADE_TEST, "Take Grade Test");
+        setValue(L.LABEL_STOP_GENERATION, "Stop Generation");
+        setValue(L.LABEL_GENERATING_TEST, "Writing the test");
+        setValue(L.LABEL_PREVIOUS, "Previous");
+        setValue(L.LABEL_NEXT, "Next");
+        setValue(L.LABEL_FINISH, "Finish");
+        setValue(L.LABEL_READING_OF, "Reading of");
+        setValue(L.LABEL_YOUR_ANSWER, "Your answer");
+        setValue(L.LABEL_DONT_KNOW, "I don't know");
+        setValue(L.LABEL_CONTINUE_GRADE_TEST, "Continue Grade Test");
+        setValue(L.LABEL_DISCARD_GRADE_TEST, "Discard Grade Test");
 
 
         // --- ENUM ---
@@ -304,7 +314,18 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.MSG_GRADE_TEST_RECOMMENDED, "Please take the grade test instead of filling in your level by hand, unless you are sure about it: the test measures it far better than a guess, and the lessons are fitted to it.");
         setValue(L.MSG_GRADE_REQUIRED, "The other tabs unlock once your level is set.");
         setValue(L.MSG_GRADE_SAVED, "Level saved.");
-        setValue(L.MSG_GRADE_TEST_NOT_AVAILABLE, "The grade test is not available yet.");
+        setValue(L.MSG_GRADE_TEST_NOT_AVAILABLE, "The test is finished. Judging the answers and setting your level is not available yet.");
+        setValue(L.MSG_QUESTIONS_PROGRESS, "%s of %s questions written, %s left");
+        setValue(L.MSG_GRADE_TEST_NO_MODEL, "Add an inference provider first (tab Inference Providers): the model writes the test.");
+        setValue(L.MSG_GRADE_TEST_FAILED, "The test could not be made: %s");
+        setValue(L.MSG_QUESTION_OF, "Question %s of %s");
+        setValue(L.MSG_TEST_EMPTY, "The test has no questions.");
+        setValue(L.MSG_TEST_QUESTION_UNAVAILABLE, "This question can't be shown: its type is not available.");
+        setValue(L.MSG_CONFIRM_LEAVE_TEST, "Leave the test? Your answers will be lost.");
+        setValue(L.MSG_CONFIRM_FINISH_UNANSWERED, "%s questions are not answered. Finish the test anyway?");
+        setValue(L.MSG_WORD_ORDER_HINT, "Tap the parts in the right order. Tap a part of your answer to take it back.");
+        setValue(L.MSG_CONFIRM_LEAVE_RECORDED_TEST, "Leave the test? Your answers are saved, you can continue it later.");
+        setValue(L.MSG_CONFIRM_DISCARD_GRADE_TEST, "Discard the unfinished grade test and your answers to it? This cannot be undone.");
 
         // --- HELP ---
         setValue(L.HELP_BACKUP_SCHEDULE, "minute hour day-of-month month day-of-week - e.g. \"0 3 * * *\" every day at 3:00, \"0 */6 * * *\" every 6 hours, \"30 2 * * 1\" Mondays at 2:30. @daily, @weekly and @monthly work too.");

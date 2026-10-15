@@ -1,5 +1,7 @@
 package com.github.enerccio.lingollm.domain.service.impl;
 
+import com.github.enerccio.lingollm.domain.collections.TestType;
+import com.github.enerccio.lingollm.domain.model.impl.Language;
 import com.github.enerccio.lingollm.domain.model.impl.Test;
 import com.github.enerccio.lingollm.domain.model.impl.TestResult;
 import com.github.enerccio.lingollm.domain.repository.TestResultRepository;
@@ -27,6 +29,29 @@ public class TestResultServiceImpl extends LanguageBoundServiceImpl<TestResult, 
             questionResultService.deleteForTestResult(result, hard);
         }
         return super.delete(result, hard);
+    }
+
+    @Override
+    @CommonTx
+    public TestResult start(Test test) throws Exception {
+        if (test == null || test.getOwner() == null || !test.getOwner().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("Not a test of the current user");
+        }
+        TestResult result = new TestResult();
+        result.setTest(test);
+        result.setLanguage(test.getLanguage());
+        result.setFinished(false);
+        return save(result);
+    }
+
+    @Override
+    @CommonTxReadOnly
+    public TestResult findUnfinished(Language language, TestType type) throws Exception {
+        if (language == null || language.getId() == null || type == null) {
+            return null;
+        }
+        List<TestResult> results = getRepository().findUnfinished(currentUser, language, type);
+        return results.isEmpty() ? null : results.getFirst();
     }
 
     @Override

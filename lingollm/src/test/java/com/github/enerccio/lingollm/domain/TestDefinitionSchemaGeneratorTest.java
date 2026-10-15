@@ -8,9 +8,11 @@ import com.github.enerccio.lingollm.domain.factories.impl.ReadingComprehensionWi
 import com.github.enerccio.lingollm.domain.factories.impl.SingleChoiceFactory;
 import com.github.enerccio.lingollm.domain.factories.impl.WordOrderQuestionFactory;
 import com.github.enerccio.lingollm.domain.factories.impl.WritingQuestionFactory;
+import com.github.enerccio.lingollm.domain.model.impl.Language;
 import com.github.enerccio.lingollm.domain.model.impl.Test;
 import com.github.enerccio.lingollm.domain.model.impl.TestQuestion;
 import com.github.enerccio.lingollm.domain.service.LanguageDefinitionService;
+import com.github.enerccio.lingollm.domain.service.LanguageService;
 import com.github.enerccio.lingollm.domain.service.structured.SchemaCheck;
 import com.github.enerccio.lingollm.domain.service.structured.StructuredOutputs;
 import com.github.enerccio.lingollm.domain.service.structured.TestDefinitionSchemaGenerator;
@@ -34,6 +36,9 @@ class TestDefinitionSchemaGeneratorTest extends LingoLLMTestBase {
     @Autowired
     @Qualifier("germanLanguageDefinitionService")
     private LanguageDefinitionService german;
+
+    @Autowired
+    private LanguageService languageService;
 
     private final Test test = new Test();
     private final TestQuestion question = new TestQuestion();
@@ -144,8 +149,18 @@ class TestDefinitionSchemaGeneratorTest extends LingoLLMTestBase {
         assertThat(writing.getLlmSchema().get("properties").fieldNames()).toIterable()
                 .containsExactlyInAnyOrder("instructions", "sampleAnswer");
         assertThat(wordOrder.getLlmSchema().get("properties").fieldNames()).toIterable()
-                .containsExactlyInAnyOrder("instructions", "segments");
-        assertThat(wordOrder.getLlmSchema().at("/properties/segments/minItems").asInt()).isEqualTo(2);
+                .containsExactlyInAnyOrder("instructions", "sentence");
+        assertThat(wordOrder.getLlmSchema().at("/properties/sentence/type").asText()).isEqualTo("string");
+        assertThat(wordOrder.getLlmSchema().get("required")).extracting(JsonNode::asText).containsExactly("instructions", "sentence");
+
+        // the sentence cut by | becomes the segments
+        com.google.gson.JsonObject data = com.google.gson.JsonParser.parseString(
+                "{\"instructions\": {\"rawString\": \"Order\"}, \"sentence\": \"Ich | heisse||Anna.\"}").getAsJsonObject();
+        wordOrder.normalizeLlmData(data);
+        assertThat(data.has("sentence")).isFalse();
+        assertThat(data.getAsJsonArray("segments")).hasSize(3);
+        assertThat(data.getAsJsonArray("segments").get(0).getAsJsonObject().get("rawString").getAsString()).isEqualTo("Ich");
+        wordOrder.setLlmData(data);
         assertThat(writing.getLlmTypeName()).isEqualTo("WritingQuestionHandler");
         assertThat(wordOrder.getLlmTypeName()).isEqualTo("WordOrderQuestionHandler");
     }
@@ -164,41 +179,32 @@ class TestDefinitionSchemaGeneratorTest extends LingoLLMTestBase {
     }
 
     @org.junit.jupiter.api.Test
-    void japaneseRequiresFuriganaInEveryText() {
+    void japaneseAsksForPlainTexts() {
         ObjectNode schema = TestDefinitionSchemaGenerator.generate(List.of(single()), japanese);
 
         JsonNode choice = schema.at("/properties/questions/items/properties/choices/items");
-        assertThat(choice.get("required")).extracting(JsonNode::asText).containsExactly("rawString", "metadata");
-        assertThat(choice.at("/properties/metadata/items/properties/type/const").asText()).isEqualTo("furigana");
+        assertThat(choice.get("required")).extracting(JsonNode::asText).containsExactly("rawString");
+        assertThat(choice.get("properties").fieldNames()).toIterable().containsExactly("rawString");
         // the instructions keep what the place says about them
         JsonNode instructions = schema.at("/properties/questions/items/properties/instructions");
         assertThat(instructions.get("description").asText()).startsWith("What the learner is asked to do")
-                .contains("furigana");
-        assertThat(instructions.get("required")).extracting(JsonNode::asText).contains("metadata");
+                .contains("without furigana");
 
-        // a text without metadata is not valid any more, one with it is
-        String choices = "\"choices\": [%s, {\"rawString\": \"b\", \"metadata\": []}], \"correctAnswer\": 0";
+        // furigana is not wanted in the questions, a plain text is valid
+        String choices = "\"choices\": [%s, {\"rawString\": \"b\"}], \"correctAnswer\": 0";
         String plain = "{\"rawString\": \"a\"}";
-        String full = "{\"rawString\": \"a\", \"metadata\": []}";
-        String instructionsJson = "\"instructions\": " + full;
-        String bad = "{\"questions\": [{\"type\": \"SingleChoiceHandler\", " + instructionsJson + ", " + choices.formatted(plain) + "}]}";
-        String good = "{\"questions\": [{\"type\": \"SingleChoiceHandler\", " + instructionsJson + ", " + choices.formatted(full) + "}]}";
+        String withMetadata = "{\"rawString\": \"a\", \"metadata\": []}";
+        String instructionsJson = "\"instructions\": " + plain;
+        String bad = "{\"questions\": [{\"type\": \"SingleChoiceHandler\", " + instructionsJson + ", " + choices.formatted(withMetadata) + "}]}";
+        String good = "{\"questions\": [{\"type\": \"SingleChoiceHandler\", " + instructionsJson + ", " + choices.formatted(plain) + "}]}";
         assertThat(StructuredOutputs.validate(schema, bad).valid()).isFalse();
         assertThat(StructuredOutputs.validate(schema, good).valid()).isTrue();
-    }
-
-    @org.junit.jupiter.api.Test
-    void japaneseChecksEveryKanjiHasFurigana() {
-        LanguageString covered = LanguageString.builder().append("日本語", "furigana", "にほんご").append("を").build();
-        LanguageString partly = LanguageString.builder().append("食", "furigana", "た").append("べる").append("本").build();
-        LanguageString plain = LanguageString.of("ひらがな and latin");
-
-        assertThat(japanese.checkLanguageString(covered)).isEmpty();
-        assertThat(japanese.checkLanguageString(plain)).isEmpty();
-        assertThat(japanese.checkLanguageString(partly)).hasSize(1).first().asString().contains("本 (3)");
-        // German does not care
-        assertThat(german.checkLanguageString(partly)).isEmpty();
-        assertThat(japanese.getLanguageStringInstructions()).contains("furigana").contains("kanji");
+        assertThat(japanese.getLanguageStringInstructions()).contains("never romaji").contains("kanji");
+        Language profile = new Language();
+        profile.setLanguage(Languages.JAPANESE);
+        assertThat(languageService.getAnnotateTextsPrompt(profile)).contains("furigana").contains("{{textCount}}");
+        profile.setLanguage(Languages.GERMAN);
+        assertThat(languageService.getAnnotateTextsPrompt(profile)).isNull();
     }
 
     @org.junit.jupiter.api.Test

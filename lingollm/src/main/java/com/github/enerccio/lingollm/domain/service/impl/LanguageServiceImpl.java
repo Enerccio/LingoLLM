@@ -41,8 +41,13 @@ public class LanguageServiceImpl extends ExtendableServiceImpl<Language, Languag
     private TestQuestionResultService testQuestionResultService;
 
     @Override
-    public String getGaugeTestPrompt(Language language) {
-        return resolve(language, LanguageDefaults::getGaugeTestPrompt);
+    public String getCreateTestPrompt(Language language) {
+        return resolve(language, LanguageDefaults::getCreateTestPrompt);
+    }
+
+    @Override
+    public String getAnnotateTextsPrompt(Language language) {
+        return resolve(language, LanguageDefaults::getAnnotateTextsPrompt);
     }
 
     /** What the profile set, the default of its language when it did not. */

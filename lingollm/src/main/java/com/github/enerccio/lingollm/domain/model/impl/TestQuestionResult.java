@@ -37,6 +37,14 @@ public class TestQuestionResult extends LanguageBoundEntity {
     @Transient
     private GradedBy gradedBy;
 
+    /**
+     * The learner said they do not know the answer, so there is none ({@link #getAnswer()} is null). Judged as a
+     * wrong one, but it tells a guess from knowing nothing.
+     */
+    @ExtendedAttribute
+    @Transient
+    private boolean dontKnow = false;
+
     // explanation or correction of the judge
     @ExtendedAttribute
     @Transient
@@ -64,6 +72,14 @@ public class TestQuestionResult extends LanguageBoundEntity {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public boolean isDontKnow() {
+        return dontKnow;
+    }
+
+    public void setDontKnow(boolean dontKnow) {
+        this.dontKnow = dontKnow;
     }
 
     public TestVerdict getVerdict() {

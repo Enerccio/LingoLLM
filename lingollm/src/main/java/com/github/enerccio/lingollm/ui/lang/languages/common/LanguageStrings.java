@@ -31,6 +31,32 @@ public final class LanguageStrings {
         return found;
     }
 
+    /**
+     * The objects of the JSON that are language strings (have a {@code rawString} text), themselves and not copies, so
+     * the caller can add to them.
+     */
+    public static List<JsonObject> objectsIn(JsonElement json) {
+        List<JsonObject> found = new ArrayList<>();
+        collectObjects(json, found);
+        return found;
+    }
+
+    private static void collectObjects(JsonElement json, List<JsonObject> found) {
+        if (json == null) {
+            return;
+        }
+        if (json.isJsonArray()) {
+            json.getAsJsonArray().forEach(element -> collectObjects(element, found));
+        } else if (json.isJsonObject()) {
+            JsonObject object = json.getAsJsonObject();
+            if (object.has(RAW_STRING) && object.get(RAW_STRING).isJsonPrimitive()) {
+                found.add(object);
+            } else {
+                object.entrySet().forEach(entry -> collectObjects(entry.getValue(), found));
+            }
+        }
+    }
+
     private static void collect(JsonElement json, List<LanguageString> found) {
         if (json == null) {
             return;

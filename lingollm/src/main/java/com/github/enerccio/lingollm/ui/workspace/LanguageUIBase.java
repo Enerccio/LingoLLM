@@ -3,6 +3,7 @@ package com.github.enerccio.lingollm.ui.workspace;
 import com.github.enerccio.lingollm.CssStyles;
 import com.github.enerccio.lingollm.domain.collections.Languages;
 import com.github.enerccio.lingollm.domain.model.impl.Language;
+import com.github.enerccio.lingollm.domain.service.LanguageDefinitionService;
 import com.github.enerccio.lingollm.domain.service.LanguageService;
 import com.github.enerccio.lingollm.loc.L;
 import com.github.enerccio.lingollm.loc.Localization;
@@ -63,6 +64,11 @@ public abstract class LanguageUIBase implements LanguageUI {
     public void setLanguage(Language language) {
         this.language = language;
     }
+
+    /**
+     * What the application knows about the language, e.g. how it writes the level test.
+     */
+    protected abstract LanguageDefinitionService getDefinition();
 
     /**
      * The tabs of the language, the grade one first. A language adds its own after the ones of the base.

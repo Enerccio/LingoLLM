@@ -65,6 +65,7 @@ class TestQuestionResultCrudTest extends ExtendableCrudContract<TestQuestionResu
         answer.setVerdict(TestVerdict.PARTIAL);
         answer.setGradedBy(GradedBy.LLM);
         answer.setFeedback("the article is wrong");
+        answer.setDontKnow(true);
         return answer;
     }
 
@@ -74,6 +75,7 @@ class TestQuestionResultCrudTest extends ExtendableCrudContract<TestQuestionResu
         assertThat(loaded.getVerdict()).isEqualTo(TestVerdict.PARTIAL);
         assertThat(loaded.getGradedBy()).isEqualTo(GradedBy.LLM);
         assertThat(loaded.getFeedback()).isEqualTo("the article is wrong");
+        assertThat(loaded.isDontKnow()).isTrue();
         assertThat(loaded.getTestResult()).isNotNull();
         assertThat(loaded.getQuestion()).isNotNull();
     }

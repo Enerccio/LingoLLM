@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845395895244">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845401330371">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,11 +38,11 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845395895244" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845401330371" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845401330371" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845401330371" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -232,6 +232,12 @@ written the way that language does. This is the language of the interface, not a
 <p>An account can have an empty password; you then log in with the user name only. If an administrator cleared your
 forgotten password, log in this way and set a new password with <strong>Change Password</strong> right away. That is handy for the desktop app on
 your own computer, but never do it on a server others can reach.</p>
+<h3 id="skipping-the-login-screen">Skipping the login screen</h3>
+<p>Start LingoLLM with the VM argument <code translate="no" v-pre>-Dlingollm-autologin=&lt;user name&gt;</code> (the desktop app: <code translate="no" v-pre>--lingollm-autologin &lt;user name&gt;</code>)
+and that user is logged in as soon as the page opens, without the login screen. It works only when the account has
+<strong>no password</strong>; if it has one, or the user does not exist or is locked, the login screen is shown as usual (the reason
+is in the log). Whoever can open the address gets in as that user, so use it only on your own computer. <strong>Logout</strong> shows
+the login screen once; the next time the page is opened you are logged in again.</p>
 <h2 id="settings">Settings</h2>
 <p>The <strong>Settings</strong> tab holds your personal settings.</p>
 <p>At the top are two buttons:</p>

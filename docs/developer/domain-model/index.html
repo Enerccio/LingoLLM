@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845395895244">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845401330371">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845395895244" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845401330371" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845401330371" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845395895244" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845395895244" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845401330371" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845401330371" defer></script>
     <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
 </head>
 <body>
@@ -628,11 +628,15 @@ name for the kind (<code translate="no" v-pre>getLlmTypeName()</code>, the simpl
 <code translate="no" v-pre>oneOf</code> the kinds, told apart by the <code translate="no" v-pre>type</code> property (a constant, the first property). The order of the list is the order
 of the questions; groups are not part of the schema yet.</p>
 <p><code translate="no" v-pre>Test.reasoning</code> (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
-user. <code translate="no" v-pre>BaseLanguageDefinitionService.createGaugeTest</code> makes the level gauging test: it renders the prompt of
-<code translate="no" v-pre>LanguageDefaults</code> with <code translate="no" v-pre>TemplateService.processTemplate</code> (Handlebars; &#x60;&#x60; is the JSON list of <code translate="no" v-pre>TestQuestionRequest</code>, 5 reading
-and 15 other questions, subclasses add more through <code translate="no" v-pre>questionsBetweenSections</code> / <code translate="no" v-pre>questionsAtEnd</code>), calls
-<code translate="no" v-pre>InferenceService.infer</code> with the schema above and turns a valid answer into <code translate="no" v-pre>Test</code>, one <code translate="no" v-pre>TestQuestionGroup</code> and the
-<code translate="no" v-pre>TestQuestion</code>s; an invalid one saves nothing.</p>
+user. <code translate="no" v-pre>BaseLanguageDefinitionService.createTest</code> writes a test in phases and <code translate="no" v-pre>createGaugeTest</code> is the level gauging test
+(<code translate="no" v-pre>gaugeQuestionRequests</code>: 6 reading and 15 other questions, subclasses add more through <code translate="no" v-pre>questionsBetweenSections</code> /
+<code translate="no" v-pre>questionsAtEnd</code>). Every <code translate="no" v-pre>TestQuestionRequest</code> has a kind and a CEFR <code translate="no" v-pre>level</code> (spread evenly over A1-C2 in a section by
+<code translate="no" v-pre>spreadLevels</code>). The requests are cut into batches of three; for each batch the generic prompt of <code translate="no" v-pre>LanguageDefaults</code>
+(<code translate="no" v-pre>getCreateTestPrompt</code>) is rendered with <code translate="no" v-pre>TemplateService.processTemplate</code> (Handlebars; <code translate="no" v-pre>is the JSON list of the batch,</code> the questions written so far, &#x60;&#x60; what was wrong with the last answer), and
+<code translate="no" v-pre>InferenceService.infer</code> is called with the schema of the kinds in the batch and exactly three items. The answer is
+checked (schema, the kind and order asked for, <code translate="no" v-pre>setLlmData</code> of the handler, the rules of the language); a batch that fails
+is asked again up to <code translate="no" v-pre>MAX_ATTEMPTS</code> times, then the test fails. When all batches are accepted they are saved as a <code translate="no" v-pre>Test</code>,
+one <code translate="no" v-pre>TestQuestionGroup</code> and the <code translate="no" v-pre>TestQuestion</code>s; a failed or cancelled generation saves nothing.</p>
 <p><code translate="no" v-pre>findByTest</code> / <code translate="no" v-pre>findByTestResult</code> of the services list the children (they refuse a parent of another user). The deletes cascade
 as in the table above, hard or soft, with bulk statements.</p>
 <p><code translate="no" v-pre>FreeChatMessage</code> attachments are <strong>loose</strong>: the JSON holds <code translate="no" v-pre>ImageAttachment(resource uuid, caption)</code>, there is no foreign key to <code translate="no" v-pre>Resource</code>,

@@ -66,6 +66,37 @@ class UserCrudTest extends LingoLLMTestBase {
     }
 
     @Test
+    void autologinOnlyWithoutPassword() throws Exception {
+        User withPassword = createUser(uniqueName("gina"), "pw", false);
+        User without = createUser(uniqueName("hank"), "pw", false);
+        loginAdmin();
+        userService.clearPassword(userService.find(without.getId()));
+
+        assertThat(userService.canAutologin(without.getLogin())).isTrue();
+        assertThat(userService.canAutologin(withPassword.getLogin())).isFalse();
+        assertThat(userService.canAutologin(without.getLogin() + "-missing")).isFalse();
+        assertThat(userService.canAutologin(null)).isFalse();
+        assertThat(userService.canAutologin(" ")).isFalse();
+
+        User locked = userService.find(without.getId());
+        locked.setLockedUntil(System.currentTimeMillis() + 60_000);
+        userService.save(locked);
+        assertThat(userService.canAutologin(without.getLogin())).isFalse();
+    }
+
+    @Test
+    void autologinConfiguration() {
+        try {
+            configuration.setAutologin(" alice ");
+            assertThat(configuration.getAutologin()).isEqualTo("alice");
+            configuration.setAutologin("");
+            assertThat(configuration.getAutologin()).isNull();
+        } finally {
+            configuration.setAutologin(null);
+        }
+    }
+
+    @Test
     void loginBackoffAfterFreeAttempts() throws Exception {
         User user = createUser(uniqueName("erin"), "pw", false);
 

@@ -42,7 +42,18 @@ Below the selector the **Learning** tab has the tabs of the profile (on a phone 
 - **Level** - the level you have in the language, as a CEFR level from A1 to C2, and your impressions: what you can and
   cannot do, your strong and weak points. The lessons are fitted to it. LingoLLM prefers that you take the grade test
   (**Take Grade Test**, the robot button) instead of choosing the level by hand; fill it in yourself only when you are sure.
-  Click **Save** to keep it. The grade test itself is not available yet.
+  Click **Save** to keep it.
+
+  **Take Grade Test** has the model write a test of 21 questions (31 for Japanese, which adds 10 questions about the
+  reading of a kanji in a sentence), covering all the levels from A1 to C2. The model writes them three at a time, so it
+  takes a while. A window shows how many questions are written and how many are left; **Stop Generation** cancels
+  it. If you have a default model in the settings it writes the test, otherwise you choose one. The test opens in a window (the whole screen on a phone) with one
+  question at a time, **Previous** / **Next**, and **Finish** at the last one. Tick **I don't know** under a question
+  you cannot answer instead of guessing. Your answers are saved as you go (when you move to another question or close
+  the window), so you can leave the test, or refresh the page, and come back: while a grade test is unfinished the button
+  **Take Grade Test** is replaced by **Continue Grade Test**, which opens the test again at the first question you have not
+  answered, with your earlier answers filled in, and **Discard Grade Test**, which deletes the test and your answers so
+  you can start a new one. Judging the answers and setting your level from them is not available yet.
 - **Free chat** - not available yet.
 
 A profile that has no level yet shows only the **Level** tab; the other tabs unlock when you save the level.

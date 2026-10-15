@@ -20,4 +20,9 @@ public class Japanese extends LanguageUIBase {
         assert language == Languages.JAPANESE;
     }
 
+    @Override
+    protected LanguageDefinitionService getDefinition() {
+        return definition;
+    }
+
 }

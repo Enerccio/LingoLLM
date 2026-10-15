@@ -78,6 +78,10 @@ public final class DesktopLauncher {
             // read by Configuration in the application, which runs in this JVM
             System.setProperty("reinitialize-with-sql", options.reinitializeSql.toAbsolutePath().toString());
         }
+        if (options.autologin != null) {
+            // read by Configuration in the application, which runs in this JVM
+            System.setProperty("lingollm-autologin", options.autologin);
+        }
         Path dataDir = Path.of(System.getProperty("user.home"), ".lingollm");
         Path desktopDir = dataDir.resolve("desktop");
         Files.createDirectories(desktopDir);
@@ -464,6 +468,8 @@ public final class DesktopLauncher {
                   --reinitialize-with-sql <file>
                                     DELETES all LingoLLM data (except the launcher's own files), creates the database again
                                     and runs the SQL file on it; give it for one start only
+                  --lingollm-autologin <login>
+                                    logs this user in without the login screen, only if they have no password
                   --no-browser      don't open the browser
                   --no-tray         no tray icon / window, stop with Ctrl+C
                   --help            show this help
@@ -474,6 +480,7 @@ public final class DesktopLauncher {
         String host = "127.0.0.1";
         Path home;
         Path reinitializeSql;
+        String autologin;
         boolean openBrowser = true;
         boolean controls = true;
         boolean help;
@@ -483,6 +490,10 @@ public final class DesktopLauncher {
             List<String> list = new ArrayList<>(List.of(args));
             for (int i = 0; i < list.size(); i++) {
                 String arg = list.get(i);
+                if (arg.startsWith("--lingollm-autologin=")) {
+                    options.autologin = arg.substring(arg.indexOf('=') + 1);
+                    continue;
+                }
                 switch (arg) {
                     case "--port" -> {
                         try {
@@ -498,6 +509,7 @@ public final class DesktopLauncher {
                     case "--host" -> options.host = value(list, ++i, arg);
                     case "--home" -> options.home = Path.of(value(list, ++i, arg));
                     case "--reinitialize-with-sql" -> options.reinitializeSql = Path.of(value(list, ++i, arg));
+                    case "--lingollm-autologin" -> options.autologin = value(list, ++i, arg);
                     case "--no-browser" -> options.openBrowser = false;
                     case "--no-tray" -> options.controls = false;
                     case "--help", "-h" -> options.help = true;

@@ -218,3 +218,88 @@ vaadin-markdown span {
     flex: 1 1 14em;
     min-width: 0;
 }
+
+/* A text of a language: line height leaves room for the readings (ruby) over the characters */
+.language-string {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.language-string:has(ruby) {
+    line-height: 2.4;
+}
+
+.language-string ruby {
+    ruby-align: center;
+    ruby-position: over;
+}
+
+.language-string rt {
+    font-size: 0.55em;
+    line-height: 1;
+    color: var(--lumo-secondary-text-color);
+}
+
+.test-question {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lumo-space-m);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.test-passage {
+    padding: var(--lumo-space-m);
+    border-radius: var(--lumo-border-radius-m);
+    background-color: var(--lumo-contrast-5pct);
+    font-size: var(--lumo-font-size-l);
+}
+
+.test-choices {
+    width: 100%;
+}
+
+.test-choices label {
+    white-space: normal;
+}
+
+.kanji-target {
+    font-size: var(--lumo-font-size-xl);
+    font-weight: bold;
+}
+
+/* Putting the segments of a sentence in order: the pool to take from and the answer being built */
+.word-order-area vaadin-button {
+    height: auto;
+    min-height: var(--lumo-button-size);
+}
+
+.word-order-area {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--lumo-space-s);
+    width: 100%;
+    min-height: 3.5em;
+    padding: var(--lumo-space-s);
+    box-sizing: border-box;
+    border-radius: var(--lumo-border-radius-m);
+    background-color: var(--lumo-contrast-5pct);
+}
+
+.word-order-answer {
+    background-color: transparent;
+    border: 1px dashed var(--lumo-contrast-30pct);
+}
+
+.test-footer {
+    display: flex;
+    width: 100%;
+    gap: var(--lumo-space-s);
+}
+
+.test-nav-button {
+    flex: 1 1 0;
+    min-width: 0;
+}

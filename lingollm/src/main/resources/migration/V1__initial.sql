@@ -235,6 +235,7 @@ create table tests
     extendedContent blob,
     _fulltext       clob,
     language_id     bigint,
+    test_type       varchar(16) not null,
     userId          bigint
 );
 
@@ -311,6 +312,7 @@ create table test_results
     _fulltext       clob,
     language_id     bigint,
     test_id         bigint,
+    finished        boolean     not null,
     userId          bigint
 );
 

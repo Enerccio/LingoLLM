@@ -52,6 +52,11 @@ public class Configuration implements InitializingBean {
      * launcher option {@code --reinitialize-with-sql <file>}.
      */
     public static final String REINITIALIZE_PROPERTY = "reinitialize-with-sql";
+    /**
+     * VM argument ({@code -Dlingollm-autologin=<login>}): the user with this login is logged in without the login screen,
+     * but only when they have no password. For the desktop app it is the launcher option {@code --lingollm-autologin <login>}.
+     */
+    public static final String AUTOLOGIN_PROPERTY = "lingollm-autologin";
     // a line with nothing but BEGIN, COMMIT or END (TRANSACTION)
     private static final Pattern TRANSACTION_CONTROL = Pattern.compile(
             "^[ \\t]*(?:BEGIN(?:[ \\t]+(?:DEFERRED|IMMEDIATE|EXCLUSIVE))?(?:[ \\t]+TRANSACTION)?|COMMIT|END(?:[ \\t]+TRANSACTION)?)[ \\t]*;[ \\t]*$",
@@ -80,6 +85,7 @@ public class Configuration implements InitializingBean {
     private boolean saveAsyncStacks = false;
     private SecretKeySpec secretKey;
     private File reinitializeSqlFile;
+    private String autologin;
     // the script, read before the wipe (it may lie in the wiped folder); null when nothing is to be reinitialized
     private String reinitializeSql;
 
@@ -130,6 +136,22 @@ public class Configuration implements InitializingBean {
      */
     public void setReinitializeWithSql(File reinitializeSqlFile) {
         this.reinitializeSqlFile = reinitializeSqlFile;
+    }
+
+    /**
+     * Login of the user that is logged in automatically, {@code null} when nobody is. When not set, the system property
+     * {@value #AUTOLOGIN_PROPERTY} is used. The user is only logged in when they have no password, see
+     * {@link com.github.enerccio.lingollm.domain.security.service.UserService#canAutologin}.
+     */
+    public String getAutologin() {
+        if (autologin != null) {
+            return StringUtils.trimToNull(autologin);
+        }
+        return StringUtils.trimToNull(System.getProperty(AUTOLOGIN_PROPERTY));
+    }
+
+    public void setAutologin(String autologin) {
+        this.autologin = autologin;
     }
 
     @Override

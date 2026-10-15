@@ -222,10 +222,10 @@ Tests are language bound too:
 
 | Entity | Table | Fields |
 |---|---|---|
-| `Test` | `tests` | `name`, `description` (extended attributes). |
+| `Test` | `tests` | `type` (`TestType`, column `test_type`: `GRADE` for the test that gauges the level, `REGULAR` otherwise), `name`, `description` (extended attributes). |
 | `TestQuestionGroup` | `test_question_groups` | `parentTest` (`OWNED_BY`), `ordinal` (column, the order in the test), `factory` (extended attribute: class name of the `TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`). What the group shows to all its questions (a text to read, instructions) is kept by its handler under `$groupData` in the attributes. |
 | `TestQuestion` | `test_questions` | `parentTest` (`OWNED_BY`), `questionGroup` (`OWNED_BY`), `ordinal` (column, the order in the group; a test is shown by the ordinal of the group, then of the question), `testQuestionFactory` (extended attribute: class name of the `TestQuestionFactory` that handles the question, resolved by `TestQuestionFactoryRegistry`). |
-| `TestResult` | `test_results` | `test` (`OWNED_BY`), `score`, `maxScore` (extended attributes). One attempt at a test. |
+| `TestResult` | `test_results` | `test` (`OWNED_BY`), `finished` (column: the attempt is created when the test is started and its answers are recorded as they are given, so an unfinished one can be continued), `score`, `maxScore` (extended attributes). One attempt at a test. |
 | `TestQuestionResult` | `test_question_results` | `testResult` (`OWNED_BY`), `question` (`OWNED_BY`), `answer`, `verdict` (`TestVerdict`: CORRECT, PARTIAL, WRONG), `gradedBy` (`GradedBy`: SERVER when the server compared the answer with `TestQuestion.answers`, LLM when the model judged it) and `feedback` (extended attributes). |
 
 What the model writes for a test: every `TestQuestionHandler` returns the JSON schema of its question data
@@ -236,11 +236,19 @@ name for the kind (`getLlmTypeName()`, the simple class name). `TestDefinitionSc
 of the questions; groups are not part of the schema yet.
 
 `Test.reasoning` (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
-user. `BaseLanguageDefinitionService.createGaugeTest` makes the level gauging test: it renders the prompt of
-`LanguageDefaults` with `TemplateService.processTemplate` (Handlebars; `{{questions}}` is the JSON list of `TestQuestionRequest`, 5 reading
-and 15 other questions, subclasses add more through `questionsBetweenSections` / `questionsAtEnd`), calls
-`InferenceService.infer` with the schema above and turns a valid answer into `Test`, one `TestQuestionGroup` and the
-`TestQuestion`s; an invalid one saves nothing.
+user. `BaseLanguageDefinitionService.createTest` writes a test in phases and `createGaugeTest` is the level gauging test
+(`gaugeQuestionRequests`: 6 reading and 15 other questions, subclasses add more through `questionsBetweenSections` /
+`questionsAtEnd`). Every `TestQuestionRequest` has a kind and a CEFR `level` (spread evenly over A1-C2 in a section by
+`spreadLevels`). The requests are grouped by their kind and cut into batches of at most three of one kind (the schema has no choice between kinds, and the questions keep their places); for each batch the generic prompt of `LanguageDefaults`
+(`getCreateTestPrompt`) is rendered with `TemplateService.processTemplate` (Handlebars; `{{kinds}}` the description each handler gives of its kind, `{{questions}}` is the JSON list
+of the batch, `{{previous}}` the questions written so far, `{{problems}}` what was wrong with the last answer), and
+`InferenceService.infer` is called with the schema of the kinds in the batch and exactly three items. The answer is
+checked (schema, the kind and order asked for, `setLlmData` of the handler, the rules of the language); a batch that fails
+is asked again up to `MAX_ATTEMPTS` times, then the test fails. A language whose texts need more than the plain text
+(Japanese: furigana) has a second pass: after a batch is accepted, the texts that `needsAnnotation` go to the model with the
+prompt `LanguageDefaults.getAnnotateTextsPrompt` and the schema `annotatedTextSchema` (parts with readings),
+`readAnnotatedText` checks them and puts the metadata into the texts, and only then the next batch is asked for. When all batches are accepted they are saved as a `Test`,
+one `TestQuestionGroup` and the `TestQuestion`s; a failed or cancelled generation saves nothing.
 
 `findByTest` / `findByTestResult` of the services list the children (they refuse a parent of another user). The deletes cascade
 as in the table above, hard or soft, with bulk statements.

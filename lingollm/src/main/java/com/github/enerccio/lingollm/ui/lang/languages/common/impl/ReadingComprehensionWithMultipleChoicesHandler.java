@@ -3,6 +3,7 @@ package com.github.enerccio.lingollm.ui.lang.languages.common.impl;
 import com.github.enerccio.lingollm.domain.model.impl.Test;
 import com.github.enerccio.lingollm.domain.model.impl.TestQuestion;
 import com.github.enerccio.lingollm.ui.lang.languages.common.LanguageString;
+import com.vaadin.flow.component.Component;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -10,6 +11,11 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class ReadingComprehensionWithMultipleChoicesHandler extends MultipleChoiceHandler<ReadingMultipleChoiceData> {
+
+    @Override
+    public String getLlmDescription() {
+        return "Pick all the correct choices, \"correctAnswers\" holds their indexes, there may be none. The question is about the \"text\" that comes with it, the learner reads it first.";
+    }
 
     public ReadingComprehensionWithMultipleChoicesHandler(Test test, TestQuestion testQuestion) {
         super(test, testQuestion, ReadingMultipleChoiceData.class, ReadingMultipleChoiceData::new);
@@ -19,5 +25,10 @@ public class ReadingComprehensionWithMultipleChoicesHandler extends MultipleChoi
         ReadingMultipleChoiceData data = getTestData(getType());
         data.setText(text);
         setTestData(data);
+    }
+
+    @Override
+    protected Component renderPassage(ReadingMultipleChoiceData data) {
+        return data.getText() == null ? null : passage(data.getText());
     }
 }

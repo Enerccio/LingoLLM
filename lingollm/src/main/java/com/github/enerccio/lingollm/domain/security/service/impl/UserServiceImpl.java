@@ -235,6 +235,14 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserRepository> imple
     }
 
     @Override
+    @CommonTxReadOnly
+    public boolean canAutologin(String username) throws Exception {
+        User user = StringUtils.isBlank(username) ? null : findByName(username);
+        return user != null && !user.isDeleted() && StringUtils.isBlank(user.getPasswordHash())
+                && user.getLockedUntil() <= System.currentTimeMillis();
+    }
+
+    @Override
     @CommonTx
     public User changePassword(User user, String password) throws Exception {
         byte[] saltBytes = new byte[16];

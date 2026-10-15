@@ -40,6 +40,7 @@ class TestResultCrudTest extends ExtendableCrudContract<TestResult> {
         result.setTest(test);
         result.setScore(3);
         result.setMaxScore(5);
+        result.setFinished(true);
         return result;
     }
 
@@ -47,6 +48,7 @@ class TestResultCrudTest extends ExtendableCrudContract<TestResult> {
     protected void assertCreated(TestResult loaded) {
         assertThat(loaded.getScore()).isEqualTo(3);
         assertThat(loaded.getMaxScore()).isEqualTo(5);
+        assertThat(loaded.isFinished()).isTrue();
         assertThat(loaded.getTest()).isNotNull();
     }
 

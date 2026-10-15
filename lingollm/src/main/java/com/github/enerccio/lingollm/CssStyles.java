@@ -48,6 +48,17 @@ public final class CssStyles {
     public static final String GRADE_ROW = "grade-row";
     public static final String GRADE_COMBO = "grade-combo";
 
+    // --- Texts of a language and tests ---
+    public static final String LANGUAGE_STRING = "language-string";
+    public static final String TEST_QUESTION = "test-question";
+    public static final String TEST_PASSAGE = "test-passage";
+    public static final String TEST_CHOICES = "test-choices";
+    public static final String TEST_FOOTER = "test-footer";
+    public static final String TEST_NAV_BUTTON = "test-nav-button";
+    public static final String WORD_ORDER_AREA = "word-order-area";
+    public static final String WORD_ORDER_ANSWER = "word-order-answer";
+    public static final String KANJI_TARGET = "kanji-target";
+
     // --- Resizable text area toggle icon ---
     public static final String RESIZABLE_TEXT_AREA_ICON = "resizable-text-area-icon";
 

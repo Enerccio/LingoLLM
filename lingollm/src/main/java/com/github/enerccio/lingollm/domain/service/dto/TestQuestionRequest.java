@@ -1,10 +1,12 @@
 package com.github.enerccio.lingollm.domain.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.enerccio.lingollm.domain.collections.CEFR;
 
 /**
- * One question the model is asked to write: what kind it is and where in the test it goes. A list of them is put into
- * the prompt (as JSON) so that the model writes exactly these questions, in this order.
+ * One question the model is asked to write: what kind it is, how difficult it is (the CEFR level of the learner it is
+ * for) and where in the test it goes. A list of them (a batch of the test) is put into the prompt (as JSON) so that the
+ * model writes exactly these questions, in this order.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestQuestionRequest {
@@ -12,6 +14,7 @@ public class TestQuestionRequest {
     private int number;
     private String section;
     private String type;
+    private CEFR level;
     private String notes;
 
     public TestQuestionRequest() {
@@ -51,6 +54,15 @@ public class TestQuestionRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    /** The level of the learner the question is written for, null when it does not matter. */
+    public CEFR getLevel() {
+        return level;
+    }
+
+    public void setLevel(CEFR level) {
+        this.level = level;
     }
 
     public String getNotes() {

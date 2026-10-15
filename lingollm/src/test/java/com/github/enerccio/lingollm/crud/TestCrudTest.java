@@ -1,6 +1,7 @@
 package com.github.enerccio.lingollm.crud;
 
 import com.github.enerccio.lingollm.domain.collections.Languages;
+import com.github.enerccio.lingollm.domain.collections.TestType;
 import com.github.enerccio.lingollm.domain.model.impl.Language;
 import com.github.enerccio.lingollm.domain.model.impl.Test;
 import com.github.enerccio.lingollm.domain.service.LanguageService;
@@ -32,6 +33,7 @@ class TestCrudTest extends ExtendableCrudContract<Test> {
         test.setName("Articles");
         test.setDescription("der, die, das");
         test.setReasoning("The articles first");
+        test.setType(TestType.GRADE);
         return test;
     }
 
@@ -41,6 +43,7 @@ class TestCrudTest extends ExtendableCrudContract<Test> {
         assertThat(loaded.getDescription()).isEqualTo("der, die, das");
         assertThat(loaded.getReasoning()).isEqualTo("The articles first");
         assertThat(loaded.getLanguage()).isNotNull();
+        assertThat(loaded.getType()).isEqualTo(TestType.GRADE);
     }
 
     @Override

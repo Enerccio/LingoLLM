@@ -56,7 +56,10 @@ flowchart TB
 `LoginCheckRoute` runs in the route's constructor (`showLogin()`):
 
 1. On an empty installation it opens `UserDialog` in *first time* mode (create the administrator) and reloads.
-2. Otherwise it tries a user that is already logged in this session (`authenticatedSessionUser`, overridden by `Main`: the page was reloaded, e.g. by the language selector) and then the *Save login* cookies (`authenticateFromCookie`, rotating the secret on success).
+2. Otherwise it tries a user that is already logged in this session (`authenticatedSessionUser`, overridden by `Main`: the page was reloaded, e.g. by the language selector) and then the *Save login* cookies (`authenticateFromCookie`, rotating the secret on success), then the user of the start argument
+   `-Dlingollm-autologin=<login>` (`Configuration.AUTOLOGIN_PROPERTY`, desktop launcher option
+   `--lingollm-autologin`) when `UserService.canAutologin` agrees: it exists, is not locked and has **no password**
+   (`autologinUser`; with a password the login screen is shown).
 3. Otherwise it shows a `LoginOverlay` (`PermissiveLoginOverlay` - allows empty passwords to reach the server-side
    check) with the *Save login* checkbox.
    The check passes the client address (`LoginCheckRoute.clientAddress()`) to `UserService.authenticate`, which
@@ -160,6 +163,36 @@ language. `LanguageUIBase` supplies the plumbing and an empty `create()`; `Japan
 place to add exercises. To add a language: a constant in `Languages` (flag from `LanguageIcons`, defaults from
 `LanguageDefaults`, the `LanguageUI` constructor), its `ENUM_LANGUAGE_*` key in `L`, `LocalizationBundleEN` and
 `LocalizationImpl.loadMaps`.
+
+### The grade test and the test dialog
+
+`GradeUIComponent.takeGradeTest()` picks the AI (`UserSetting.defaultModel` if the user can use it, the only AI, or a
+`ListSelectDialog`), then `generate`: it opens the modal `TestGenerationDialog` (it blocks the rest of the UI; a progress
+bar, "written / left" and **Stop Generation**) and calls `LanguageDefinitionService.createGaugeTest` (written batch by
+batch; `TestCallback.onProgress(done, total)` counts questions, first with 0, and moves the bar; the definition comes
+from `LanguageUIBase.getDefinition()`). The callbacks run on a thread of the inference, so they go through `ui.access`
+inside `InRequestScope`; a generation number makes the answer of a stopped generation harmless (a test that arrives after
+the stop is deleted).
+
+The test that was written is started with `TestResultService.start(test)`, which creates the `TestResult` at once
+(`finished = false`), and opened in a `TestDialog(test, result)`. With a result the dialog records the answer of a question
+when it is left (**Next**, **Previous**, the close button; `TestQuestionResultService.record` writes the first answer and
+rewrites it when the learner goes back) and sets `finished` on **Finish**. A dialog opened on a result with answers puts
+them back (`TestQuestionHandler.setAnswer`, the opposite of `getAnswer`) and starts at the first question without one. While
+`TestResultService.findUnfinished(language, TestType.GRADE)` finds an attempt, `GradeUIComponent` shows **Continue Grade
+Test** and **Discard Grade Test** (a hard delete of the test, which takes its attempts and answers with it) instead of
+**Take Grade Test**; `TestDialog.setOnClose` makes it look again when the dialog is closed.
+
+`TestDialog` loads the questions (`TestQuestionService.findByTest`), makes a handler per question with the
+`TestQuestionFactoryRegistry`, renders each once (`TestQuestionHandler.render()`; the handler keeps its inputs and
+`getAnswer()` reads them) and shows one at a time with the output of `TestQuestionGroupHandler.render()` above it. An
+**I don't know** check box disables the rendered question and the answer becomes `dontKnow`. The size is set from Java
+(`sizeForScreen`: the whole screen when the body is narrower than 768 px, as for the choice of the workspace): in
+Vaadin 25 the overlay is inside the shadow DOM of the dialog, so a style sheet rule can't size it.
+
+`LanguageStringComponent` draws a `LanguageString`: the metadata of a kind with an `Annotator` (furigana as `ruby`)
+over the text it covers. An `AnnotationFilter` hides annotations - `KanjiReadingHandler` hides the furigana over its
+target kanji with `Furigana.hideOver`. The text goes into the DOM as text nodes, never as HTML.
 
 ### Grids
 

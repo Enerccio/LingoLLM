@@ -19,4 +19,9 @@ public class German extends LanguageUIBase {
         super(language, workspace);
     }
 
+    @Override
+    protected LanguageDefinitionService getDefinition() {
+        return definition;
+    }
+
 }

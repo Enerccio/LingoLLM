@@ -40,7 +40,7 @@ class ExtendableEntityListenerTest {
         Language language = new Language();
         language.setNote("Write \"more\"\nwith ünïcödé ✓");
         LanguageDefaults defaults = new LanguageDefaults();
-        defaults.setGaugeTestPrompt("Test \"{{language}}\"\nlevel");
+        defaults.setCreateTestPrompt("Test \"{{language}}\"\nlevel");
         language.setDefaults(defaults);
 
         listener.serialize(language);
@@ -49,7 +49,7 @@ class ExtendableEntityListenerTest {
         loaded.setExtendedContent(language.getExtendedContent());
         listener.deserialize(loaded);
         assertThat(loaded.getNote()).isEqualTo("Write \"more\"\nwith ünïcödé ✓");
-        assertThat(loaded.getDefaults().getGaugeTestPrompt()).isEqualTo("Test \"{{language}}\"\nlevel");
+        assertThat(loaded.getDefaults().getCreateTestPrompt()).isEqualTo("Test \"{{language}}\"\nlevel");
         assertThat(loaded.getDefaults().getFreeChatTemplate()).isNull();
     }
 

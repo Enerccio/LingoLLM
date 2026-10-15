@@ -12,24 +12,52 @@ anything specific to its stories); the database starts at `V1`.
 
 ### Added
 
+- `-Dlingollm-autologin=<login>` (desktop app: `--lingollm-autologin <login>`): that user is logged in without the login
+  screen, but only when they have no password (otherwise, or when the user is missing or locked, the login screen is
+  shown). New `Configuration.getAutologin`, `UserService.canAutologin` and `LoginCheckRoute.autologinUser` (a new
+  `@Extendable` method).
+- The grade test can be taken: **Take Grade Test** (tab *Level*) has the model write the test (the default model of the
+  user, the only one they have, or one chosen from a list) while the new modal `TestGenerationDialog` shows a progress bar,
+  how many questions are written and how many are left, and a **Stop Generation** button, then opens the test in the
+  new `TestDialog` (a window on a desktop, the whole screen on a phone; one question at a time,
+  *Previous*/*Next*/*Finish*, an **I don't know** check box under every question). The answers are only collected for
+  now, judging them is not there yet.
+- `TestQuestionHandler.render()` (the component of a question for the test dialog) and `getAnswer()` for every kind of
+  question (an index, a JSON list of indexes, a text), `TestQuestionGroupHandler.render()` for what a group shows above
+  its questions. Both are new abstract/final methods: question handlers of extensions have to implement them.
+- `LanguageStringComponent`: shows a `LanguageString` with its annotations (furigana as `<ruby>`), can hide annotations
+  with an `AnnotationFilter` (`Furigana.hideOver(kanji)`) and takes `Annotator`s for other kinds of metadata.
+- `TestQuestionResult.dontKnow` (extended attribute, `false` by default): the learner said they do not know the answer.
+- Japanese level test: 10 more questions, `KanjiReadingFactory` / `KanjiReadingHandler` (a single choice question: the
+  reading of the `targetKanji` of a `sentence`; the model writes the furigana of the whole sentence as always and the
+  question hides the ones over the target), their levels spread over A1-C2 with the kanji of the JLPT level that is
+  about the same (N5 for A1 ... N1 for C1 and C2).
+
 - `-Dreinitialize-with-sql=/path/to/file.sql` (desktop app: `--reinitialize-with-sql <file>`): before the database exists
   `Configuration` wipes the content of the application folder (not `secret.key` and not the launcher's `desktop/` folder), Flyway creates and
   migrates the database, the SQL file is run on it in one transaction, and the application continues. Nothing is deleted
   when the file is not readable. `BEGIN`/`COMMIT` lines of the file (a `sqlite3` dump) are ignored. `Configuration.resolveDb` now declares `throws Exception`.
-- Level gauging test: `LanguageDefinitionService.createGaugeTest(language, ai, callback)` is asynchronous, returns a
-  `CancellationToken` and has the model write 20 questions (5 about a text, 15 others: single and multiple choice, writing
-  and word order) in one group, saved as a `Test` with its `TestQuestion`s only when the whole answer is valid. Languages
-  can add questions between the sections and at the end (`questionsBetweenSections`, `questionsAtEnd`, `questionKinds`
-  in `BaseLanguageDefinitionService`). The reasoning of the model is kept in `Test.reasoning`; for that
-  `InferenceService.InferenceOutcomeCallback` has a new `onReasoning`.
+- Tests are written by the model in phases: `LanguageDefinitionService.createTest(language, ai, name, requests, callback)`
+  (any test) and `createGaugeTest(language, ai, callback)` (the level gauging test) are asynchronous, return a
+  `CancellationToken` and ask the model for the questions three at a time (`BaseLanguageDefinitionService.BATCH_SIZE`),
+  each request telling it what was written already; a batch that is not what was asked (wrong kinds or order, an invalid
+  question, no furigana in Japanese...) is asked again with the problems, up to 3 times, and the accepted batches are
+  stitched into one `Test` in one group, with its `TestQuestion`s, saved only when all of them are valid. The callback
+  (`LanguageDefinitionService.TestCallback`, was `GaugeTestCallback`) also gets `onProgress(done, total)`.
+  Every `TestQuestionRequest` has the CEFR `level` of the question; the level gauging test is 21 questions (6 about a text,
+  15 others: single and multiple choice, writing and word order), the levels of each section spread evenly over A1-C2
+  (`spreadLevels`). Languages can add questions between the sections and at the end (`questionsBetweenSections`,
+  `questionsAtEnd`, `questionKinds` in `BaseLanguageDefinitionService`). The reasoning of the model is kept in
+  `Test.reasoning`, per batch; for that `InferenceService.InferenceOutcomeCallback` has a new `onReasoning`.
 - New kinds of questions: `WritingQuestionFactory` (the learner writes an answer, the model gives a sample one) and
   `WordOrderQuestionFactory` (the model gives the segments of a sentence in the correct order, the code shuffles them).
 - Prompts are Handlebars templates (`{{variable}}`), rendered by `TemplateService` as in Marginalia but without its
   SillyTavern macros (`processTemplate`, `isValidTemplate` with a list of names to report unknown ones, compiled
   templates cached by Caffeine; new dependencies `com.github.jknack:handlebars`, `com.github.ben-manes.caffeine:caffeine`).
-  `LanguageDefaults` holds the level test prompt of each language (`getGaugeTestPrompt`); `Language.defaults` is now a
-  `LanguageDefaults` with what the user changed, and `LanguageService.getGaugeTestPrompt` takes the profile's own text
-  when it is set and the default of the language otherwise.
+  `LanguageDefaults` holds the create test prompt of each language (`getCreateTestPrompt`), one generic prompt that writes
+  the questions asked for whatever the test is for; `Language.defaults` is now a `LanguageDefaults` with what the user
+  changed, and `LanguageService.getCreateTestPrompt` takes the profile's own text when it is set and the default of the
+  language otherwise.
 - `LanguageDefinitionService` (what the application knows about a learnable language) with `BaseLanguageDefinitionService`
   and one implementation per language (`JapaneseLanguageDefinitionServiceImpl`, `GermanLanguageDefinitionServiceImpl`).
 - `TestQuestionHandler.getLlmSchema()` (JSON schema of what the model writes for a question, extensions that add
@@ -89,8 +117,57 @@ anything specific to its stories); the database starts at `V1`.
   locally with jtokkit).
 - Migration `V1` (all tables).
 
+- The grade test is recorded while it is taken: `TestResultService.start(test)` creates the `TestResult` as soon as the
+  test is written, and the `TestDialog` (new constructor `TestDialog(test, result)`, `setOnClose`) records the answer of a
+  question when it is left (`TestQuestionResultService.record(result, question, answer, dontKnow)`: the first answer
+  creates the `TestQuestionResult`, going back rewrites it). `TestResult.finished` is set on Finish.
+- An unfinished grade test can be continued after a refresh or a closed window: **Take Grade Test** is replaced by
+  **Continue Grade Test** (opens at the first question without an answer, the other answers are put back with the new
+  `TestQuestionHandler.setAnswer(String)`, which does nothing by default and is implemented by the single choice, multiple
+  choice, writing and word order questions) and **Discard Grade Test** (deletes the test with its attempt and answers).
+  `TestResultService.findUnfinished(language, type)`. New texts `LABEL_CONTINUE_GRADE_TEST`, `LABEL_DISCARD_GRADE_TEST`,
+  `MSG_CONFIRM_LEAVE_RECORDED_TEST`, `MSG_CONFIRM_DISCARD_GRADE_TEST`.
+- `Test.type` (`TestType`: `GRADE`, `REGULAR`, column `test_type`): `createGaugeTest` makes a `GRADE` test, `createTest` a
+  `REGULAR` one. `TestResult.finished` (column). Both are in `V1` (the database has no release yet): a development
+  database needs to be created again, `dev.sql` has the column `test_type` of its test.
+
+### Changed
+
+- Japanese furigana is no longer part of the generation of the questions: the model writes the questions as plain texts
+  (`getLanguageStringSchema()` of Japanese has only `rawString`, the furigana check of `checkLanguageString` is gone) and
+  after every accepted batch a pass of its own adds the furigana to the texts that have kanji, before the next batch is
+  asked for. The model sees only those texts (the same text once) and does not write them again: it lists the words with
+  kanji in the order of the text, `{"word", "reading"}`, picking the readings from the context, and the application finds
+  every word in the text (so a dropped `。` or an added `|` can not fail the pass), takes kana the reading repeats at the ends
+  of a word out of the furigana, ignores a word that is not in the text (named in the message when a kanji has no reading), gives a word that comes again the reading of its entry and rejects kanji without a reading,
+  a `targetKanji` split into more entries. The pass is asked again up to
+  `MAX_ATTEMPTS` times. New prompt
+  `LanguageDefaults.getAnnotateTextsPrompt` / `LanguageService.getAnnotateTextsPrompt(language)` (Handlebars: `texts`,
+  `textCount`, `wholeWords`, `problems`; blank for a language without the pass, like German) and the hooks
+  `needsAnnotation`, `annotatedTextSchema`, `wholeWords`, `readAnnotatedText` in `BaseLanguageDefinitionService`.
+  `Furigana.hideOver` hides the furigana over the kanji of the target (`Furigana.kanjiCore`), so 食べる is hidden by the
+  furigana over 食.
+
+- The word order question is written by the model as one `sentence` cut by `|` (`Ich|heisse|Anna.`) instead of a list of
+  `segments`; the application makes the segments (the stored data is the same, the program still shuffles them). New
+  `TestQuestionHandler.normalizeLlmData(JsonObject)` (does nothing by default, called on what the model wrote before it is
+  read; question kinds of extensions can use it for a simpler form too).
+
+- The model is asked for questions of one kind at a time: `BaseLanguageDefinitionService` groups the requests of a test by
+  their kind and cuts every group into batches of at most `BATCH_SIZE` (the questions keep their places in the test), so the
+  schema of a request has no choice between kinds (providers like Gemini do not keep the `type` and the body of the
+  alternatives of a `oneOf` together and wrote the body of one kind for all). The log and the reasoning of the test name the
+  questions of a batch (`Questions 1, 3, 5`).
+- The prompt of the test no longer lists the kinds of questions itself: every handler describes its kind
+  (`TestQuestionHandler.getLlmDescription()`, empty by default, so kinds of extensions keep working) and the prompt
+  inserts the description of the kind asked for (`{{#each kinds}}`, variable `kinds` with `name` and `description`;
+  `promptVariables` takes the handlers of the kinds). The Japanese prompt lost its paragraph about kanji questions, it is
+  the description of `KanjiReadingHandler` now.
+
 ### Known issues
 
+- Taking the grade test does not judge the answers yet, so the level is not set by it.
+- The test dialog and the rendering of the questions are checked by tests of the component tree only, not in a browser.
 - There is no chat or lesson screen: nothing in the application sends requests yet (the inference layer is there and
   tested), so no token limit is applied and no usage is counted in practice.
 - The learnable languages (Japanese, German) have an empty screen; their defaults (`LanguageDefaults`) are empty.

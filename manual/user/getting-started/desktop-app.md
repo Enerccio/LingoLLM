@@ -75,6 +75,7 @@ The portable launcher accepts these options:
 lingollm --port 8765        # port to listen on; a free one is picked when 8765 is taken
 lingollm --host 127.0.0.1   # address to listen on
 lingollm --home /path       # directory that holds the .lingollm folder (default: your home directory)
+lingollm --lingollm-autologin alice  # log "alice" in without the login screen (only if she has no password)
 lingollm --no-browser       # don't open the browser
 lingollm --no-tray          # no tray icon; stop with Ctrl+C
 lingollm --help

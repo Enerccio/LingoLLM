@@ -224,11 +224,16 @@ name for the kind (`getLlmTypeName()`, the simple class name). `TestDefinitionSc
 of the questions; groups are not part of the schema yet.
 
 `Test.reasoning` (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
-user. `BaseLanguageDefinitionService.createGaugeTest` makes the level gauging test: it renders the prompt of
-`LanguageDefaults` with `TemplateService.processTemplate` (Handlebars; `` is the JSON list of `TestQuestionRequest`, 5 reading
-and 15 other questions, subclasses add more through `questionsBetweenSections` / `questionsAtEnd`), calls
-`InferenceService.infer` with the schema above and turns a valid answer into `Test`, one `TestQuestionGroup` and the
-`TestQuestion`s; an invalid one saves nothing.
+user. `BaseLanguageDefinitionService.createTest` writes a test in phases and `createGaugeTest` is the level gauging test
+(`gaugeQuestionRequests`: 6 reading and 15 other questions, subclasses add more through `questionsBetweenSections` /
+`questionsAtEnd`). Every `TestQuestionRequest` has a kind and a CEFR `level` (spread evenly over A1-C2 in a section by
+`spreadLevels`). The requests are cut into batches of three; for each batch the generic prompt of `LanguageDefaults`
+(`getCreateTestPrompt`) is rendered with `TemplateService.processTemplate` (Handlebars; `` is the JSON list
+of the batch, `` the questions written so far, `` what was wrong with the last answer), and
+`InferenceService.infer` is called with the schema of the kinds in the batch and exactly three items. The answer is
+checked (schema, the kind and order asked for, `setLlmData` of the handler, the rules of the language); a batch that fails
+is asked again up to `MAX_ATTEMPTS` times, then the test fails. When all batches are accepted they are saved as a `Test`,
+one `TestQuestionGroup` and the `TestQuestion`s; a failed or cancelled generation saves nothing.
 
 `findByTest` / `findByTestResult` of the services list the children (they refuse a parent of another user). The deletes cascade
 as in the table above, hard or soft, with bulk statements.

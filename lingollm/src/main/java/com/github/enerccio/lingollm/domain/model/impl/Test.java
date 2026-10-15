@@ -2,7 +2,11 @@ package com.github.enerccio.lingollm.domain.model.impl;
 
 import com.github.enerccio.lingollm.domain.model.LanguageBoundEntity;
 import com.github.enerccio.lingollm.domain.traits.ExtendedAttribute;
+import com.github.enerccio.lingollm.domain.collections.TestType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -12,6 +16,11 @@ import jakarta.persistence.Transient;
 @Entity
 @Table(name = "tests")
 public class Test extends LanguageBoundEntity {
+
+    /** A column, the application looks for the unfinished grade test of a profile. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "test_type", nullable = false)
+    private TestType type = TestType.REGULAR;
 
     @ExtendedAttribute
     @Transient
@@ -28,6 +37,14 @@ public class Test extends LanguageBoundEntity {
     @ExtendedAttribute
     @Transient
     private String reasoning;
+
+    public TestType getType() {
+        return type;
+    }
+
+    public void setType(TestType type) {
+        this.type = type == null ? TestType.REGULAR : type;
+    }
 
     public String getName() {
         return name;

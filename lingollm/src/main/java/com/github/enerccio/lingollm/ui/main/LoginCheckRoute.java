@@ -88,6 +88,9 @@ public abstract class LoginCheckRoute extends Div implements ApplicationEntryPoi
                     authUser = authenticateFromCookie();
                 }
                 if (authUser == null) {
+                    authUser = autologinUser();
+                }
+                if (authUser == null) {
                     login();
                 } else {
                     performLogin(authUser);
@@ -105,6 +108,26 @@ public abstract class LoginCheckRoute extends Div implements ApplicationEntryPoi
         } catch (Exception e) {
             UIUtils.internalServerError(loc, e);
         }
+    }
+
+    /**
+     * Login of the user named by the {@code lingollm-autologin} start argument when they may be logged in without a
+     * password, {@code null} otherwise (the login screen is shown).
+     */
+    @PublicAPI(from = "1.0.0",
+            returns = @APIReturn(type = String.class),
+            locals = {@APILocals(name = "autologin", type = String.class)})
+    protected String autologinUser() throws Exception {
+        String autologin = configuration.getAutologin();
+        if (autologin == null) {
+            return null;
+        }
+        if (!userService.canAutologin(autologin)) {
+            log.warn("Cannot log in {} automatically (lingollm-autologin): no such user, or it has a password or is locked",
+                    autologin);
+            return null;
+        }
+        return userService.findByName(autologin).getLogin();
     }
 
     /**

@@ -21,6 +21,11 @@ public interface UserService extends BaseService<User, UserRepository> {
      * @param clientAddress address the attempt came from, used for in-memory throttling; null or blank to skip it
      */
     boolean authenticate(String username, String password, String clientAddress) throws Exception;
+    /**
+     * Whether the user may be logged in without asking for anything (the {@code lingollm-autologin} start argument): they
+     * exist, are not deleted or locked and have no password. A user with a password is never logged in this way.
+     */
+    boolean canAutologin(String username) throws Exception;
     User changePassword(User user, String password) throws Exception;
     User clearPassword(User user) throws Exception;
     User unlock(User user) throws Exception;

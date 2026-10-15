@@ -18,6 +18,13 @@ public class TestResult extends LanguageBoundEntity {
     @CleanupReference(Policy.OWNED_BY)
     private Test test;
 
+    /**
+     * The learner has finished the attempt. The result is created when the test is started and its answers are recorded
+     * as they are given, so an attempt that is not finished can be continued (a column: the application looks for it).
+     */
+    @Column(name = "finished", nullable = false)
+    private boolean finished = false;
+
     @ExtendedAttribute
     @Transient
     private Integer score;
@@ -32,6 +39,14 @@ public class TestResult extends LanguageBoundEntity {
 
     public void setTest(Test test) {
         this.test = test;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public Integer getScore() {

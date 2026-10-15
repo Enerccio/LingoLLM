@@ -51,6 +51,14 @@ An account can have an empty password; you then log in with the user name only. 
 forgotten password, log in this way and set a new password with **Change Password** right away. That is handy for the desktop app on
 your own computer, but never do it on a server others can reach.
 
+### Skipping the login screen
+
+Start LingoLLM with the VM argument `-Dlingollm-autologin=<user name>` (the desktop app: `--lingollm-autologin <user name>`)
+and that user is logged in as soon as the page opens, without the login screen. It works only when the account has
+**no password**; if it has one, or the user does not exist or is locked, the login screen is shown as usual (the reason
+is in the log). Whoever can open the address gets in as that user, so use it only on your own computer. **Logout** shows
+the login screen once; the next time the page is opened you are logged in again.
+
 ## Settings
 
 The **Settings** tab holds your personal settings.
