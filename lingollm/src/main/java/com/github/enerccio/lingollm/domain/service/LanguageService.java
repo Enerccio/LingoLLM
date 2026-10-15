@@ -8,4 +8,10 @@ import com.github.enerccio.lingollm.domain.repository.LanguageRepository;
  */
 public interface LanguageService extends ExtendableService<Language, LanguageRepository> {
 
+    /**
+     * The template of the prompt that makes the model write a level gauging test: the one the profile has if it is set,
+     * the default of its language ({@code Languages.defaults}) otherwise.
+     */
+    String getGaugeTestPrompt(Language language);
+
 }

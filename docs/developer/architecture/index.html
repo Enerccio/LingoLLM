@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845384888589">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845384888589" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845384888589" defer></script>
     <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
 </head>
 <body>
@@ -838,7 +838,7 @@ languages come with extensions or are added later.</p>
 request (startup, scheduled backups) or with a language that has no bundle (any more) the default language is
 used, and a text a bundle doesn&#x27;t have is taken from the default language, so a bundle that lags behind the keys
 keeps working. Worker threads get the session through <code translate="no" v-pre>ThreadCopyRequestAttributes</code> like the <code translate="no" v-pre>user</code> bean. The names of the learnable
-languages (<code translate="no" v-pre>Languages</code>) are <code translate="no" v-pre>ENUM_LANGUAGE_*</code> keys, see <code translate="no" v-pre>Localization.getLanguageName</code>.</p>
+languages (<code translate="no" v-pre>Languages</code>) are <code translate="no" v-pre>ENUM_LANGUAGE_*</code> keys, see <code translate="no" v-pre>Localization.getLanguageName</code>; the CEFR levels (<code translate="no" v-pre>CEFR</code>) are <code translate="no" v-pre>ENUM_CEFR_*</code> keys, see <code translate="no" v-pre>Localization.getCefrLevel</code>.</p>
 </li>
 <li>
 <p><strong>Choosing.</strong> The language of a user is <code translate="no" v-pre>UserSetting.language</code> (a language code, <code translate="no" v-pre>null</code> for the default).

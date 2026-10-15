@@ -41,6 +41,22 @@ public class MultipleChoiceHandler<D extends MultipleChoiceData> extends TestQue
         return type;
     }
 
+    @Override
+    protected void check(D data) {
+        if (data.getChoices() == null || data.getChoices().size() < 2) {
+            throw new IllegalArgumentException("A multiple choice question needs at least two choices");
+        }
+        List<Integer> correct = data.getCorrectAnswers() == null ? List.of() : data.getCorrectAnswers();
+        for (Integer index : correct) {
+            if (index == null || index < 0 || index >= data.getChoices().size()) {
+                throw new IllegalArgumentException("The correct choices have to be among the choices");
+            }
+        }
+        if (new TreeSet<>(correct).size() != correct.size()) {
+            throw new IllegalArgumentException("A choice can be correct only once");
+        }
+    }
+
     /**
      * @param correctChoices indexes of the correct choices, may be empty; each choice at most once
      */

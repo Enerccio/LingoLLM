@@ -1,5 +1,6 @@
 package com.github.enerccio.lingollm.ui.lang.languages.common;
 
+import com.github.enerccio.lingollm.domain.traits.LLMField;
 import java.util.Objects;
 
 /**
@@ -11,9 +12,13 @@ import java.util.Objects;
  */
 public final class LanguageStringMetadata {
 
+    @LLMField(description = "The kind of the annotation, e.g. furigana")
     private String type;
+    @LLMField(minimum = 0, description = "Index of the first character covered, counted from 0 in the raw string")
     private int start;
+    @LLMField(minimum = 1, description = "Index after the last character covered (exclusive), greater than start")
     private int end;
+    @LLMField(description = "What the annotation says about the covered part, e.g. the reading of the kanji for furigana")
     private String value;
 
     // for deserialization

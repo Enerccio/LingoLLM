@@ -1,5 +1,6 @@
 package com.github.enerccio.lingollm.ui.lang.languages.common;
 
+import com.github.enerccio.lingollm.domain.traits.LLMField;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,9 @@ import java.util.Objects;
  */
 public final class LanguageString {
 
+    @LLMField(description = "The text itself, plain, without any markup")
     private String rawString;
+    @LLMField(required = false, description = "Annotations of parts of the text, empty when there are none")
     private List<LanguageStringMetadata> metadata;
 
     // for deserialization

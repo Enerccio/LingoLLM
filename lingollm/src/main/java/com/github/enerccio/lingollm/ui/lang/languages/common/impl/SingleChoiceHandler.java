@@ -39,6 +39,16 @@ public class SingleChoiceHandler<D extends SingleChoiceData> extends TestQuestio
         return type;
     }
 
+    @Override
+    protected void check(D data) {
+        if (data.getChoices() == null || data.getChoices().size() < 2) {
+            throw new IllegalArgumentException("A single choice question needs at least two choices");
+        }
+        if (data.getCorrectAnswer() < 0 || data.getCorrectAnswer() >= data.getChoices().size()) {
+            throw new IllegalArgumentException("The correct choice has to be one of the choices");
+        }
+    }
+
     public void setChoices(List<LanguageString> choices, int correctChoice) {
         if (choices == null || correctChoice < 0 || correctChoice >= choices.size()) {
             throw new IllegalArgumentException("The correct choice has to be one of the choices");

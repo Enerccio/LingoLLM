@@ -212,6 +212,10 @@ public class OpenAICompatibleInferenceService implements InferenceService, Initi
                         callFunctions(request, outcome, conversation, text, calls,
                                 next -> inferRound(request, outcome, callback, schema, next, round + 1));
                     } else {
+                        String reasoning = message == null ? null : reasoningOf(message);
+                        if (reasoning != null && !reasoning.isEmpty()) {
+                            callback.onReasoning(reasoning);
+                        }
                         callback.onResult(text, schema == null ? SchemaCheck.notChecked() : StructuredOutputs.validate(schema, text));
                     }
                 });
@@ -288,6 +292,15 @@ public class OpenAICompatibleInferenceService implements InferenceService, Initi
                 }
             }
         });
+    }
+
+    /** The reasoning of a whole (not streamed) answer, in the property providers put it in. */
+    private static String reasoningOf(ChatCompletionMessage message) {
+        com.openai.core.JsonValue value = message._additionalProperties().get("reasoning_content");
+        if (value == null) {
+            value = message._additionalProperties().get("reasoning");
+        }
+        return value != null && !value.isNull() ? (String) value.asString().orElse((String) null) : null;
     }
 
     /** The most the model may write: the response limit of the AI, 0 when there is none. */

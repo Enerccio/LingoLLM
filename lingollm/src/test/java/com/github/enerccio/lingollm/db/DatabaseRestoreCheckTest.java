@@ -114,8 +114,9 @@ class DatabaseRestoreCheckTest {
     @Test
     void rejectsDatabaseOfNewerVersion() {
         File db = lingollmDatabase("newer.sqlite", jdbc -> jdbc.update(
-                "INSERT INTO flyway_schema_history (installed_rank, version, description, type, script, checksum, "
-                        + "installed_by, execution_time, success) VALUES (999, '999', 'future', 'SQL', 'V999__future.sql', 0, '', 0, 1)"));
+                """
+                        INSERT INTO flyway_schema_history (installed_rank, version, description, type, script, checksum, \
+                        installed_by, execution_time, success) VALUES (999, '999', 'future', 'SQL', 'V999__future.sql', 0, '', 0, 1)"""));
         assertThatThrownBy(() -> DatabaseCheck.check(db))
                 .isInstanceOf(DatabaseCheck.InvalidDatabaseException.class)
                 .hasMessageContaining("newer version");

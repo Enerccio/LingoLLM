@@ -21,6 +21,14 @@ public class Test extends LanguageBoundEntity {
     @Transient
     private String description;
 
+    /**
+     * What the model reasoned while it wrote the test, kept for debugging or when the user is curious. Null when the
+     * test was not written by a model or the provider does not send reasoning.
+     */
+    @ExtendedAttribute
+    @Transient
+    private String reasoning;
+
     public String getName() {
         return name;
     }
@@ -35,5 +43,13 @@ public class Test extends LanguageBoundEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getReasoning() {
+        return reasoning;
+    }
+
+    public void setReasoning(String reasoning) {
+        this.reasoning = reasoning;
     }
 }

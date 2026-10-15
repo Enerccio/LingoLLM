@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="turbo-root" content="/LingoLLM">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845292923698">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.845384888589">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=4.6.0.845292923698" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.845384888589" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845292923698" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845292923698" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.845384888589" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.845384888589" defer></script>
     <script id="mermaid-js" data-cfasync="false" src="../../resources/js/mermaid.js?v=4.6.0" defer></script>
 </head>
 <body>
@@ -177,6 +177,7 @@ delete, extended attributes and cleanup. Entities are in <code translate="no" v-
 | `Language` | `languages` | Language profile |
 | `Languages` (enum) | - | Language (the template of a profile) |
 | `FreeChat`, `FreeChatMessage` | `free_chats`, `free_chat_messages` | Free chat, message |
+| `Test`, `TestQuestionGroup`, `TestQuestion`, `TestResult`, `TestQuestionResult` | `tests`, `test_question_groups`, `test_questions`, `test_results`, `test_question_results` | Test, its groups of questions, the questions, an attempt at it, the answers of an attempt |
 | `AI`, `OpenAICompatible` | `ais`, `ais_openaicompat` | Inference provider |
 | `Usage` | `usages` | Tokens sent / generated column of the Inference Providers tab |
 | `Setting`, `AppSettings`, `UserSetting` | `settings` | Settings page, admin settings |
@@ -206,6 +207,11 @@ delete, extended attributes and cleanup. Entities are in <code translate="no" v-
 <td><code translate="no" v-pre>FreeChat</code>, <code translate="no" v-pre>FreeChatMessage</code></td>
 <td><code translate="no" v-pre>free_chats</code>, <code translate="no" v-pre>free_chat_messages</code></td>
 <td>Free chat, message</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Test</code>, <code translate="no" v-pre>TestQuestionGroup</code>, <code translate="no" v-pre>TestQuestion</code>, <code translate="no" v-pre>TestResult</code>, <code translate="no" v-pre>TestQuestionResult</code></td>
+<td><code translate="no" v-pre>tests</code>, <code translate="no" v-pre>test_question_groups</code>, <code translate="no" v-pre>test_questions</code>, <code translate="no" v-pre>test_results</code>, <code translate="no" v-pre>test_question_results</code></td>
+<td>Test, its groups of questions, the questions, an attempt at it, the answers of an attempt</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>AI</code>, <code translate="no" v-pre>OpenAICompatible</code></td>
@@ -250,6 +256,13 @@ delete, extended attributes and cleanup. Entities are in <code translate="no" v-
     FreeChat ||--o{ FreeChatMessage : &quot;parentChat&quot;
     FreeChatMessage |o--o{ FreeChatMessage : &quot;parent / children&quot;
     FreeChatMessage }o..o{ Resource : &quot;attachments (uuid in JSON)&quot;
+    Language ||--o{ Test : &quot;language&quot;
+    Test ||--o{ TestQuestionGroup : &quot;parentTest&quot;
+    Test ||--o{ TestQuestion : &quot;parentTest&quot;
+    TestQuestionGroup ||--o{ TestQuestion : &quot;questionGroup&quot;
+    Test ||--o{ TestResult : &quot;test&quot;
+    TestResult ||--o{ TestQuestionResult : &quot;testResult&quot;
+    TestQuestion ||--o{ TestQuestionResult : &quot;question&quot;
     UserSetting }o..o| Language : &quot;lastLanguage (id)&quot;
     UserSetting }o..o| AI : &quot;defaultModel (id)&quot;</pre></div>
 <p>Every entity except <code translate="no" v-pre>User</code> has an owner, so each user has a separate set of language profiles, providers and
@@ -287,6 +300,11 @@ uuids of its attachments in its extended content, and <code translate="no" v-pre
     ExtendableEntity &lt;|-- Setting
     LanguageBoundEntity &lt;|-- FreeChat
     LanguageBoundEntity &lt;|-- FreeChatMessage
+    LanguageBoundEntity &lt;|-- Test
+    LanguageBoundEntity &lt;|-- TestQuestionGroup
+    LanguageBoundEntity &lt;|-- TestQuestion
+    LanguageBoundEntity &lt;|-- TestResult
+    LanguageBoundEntity &lt;|-- TestQuestionResult
     AI &lt;|-- OpenAICompatible
     Setting &lt;|-- AppSettings
     Setting &lt;|-- UserSetting</pre></div>
@@ -342,9 +360,11 @@ when it is not a hard delete, soft delete those rows first (the <code translate=
 <doc-anchor-trigger to="#cleanup-references">cleanup references</doc-anchor-trigger>), so the trash and the cleanup see the whole group deleted:</p>
 <retype-table copy-text="| Deleted | Also deleted |
 |---|---|
-| `Language` | its `FreeChat`s and `FreeChatMessage`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
+| `Language` | its `FreeChat`s, `FreeChatMessage`s, `Test`s, `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
 | `FreeChat` | its `FreeChatMessage`s (`FreeChatMessageService.softDeleteForChat`) |
 | `FreeChatMessage` | nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent |
+| `Test` | its `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s, soft or hard like the test (`deleteForTest` of their services, bulk) |
+| `TestResult` | its `TestQuestion`s, soft or hard (`TestQuestionResultService.deleteForTestResult`) |
 | `AI` | its `Usage`s |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="comfortable">
@@ -357,7 +377,7 @@ when it is not a hard delete, soft delete those rows first (the <code translate=
 <tbody>
 <tr>
 <td><code translate="no" v-pre>Language</code></td>
-<td>its <code translate="no" v-pre>FreeChat</code>s and <code translate="no" v-pre>FreeChatMessage</code>s (<code translate="no" v-pre>LanguageBoundService.softDeleteForLanguage</code>, bulk updates)</td>
+<td>its <code translate="no" v-pre>FreeChat</code>s, <code translate="no" v-pre>FreeChatMessage</code>s, <code translate="no" v-pre>Test</code>s, <code translate="no" v-pre>TestQuestionGroup</code>s, <code translate="no" v-pre>TestQuestion</code>s, <code translate="no" v-pre>TestResult</code>s and <code translate="no" v-pre>TestQuestionResult</code>s (<code translate="no" v-pre>LanguageBoundService.softDeleteForLanguage</code>, bulk updates)</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>FreeChat</code></td>
@@ -366,6 +386,14 @@ when it is not a hard delete, soft delete those rows first (the <code translate=
 <tr>
 <td><code translate="no" v-pre>FreeChatMessage</code></td>
 <td>nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>Test</code></td>
+<td>its <code translate="no" v-pre>TestQuestionGroup</code>s, <code translate="no" v-pre>TestQuestion</code>s, <code translate="no" v-pre>TestResult</code>s and <code translate="no" v-pre>TestQuestionResult</code>s, soft or hard like the test (<code translate="no" v-pre>deleteForTest</code> of their services, bulk)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TestResult</code></td>
+<td>its <code translate="no" v-pre>TestQuestion</code>s, soft or hard (<code translate="no" v-pre>TestQuestionResultService.deleteForTestResult</code>)</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>AI</code></td>
@@ -418,7 +446,7 @@ kinds of fields end up there:</p>
 <ul>
 <li>fields annotated <code translate="no" v-pre>@ExtendedAttribute</code> (they are also <code translate="no" v-pre>@Transient</code>, so Hibernate ignores them), and</li>
 <li><code translate="no" v-pre>attributes</code>, a free-form <code translate="no" v-pre>JsonObject</code> for extensions. Its keys are stored with the prefix <code translate="no" v-pre>attributes_</code> next to
-the other fields. Any <code translate="no" v-pre>JsonObject</code> field can be stored this way with <code translate="no" v-pre>@ExtendedAttribute(inject = true, injectPrefix = &quot;name&quot;)</code>; <code translate="no" v-pre>Language.languageSpecificData</code> does (keys <code translate="no" v-pre>languageSpecificData_*</code>), <code translate="no" v-pre>attributes</code> is the same
+the other fields. Any <code translate="no" v-pre>JsonObject</code> field can be stored this way (so can a POJO, see <em>Types</em>) with <code translate="no" v-pre>@ExtendedAttribute(inject = true, injectPrefix = &quot;name&quot;)</code>; <code translate="no" v-pre>Language.languageSpecificData</code> does (keys <code translate="no" v-pre>languageSpecificData_*</code>), <code translate="no" v-pre>attributes</code> is the same
 mechanism.</li>
 </ul>
 <div id="extendableentity---extended-attributes-code-1" class="codeblock-wrapper"><doc-codeblock>
@@ -433,7 +461,10 @@ mechanism.</li>
 <ul>
 <li>
 <p><strong>Load</strong> (<code translate="no" v-pre>@PostLoad</code>): the JSON is parsed and the fields are set. Supported field types are <code translate="no" v-pre>String</code>, numbers,
-<code translate="no" v-pre>Boolean</code>, <code translate="no" v-pre>Date</code> (ISO-8601 instant in UTC, e.g. <code translate="no" v-pre>2026-10-09T08:15:30.123Z</code>; values in the old <code translate="no" v-pre>yyyy.MM.dd'Z'HH:mm:ss.SSS</code> format, written in the server&#x27;s time zone, are still read), enums (by name) and <code translate="no" v-pre>JsonObject</code> for <code translate="no" v-pre>inject = true</code>.</p>
+<code translate="no" v-pre>Boolean</code>, <code translate="no" v-pre>Date</code> (ISO-8601 instant in UTC, e.g. <code translate="no" v-pre>2026-10-09T08:15:30.123Z</code>; values in the old <code translate="no" v-pre>yyyy.MM.dd'Z'HH:mm:ss.SSS</code> format, written in the server&#x27;s time zone, are still read), enums (by name) and for <code translate="no" v-pre>inject = true</code> a <code translate="no" v-pre>JsonObject</code> or any class Gson can read (below).</p>
+</li>
+<li>
+<p><strong>Injected POJOs</strong>: an <code translate="no" v-pre>inject = true</code> field may also be a class (or a list, map...): it is converted with Gson; an object is flattened by its top-level properties (<code translate="no" v-pre>prefix_name</code>), nested parts stay structured, and a value that is not an object (a list) is stored under the plain prefix. A field absent from the content keeps its default value.</p>
 </li>
 <li>
 <p><strong>Types</strong>: the values are written with <code translate="no" v-pre>toString()</code>, so a field can&#x27;t be a collection. A list is kept as a JSON string
@@ -457,7 +488,9 @@ by the (empty) fields. The repository then reads the fields back from the JSON a
 | `language` | column (by name) | The template, `Languages` (`JAPANESE`, `GERMAN`): flag, defaults and the `LanguageUI` factory. Renaming a constant breaks existing data. |
 | `nameOverride` | column | The name the user gave the profile. |
 | `note` | extended attribute | Free text shown below the name. |
-| `defaults` | extended attribute | JSON of `LanguageDefaults` as it was when the profile was created, so a later change of the defaults does not change old profiles. |
+| `userGrade` | extended attribute | The level the user says they have, `CEFR` (`A1`...`C2`, in `domain.collections`; `getDescription()` is a short text for the model). Null until set. |
+| `userGradeFineDetails` | extended attribute | Free text on top of the grade (what the user can and cannot do). |
+| `defaults` | injected extended attribute (`defaults_*`) | `LanguageDefaults` with the texts (prompt templates) the user changed. A text that is null or blank means the default of the language (`Languages.defaults`) is used; `LanguageService` (e.g. `getGaugeTestPrompt`) resolves it. |
 | `languageSpecificData` | injected `JsonObject` | Whatever the language's own UI keeps (progress, settings), stored as `languageSpecificData_*`. |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="comfortable">
@@ -485,9 +518,19 @@ by the (empty) fields. The repository then reads the fields back from the JSON a
 <td>Free text shown below the name.</td>
 </tr>
 <tr>
-<td><code translate="no" v-pre>defaults</code></td>
+<td><code translate="no" v-pre>userGrade</code></td>
 <td>extended attribute</td>
-<td>JSON of <code translate="no" v-pre>LanguageDefaults</code> as it was when the profile was created, so a later change of the defaults does not change old profiles.</td>
+<td>The level the user says they have, <code translate="no" v-pre>CEFR</code> (<code translate="no" v-pre>A1</code>...<code translate="no" v-pre>C2</code>, in <code translate="no" v-pre>domain.collections</code>; <code translate="no" v-pre>getDescription()</code> is a short text for the model). Null until set.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>userGradeFineDetails</code></td>
+<td>extended attribute</td>
+<td>Free text on top of the grade (what the user can and cannot do).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>defaults</code></td>
+<td>injected extended attribute (<code translate="no" v-pre>defaults_*</code>)</td>
+<td><code translate="no" v-pre>LanguageDefaults</code> with the texts (prompt templates) the user changed. A text that is null or blank means the default of the language (<code translate="no" v-pre>Languages.defaults</code>) is used; <code translate="no" v-pre>LanguageService</code> (e.g. <code translate="no" v-pre>getGaugeTestPrompt</code>) resolves it.</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>languageSpecificData</code></td>
@@ -531,6 +574,67 @@ session, see below.</p>
 </table>
 </div>
 </retype-table>
+<p>Tests are language bound too:</p>
+<retype-table copy-text="| Entity | Table | Fields |
+|---|---|---|
+| `Test` | `tests` | `name`, `description` (extended attributes). |
+| `TestQuestionGroup` | `test_question_groups` | `parentTest` (`OWNED_BY`), `ordinal` (column, the order in the test), `factory` (extended attribute: class name of the `TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`). What the group shows to all its questions (a text to read, instructions) is kept by its handler under `$groupData` in the attributes. |
+| `TestQuestion` | `test_questions` | `parentTest` (`OWNED_BY`), `questionGroup` (`OWNED_BY`), `ordinal` (column, the order in the group; a test is shown by the ordinal of the group, then of the question), `testQuestionFactory` (extended attribute: class name of the `TestQuestionFactory` that handles the question, resolved by `TestQuestionFactoryRegistry`). |
+| `TestResult` | `test_results` | `test` (`OWNED_BY`), `score`, `maxScore` (extended attributes). One attempt at a test. |
+| `TestQuestionResult` | `test_question_results` | `testResult` (`OWNED_BY`), `question` (`OWNED_BY`), `answer`, `verdict` (`TestVerdict`: CORRECT, PARTIAL, WRONG), `gradedBy` (`GradedBy`: SERVER when the server compared the answer with `TestQuestion.answers`, LLM when the model judged it) and `feedback` (extended attributes). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Entity</th>
+<th>Table</th>
+<th>Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>Test</code></td>
+<td><code translate="no" v-pre>tests</code></td>
+<td><code translate="no" v-pre>name</code>, <code translate="no" v-pre>description</code> (extended attributes).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TestQuestionGroup</code></td>
+<td><code translate="no" v-pre>test_question_groups</code></td>
+<td><code translate="no" v-pre>parentTest</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>ordinal</code> (column, the order in the test), <code translate="no" v-pre>factory</code> (extended attribute: class name of the <code translate="no" v-pre>TestQuestionGroupFactory</code>, resolved by <code translate="no" v-pre>TestQuestionGroupFactoryRegistry</code>). What the group shows to all its questions (a text to read, instructions) is kept by its handler under <code translate="no" v-pre>$groupData</code> in the attributes.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TestQuestion</code></td>
+<td><code translate="no" v-pre>test_questions</code></td>
+<td><code translate="no" v-pre>parentTest</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>questionGroup</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>ordinal</code> (column, the order in the group; a test is shown by the ordinal of the group, then of the question), <code translate="no" v-pre>testQuestionFactory</code> (extended attribute: class name of the <code translate="no" v-pre>TestQuestionFactory</code> that handles the question, resolved by <code translate="no" v-pre>TestQuestionFactoryRegistry</code>).</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TestResult</code></td>
+<td><code translate="no" v-pre>test_results</code></td>
+<td><code translate="no" v-pre>test</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>score</code>, <code translate="no" v-pre>maxScore</code> (extended attributes). One attempt at a test.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>TestQuestionResult</code></td>
+<td><code translate="no" v-pre>test_question_results</code></td>
+<td><code translate="no" v-pre>testResult</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>question</code> (<code translate="no" v-pre>OWNED_BY</code>), <code translate="no" v-pre>answer</code>, <code translate="no" v-pre>verdict</code> (<code translate="no" v-pre>TestVerdict</code>: CORRECT, PARTIAL, WRONG), <code translate="no" v-pre>gradedBy</code> (<code translate="no" v-pre>GradedBy</code>: SERVER when the server compared the answer with <code translate="no" v-pre>TestQuestion.answers</code>, LLM when the model judged it) and <code translate="no" v-pre>feedback</code> (extended attributes).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>What the model writes for a test: every <code translate="no" v-pre>TestQuestionHandler</code> returns the JSON schema of its question data
+(<code translate="no" v-pre>getLlmSchema()</code>, built from the data class with <code translate="no" v-pre>@LLMField</code>; override it when the question needs something else) and a
+name for the kind (<code translate="no" v-pre>getLlmTypeName()</code>, the simple class name). <code translate="no" v-pre>TestDefinitionSchemaGenerator.generate(handlers)</code>
+(<code translate="no" v-pre>domain.service.structured</code>) combines them into the schema of an object with a <code translate="no" v-pre>questions</code> list whose items are
+<code translate="no" v-pre>oneOf</code> the kinds, told apart by the <code translate="no" v-pre>type</code> property (a constant, the first property). The order of the list is the order
+of the questions; groups are not part of the schema yet.</p>
+<p><code translate="no" v-pre>Test.reasoning</code> (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
+user. <code translate="no" v-pre>BaseLanguageDefinitionService.createGaugeTest</code> makes the level gauging test: it renders the prompt of
+<code translate="no" v-pre>LanguageDefaults</code> with <code translate="no" v-pre>TemplateService.processTemplate</code> (Handlebars; &#x60;&#x60; is the JSON list of <code translate="no" v-pre>TestQuestionRequest</code>, 5 reading
+and 15 other questions, subclasses add more through <code translate="no" v-pre>questionsBetweenSections</code> / <code translate="no" v-pre>questionsAtEnd</code>), calls
+<code translate="no" v-pre>InferenceService.infer</code> with the schema above and turns a valid answer into <code translate="no" v-pre>Test</code>, one <code translate="no" v-pre>TestQuestionGroup</code> and the
+<code translate="no" v-pre>TestQuestion</code>s; an invalid one saves nothing.</p>
+<p><code translate="no" v-pre>findByTest</code> / <code translate="no" v-pre>findByTestResult</code> of the services list the children (they refuse a parent of another user). The deletes cascade
+as in the table above, hard or soft, with bulk statements.</p>
 <p><code translate="no" v-pre>FreeChatMessage</code> attachments are <strong>loose</strong>: the JSON holds <code translate="no" v-pre>ImageAttachment(resource uuid, caption)</code>, there is no foreign key to <code translate="no" v-pre>Resource</code>,
 so deleting or replacing a resource never touches a message (and cleanup does not know the link). The messages of a chat form a
 tree through <code translate="no" v-pre>parent</code> like the parts of a Marginalia story; deleting a message permanently moves its children to its parent

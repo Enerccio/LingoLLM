@@ -4,6 +4,7 @@ import com.github.enerccio.lingollm.domain.collections.CEFR;
 import com.github.enerccio.lingollm.domain.collections.Languages;
 import com.github.enerccio.lingollm.domain.model.ExtendableEntity;
 import com.github.enerccio.lingollm.domain.traits.ExtendedAttribute;
+import com.github.enerccio.lingollm.ui.lang.LanguageDefaults;
 import com.google.gson.JsonObject;
 import jakarta.persistence.*;
 
@@ -25,10 +26,14 @@ public class Language extends ExtendableEntity {
     @Transient
     private String note;
 
-    /** JSON of the defaults the profile was created with ({@code LanguageDefaults}). */
-    @ExtendedAttribute
+    /**
+     * What the user changed of the defaults of the language ({@code Languages.defaults}): a text that is not set (null
+     * or blank) is taken from the defaults of the language, see {@code LanguageService}. Injected, so its keys are stored
+     * as {@code defaults_*} attributes of the extended content.
+     */
+    @ExtendedAttribute(inject = true, injectPrefix = "defaults")
     @Transient
-    private String defaults;
+    private LanguageDefaults defaults = new LanguageDefaults();
 
     /** The level the user says they have in this language. */
     @ExtendedAttribute
@@ -72,12 +77,12 @@ public class Language extends ExtendableEntity {
         this.note = note;
     }
 
-    public String getDefaults() {
+    public LanguageDefaults getDefaults() {
         return defaults;
     }
 
-    public void setDefaults(String defaults) {
-        this.defaults = defaults;
+    public void setDefaults(LanguageDefaults defaults) {
+        this.defaults = defaults == null ? new LanguageDefaults() : defaults;
     }
 
     public JsonObject getLanguageSpecificData() {

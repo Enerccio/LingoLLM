@@ -203,7 +203,7 @@ by the (empty) fields. The repository then reads the fields back from the JSON a
 | `note` | extended attribute | Free text shown below the name. |
 | `userGrade` | extended attribute | The level the user says they have, `CEFR` (`A1`...`C2`, in `domain.collections`; `getDescription()` is a short text for the model). Null until set. |
 | `userGradeFineDetails` | extended attribute | Free text on top of the grade (what the user can and cannot do). |
-| `defaults` | extended attribute | JSON of `LanguageDefaults` as it was when the profile was created, so a later change of the defaults does not change old profiles. |
+| `defaults` | injected extended attribute (`defaults_*`) | `LanguageDefaults` with the texts (prompt templates) the user changed. A text that is null or blank means the default of the language (`Languages.defaults`) is used; `LanguageService` (e.g. `getGaugeTestPrompt`) resolves it. |
 | `languageSpecificData` | injected `JsonObject` | Whatever the language's own UI keeps (progress, settings), stored as `languageSpecificData_*`. |
 
 ### `LanguageBoundEntity`, `FreeChat`, `FreeChatMessage`
@@ -227,6 +227,20 @@ Tests are language bound too:
 | `TestQuestion` | `test_questions` | `parentTest` (`OWNED_BY`), `questionGroup` (`OWNED_BY`), `ordinal` (column, the order in the group; a test is shown by the ordinal of the group, then of the question), `testQuestionFactory` (extended attribute: class name of the `TestQuestionFactory` that handles the question, resolved by `TestQuestionFactoryRegistry`). |
 | `TestResult` | `test_results` | `test` (`OWNED_BY`), `score`, `maxScore` (extended attributes). One attempt at a test. |
 | `TestQuestionResult` | `test_question_results` | `testResult` (`OWNED_BY`), `question` (`OWNED_BY`), `answer`, `verdict` (`TestVerdict`: CORRECT, PARTIAL, WRONG), `gradedBy` (`GradedBy`: SERVER when the server compared the answer with `TestQuestion.answers`, LLM when the model judged it) and `feedback` (extended attributes). |
+
+What the model writes for a test: every `TestQuestionHandler` returns the JSON schema of its question data
+(`getLlmSchema()`, built from the data class with `@LLMField`; override it when the question needs something else) and a
+name for the kind (`getLlmTypeName()`, the simple class name). `TestDefinitionSchemaGenerator.generate(handlers)`
+(`domain.service.structured`) combines them into the schema of an object with a `questions` list whose items are
+`oneOf` the kinds, told apart by the `type` property (a constant, the first property). The order of the list is the order
+of the questions; groups are not part of the schema yet.
+
+`Test.reasoning` (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
+user. `BaseLanguageDefinitionService.createGaugeTest` makes the level gauging test: it renders the prompt of
+`LanguageDefaults` with `TemplateService.processTemplate` (Handlebars; `{{questions}}` is the JSON list of `TestQuestionRequest`, 5 reading
+and 15 other questions, subclasses add more through `questionsBetweenSections` / `questionsAtEnd`), calls
+`InferenceService.infer` with the schema above and turns a valid answer into `Test`, one `TestQuestionGroup` and the
+`TestQuestion`s; an invalid one saves nothing.
 
 `findByTest` / `findByTestResult` of the services list the children (they refuse a parent of another user). The deletes cascade
 as in the table above, hard or soft, with bulk statements.

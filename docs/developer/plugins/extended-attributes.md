@@ -123,7 +123,7 @@ Two things follow from this:
 - `@ExtendedAttribute` is the application's own way of adding fields to an entity without a migration - many fields
   of `Language`, `FreeChat`, `FreeChatMessage`, `AI` and the settings are stored like this. It works for `String`, the
   numeric types, `boolean`, `Date` and enums, stored as strings (dates as ISO-8601 instants in UTC).
-  `@ExtendedAttribute(inject = true, injectPrefix = ...)` on a `JsonObject` field spreads its keys with that prefix,
+  `@ExtendedAttribute(inject = true, injectPrefix = ...)` on a `JsonObject` field (or a class, which is converted with Gson) spreads its keys with that prefix,
   which is how `attributes` itself is declared. This is for application code: a plugin can't add fields to an entity
   class, it uses `attributes`.
 

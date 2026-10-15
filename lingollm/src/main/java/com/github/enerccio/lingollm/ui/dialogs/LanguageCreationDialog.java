@@ -8,7 +8,6 @@ import com.github.enerccio.lingollm.loc.Localization;
 import com.github.enerccio.lingollm.ui.widgets.LanguageItem;
 import com.github.enerccio.lingollm.ui.widgets.Notification;
 import com.github.enerccio.lingollm.utils.UIUtils;
-import com.google.gson.Gson;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -33,7 +32,6 @@ import java.util.List;
 @Configurable
 public class LanguageCreationDialog extends Dialog {
 
-    private static final Gson gson = new Gson();
 
     @Autowired
     private LanguageService languageService;
@@ -141,7 +139,6 @@ public class LanguageCreationDialog extends Dialog {
             language.setLanguage(template);
             language.setNameOverride(name.trim());
             language.setNote(note != null ? note.trim() : null);
-            language.setDefaults(gson.toJson(template.defaults));
 
             Language savedLanguage = languageService.save(language);
 

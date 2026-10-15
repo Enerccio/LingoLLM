@@ -123,6 +123,12 @@
 
     <bean class="com.github.enerccio.lingollm.domain.service.impl.TestQuestionGroupFactoryRegistryImpl" />
 
+    <bean id="japaneseLanguageDefinitionService" class="com.github.enerccio.lingollm.domain.service.impl.languages.JapaneseLanguageDefinitionServiceImpl" />
+
+    <bean id="germanLanguageDefinitionService" class="com.github.enerccio.lingollm.domain.service.impl.languages.GermanLanguageDefinitionServiceImpl" />
+
+    <bean class="com.github.enerccio.lingollm.domain.service.impl.TemplateServiceImpl" />
+
     <bean class="com.github.enerccio.lingollm.domain.service.impl.DatabaseBackupServiceImpl" />
 
     <bean class="com.github.enerccio.lingollm.domain.service.impl.OsgiServiceImpl" />

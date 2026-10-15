@@ -12,6 +12,25 @@ anything specific to its stories); the database starts at `V1`.
 
 ### Added
 
+- Level gauging test: `LanguageDefinitionService.createGaugeTest(language, ai, callback)` is asynchronous, returns a
+  `CancellationToken` and has the model write 20 questions (5 about a text, 15 others: single and multiple choice, writing
+  and word order) in one group, saved as a `Test` with its `TestQuestion`s only when the whole answer is valid. Languages
+  can add questions between the sections and at the end (`questionsBetweenSections`, `questionsAtEnd`, `questionKinds`
+  in `BaseLanguageDefinitionService`). The reasoning of the model is kept in `Test.reasoning`; for that
+  `InferenceService.InferenceOutcomeCallback` has a new `onReasoning`.
+- New kinds of questions: `WritingQuestionFactory` (the learner writes an answer, the model gives a sample one) and
+  `WordOrderQuestionFactory` (the model gives the segments of a sentence in the correct order, the code shuffles them).
+- Prompts are Handlebars templates (`{{variable}}`), rendered by `TemplateService` as in Marginalia but without its
+  SillyTavern macros (`processTemplate`, `isValidTemplate` with a list of names to report unknown ones, compiled
+  templates cached by Caffeine; new dependencies `com.github.jknack:handlebars`, `com.github.ben-manes.caffeine:caffeine`).
+  `LanguageDefaults` holds the level test prompt of each language (`getGaugeTestPrompt`); `Language.defaults` is now a
+  `LanguageDefaults` with what the user changed, and `LanguageService.getGaugeTestPrompt` takes the profile's own text
+  when it is set and the default of the language otherwise.
+- `LanguageDefinitionService` (what the application knows about a learnable language) with `BaseLanguageDefinitionService`
+  and one implementation per language (`JapaneseLanguageDefinitionServiceImpl`, `GermanLanguageDefinitionServiceImpl`).
+- `TestQuestionHandler.getLlmSchema()` (JSON schema of what the model writes for a question, extensions that add
+  question types can override it), `getLlmTypeName()` and `TestDefinitionSchemaGenerator`, which builds the schema of a
+  whole test from a list of handlers. The data classes of the questions describe their fields with `@LLMField`.
 - Language profiles have the level the user says they have: `Language.userGrade` (`CEFR`, A1-C2, each with a short
   description for the model) and `Language.userGradeFineDetails` (free text). No screen sets them yet. The levels have
   localized names (`ENUM_CEFR_*`, `Localization.getCefrLevel`).

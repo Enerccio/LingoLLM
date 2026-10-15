@@ -6,6 +6,8 @@ import com.github.enerccio.lingollm.domain.factories.impl.MultipleChoiceFactory;
 import com.github.enerccio.lingollm.domain.factories.impl.ReadingComprehensionWithMultipleChoicesFactory;
 import com.github.enerccio.lingollm.domain.factories.impl.ReadingComprehensionWithSingleChoiceFactory;
 import com.github.enerccio.lingollm.domain.factories.impl.SingleChoiceFactory;
+import com.github.enerccio.lingollm.domain.factories.impl.WordOrderQuestionFactory;
+import com.github.enerccio.lingollm.domain.factories.impl.WritingQuestionFactory;
 import com.github.enerccio.lingollm.domain.model.impl.Language;
 import com.github.enerccio.lingollm.domain.model.impl.Test;
 import com.github.enerccio.lingollm.domain.model.impl.TestQuestion;
@@ -18,6 +20,7 @@ import com.github.enerccio.lingollm.ui.lang.languages.common.LanguageString;
 import com.github.enerccio.lingollm.ui.lang.languages.common.TestQuestionHandler;
 import com.github.enerccio.lingollm.ui.lang.languages.common.impl.*;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,6 +88,58 @@ class TestQuestionHandlersTest extends LingoLLMTestBase {
         assertThat(data.getAsJsonObject("instructions").get("rawString").getAsString()).isEqualTo("Pick the verbs");
         assertThat(data.getAsJsonArray("choices")).hasSize(3);
         assertThat(data.getAsJsonArray("correctAnswers").toString()).isEqualTo("[1,2]");
+    }
+
+    @org.junit.jupiter.api.Test
+    void writingQuestionKeepsTheSampleAnswer() throws Exception {
+        TestQuestion question = question(WritingQuestionFactory.class);
+
+        WritingQuestionHandler handler = (WritingQuestionHandler) handler(question);
+        handler.setInstructions(text("Introduce yourself"));
+        handler.setSampleAnswer(text("Watashi wa Anna desu"));
+        handler.save();
+
+        JsonObject data = savedData(question);
+        assertThat(data.getAsJsonObject("sampleAnswer").get("rawString").getAsString()).isEqualTo("Watashi wa Anna desu");
+        assertThat(data.getAsJsonObject("instructions").get("rawString").getAsString()).isEqualTo("Introduce yourself");
+    }
+
+    @org.junit.jupiter.api.Test
+    void wordOrderQuestionKeepsTheSegmentsInOrder() throws Exception {
+        TestQuestion question = question(WordOrderQuestionFactory.class);
+
+        WordOrderQuestionHandler handler = (WordOrderQuestionHandler) handler(question);
+        handler.setSegments(List.of(text("Ich"), text("heisse"), text("Anna")));
+        handler.save();
+
+        assertThat(savedData(question).getAsJsonArray("segments").toString())
+                .isEqualTo("[{\"rawString\":\"Ich\",\"metadata\":[]},{\"rawString\":\"heisse\",\"metadata\":[]},{\"rawString\":\"Anna\",\"metadata\":[]}]");
+        assertThatThrownBy(() -> handler.setSegments(List.of(text("Ich")))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> handler.setSegments(List.of(text("Ich"), text(" ")))).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @org.junit.jupiter.api.Test
+    void dataFromTheModelIsReadAndChecked() throws Exception {
+        TestQuestion question = question(SingleChoiceFactory.class);
+        TestQuestionHandler<?> handler = handler(question);
+
+        handler.setLlmData(JsonParser.parseString("""
+                {"instructions": {"rawString": "Pick"}, "choices": [{"rawString": "a"}, {"rawString": "b"}], "correctAnswer": 1}""")
+                .getAsJsonObject());
+        handler.save();
+        assertThat(savedData(question).get("correctAnswer").getAsInt()).isEqualTo(1);
+
+        assertThatThrownBy(() -> handler.setLlmData(JsonParser.parseString("""
+                {"choices": [{"rawString": "a"}, {"rawString": "b"}], "correctAnswer": 2}""").getAsJsonObject()))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("correct choice");
+        assertThatThrownBy(() -> handler.setLlmData(JsonParser.parseString("""
+                {"choices": "not a list", "correctAnswer": 0}""").getAsJsonObject()))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("can not be read");
+
+        TestQuestionHandler<?> multiple = handler(question(MultipleChoiceFactory.class));
+        assertThatThrownBy(() -> multiple.setLlmData(JsonParser.parseString("""
+                {"choices": [{"rawString": "a"}, {"rawString": "b"}], "correctAnswers": [0, 0]}""").getAsJsonObject()))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("only once");
     }
 
     @org.junit.jupiter.api.Test

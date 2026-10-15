@@ -13,6 +13,7 @@ Some entities have a name in the UI that differs from the class. The UI and this
 | `Language` | `languages` | Language profile |
 | `Languages` (enum) | - | Language (the template of a profile) |
 | `FreeChat`, `FreeChatMessage` | `free_chats`, `free_chat_messages` | Free chat, message |
+| `Test`, `TestQuestionGroup`, `TestQuestion`, `TestResult`, `TestQuestionResult` | `tests`, `test_question_groups`, `test_questions`, `test_results`, `test_question_results` | Test, its groups of questions, the questions, an attempt at it, the answers of an attempt |
 | `AI`, `OpenAICompatible` | `ais`, `ais_openaicompat` | Inference provider |
 | `Usage` | `usages` | Tokens sent / generated column of the Inference Providers tab |
 | `Setting`, `AppSettings`, `UserSetting` | `settings` | Settings page, admin settings |
@@ -36,6 +37,13 @@ erDiagram
     FreeChat ||--o{ FreeChatMessage : "parentChat"
     FreeChatMessage |o--o{ FreeChatMessage : "parent / children"
     FreeChatMessage }o..o{ Resource : "attachments (uuid in JSON)"
+    Language ||--o{ Test : "language"
+    Test ||--o{ TestQuestionGroup : "parentTest"
+    Test ||--o{ TestQuestion : "parentTest"
+    TestQuestionGroup ||--o{ TestQuestion : "questionGroup"
+    Test ||--o{ TestResult : "test"
+    TestResult ||--o{ TestQuestionResult : "testResult"
+    TestQuestion ||--o{ TestQuestionResult : "question"
     UserSetting }o..o| Language : "lastLanguage (id)"
     UserSetting }o..o| AI : "defaultModel (id)"
 ```
@@ -78,6 +86,11 @@ classDiagram
     ExtendableEntity <|-- Setting
     LanguageBoundEntity <|-- FreeChat
     LanguageBoundEntity <|-- FreeChatMessage
+    LanguageBoundEntity <|-- Test
+    LanguageBoundEntity <|-- TestQuestionGroup
+    LanguageBoundEntity <|-- TestQuestion
+    LanguageBoundEntity <|-- TestResult
+    LanguageBoundEntity <|-- TestQuestionResult
     AI <|-- OpenAICompatible
     Setting <|-- AppSettings
     Setting <|-- UserSetting
@@ -106,9 +119,11 @@ when it is not a hard delete, soft delete those rows first (the `OWNED_BY` / `OW
 
 | Deleted | Also deleted |
 |---|---|
-| `Language` | its `FreeChat`s and `FreeChatMessage`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
+| `Language` | its `FreeChat`s, `FreeChatMessage`s, `Test`s, `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s (`LanguageBoundService.softDeleteForLanguage`, bulk updates) |
 | `FreeChat` | its `FreeChatMessage`s (`FreeChatMessageService.softDeleteForChat`) |
 | `FreeChatMessage` | nothing: the messages below it stay, whoever deletes a message in the middle of a chat has to move them to its parent |
+| `Test` | its `TestQuestionGroup`s, `TestQuestion`s, `TestResult`s and `TestQuestionResult`s, soft or hard like the test (`deleteForTest` of their services, bulk) |
+| `TestResult` | its `TestQuestion`s, soft or hard (`TestQuestionResultService.deleteForTestResult`) |
 | `AI` | its `Usage`s |
 
 Objects that only *reference* the deleted one (a default model, the last language profile) are not deleted. A hard
@@ -134,7 +149,7 @@ kinds of fields end up there:
 
 - fields annotated `@ExtendedAttribute` (they are also `@Transient`, so Hibernate ignores them), and
 - `attributes`, a free-form `JsonObject` for extensions. Its keys are stored with the prefix `attributes_` next to
-  the other fields. Any `JsonObject` field can be stored this way with `@ExtendedAttribute(inject = true,
+  the other fields. Any `JsonObject` field can be stored this way (so can a POJO, see *Types*) with `@ExtendedAttribute(inject = true,
   injectPrefix = "name")`; `Language.languageSpecificData` does (keys `languageSpecificData_*`), `attributes` is the same
   mechanism.
 
@@ -150,7 +165,8 @@ kinds of fields end up there:
 `ExtendableEntityListener` converts between the fields and the document:
 
 - **Load** (`@PostLoad`): the JSON is parsed and the fields are set. Supported field types are `String`, numbers,
-  `Boolean`, `Date` (ISO-8601 instant in UTC, e.g. `2026-10-09T08:15:30.123Z`; values in the old `yyyy.MM.dd'Z'HH:mm:ss.SSS` format, written in the server's time zone, are still read), enums (by name) and `JsonObject` for `inject = true`.
+  `Boolean`, `Date` (ISO-8601 instant in UTC, e.g. `2026-10-09T08:15:30.123Z`; values in the old `yyyy.MM.dd'Z'HH:mm:ss.SSS` format, written in the server's time zone, are still read), enums (by name) and for `inject = true` a `JsonObject` or any class Gson can read (below).
+- **Injected POJOs**: an `inject = true` field may also be a class (or a list, map...): it is converted with Gson; an object is flattened by its top-level properties (`prefix_name`), nested parts stay structured, and a value that is not an object (a list) is stored under the plain prefix. A field absent from the content keeps its default value.
 - **Types**: the values are written with `toString()`, so a field can't be a collection. A list is kept as a JSON string
   in a `String` field with typed accessors, like `FreeChatMessage.attachments` (`getAttachments()` / `setAttachments(...)`, a JSON
   array of `ImageAttachment(resource uuid, caption)`).
@@ -173,7 +189,9 @@ by the (empty) fields. The repository then reads the fields back from the JSON a
 | `language` | column (by name) | The template, `Languages` (`JAPANESE`, `GERMAN`): flag, defaults and the `LanguageUI` factory. Renaming a constant breaks existing data. |
 | `nameOverride` | column | The name the user gave the profile. |
 | `note` | extended attribute | Free text shown below the name. |
-| `defaults` | extended attribute | JSON of `LanguageDefaults` as it was when the profile was created, so a later change of the defaults does not change old profiles. |
+| `userGrade` | extended attribute | The level the user says they have, `CEFR` (`A1`...`C2`, in `domain.collections`; `getDescription()` is a short text for the model). Null until set. |
+| `userGradeFineDetails` | extended attribute | Free text on top of the grade (what the user can and cannot do). |
+| `defaults` | injected extended attribute (`defaults_*`) | `LanguageDefaults` with the texts (prompt templates) the user changed. A text that is null or blank means the default of the language (`Languages.defaults`) is used; `LanguageService` (e.g. `getGaugeTestPrompt`) resolves it. |
 | `languageSpecificData` | injected `JsonObject` | Whatever the language's own UI keeps (progress, settings), stored as `languageSpecificData_*`. |
 
 ### `LanguageBoundEntity`, `FreeChat`, `FreeChatMessage`
@@ -187,6 +205,33 @@ session, see below.
 |---|---|---|
 | `FreeChat` | `free_chats` | `rootPrompt`, `prompt` (extended attributes). |
 | `FreeChatMessage` | `free_chat_messages` | `parentChat` (`OWNED_BY`; a column that cleanup sets to null before the purge, so it is nullable), `parent` (the message it answers, `OWNED_BY`; null for the first message), `contents` and `attachments` (extended attributes). |
+
+Tests are language bound too:
+
+| Entity | Table | Fields |
+|---|---|---|
+| `Test` | `tests` | `name`, `description` (extended attributes). |
+| `TestQuestionGroup` | `test_question_groups` | `parentTest` (`OWNED_BY`), `ordinal` (column, the order in the test), `factory` (extended attribute: class name of the `TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`). What the group shows to all its questions (a text to read, instructions) is kept by its handler under `$groupData` in the attributes. |
+| `TestQuestion` | `test_questions` | `parentTest` (`OWNED_BY`), `questionGroup` (`OWNED_BY`), `ordinal` (column, the order in the group; a test is shown by the ordinal of the group, then of the question), `testQuestionFactory` (extended attribute: class name of the `TestQuestionFactory` that handles the question, resolved by `TestQuestionFactoryRegistry`). |
+| `TestResult` | `test_results` | `test` (`OWNED_BY`), `score`, `maxScore` (extended attributes). One attempt at a test. |
+| `TestQuestionResult` | `test_question_results` | `testResult` (`OWNED_BY`), `question` (`OWNED_BY`), `answer`, `verdict` (`TestVerdict`: CORRECT, PARTIAL, WRONG), `gradedBy` (`GradedBy`: SERVER when the server compared the answer with `TestQuestion.answers`, LLM when the model judged it) and `feedback` (extended attributes). |
+
+What the model writes for a test: every `TestQuestionHandler` returns the JSON schema of its question data
+(`getLlmSchema()`, built from the data class with `@LLMField`; override it when the question needs something else) and a
+name for the kind (`getLlmTypeName()`, the simple class name). `TestDefinitionSchemaGenerator.generate(handlers)`
+(`domain.service.structured`) combines them into the schema of an object with a `questions` list whose items are
+`oneOf` the kinds, told apart by the `type` property (a constant, the first property). The order of the list is the order
+of the questions; groups are not part of the schema yet.
+
+`Test.reasoning` (extended attribute) keeps what the model reasoned while it wrote the test, for debugging or a curious
+user. `BaseLanguageDefinitionService.createGaugeTest` makes the level gauging test: it renders the prompt of
+`LanguageDefaults` with `TemplateService.processTemplate` (Handlebars; `` is the JSON list of `TestQuestionRequest`, 5 reading
+and 15 other questions, subclasses add more through `questionsBetweenSections` / `questionsAtEnd`), calls
+`InferenceService.infer` with the schema above and turns a valid answer into `Test`, one `TestQuestionGroup` and the
+`TestQuestion`s; an invalid one saves nothing.
+
+`findByTest` / `findByTestResult` of the services list the children (they refuse a parent of another user). The deletes cascade
+as in the table above, hard or soft, with bulk statements.
 
 `FreeChatMessage` attachments are **loose**: the JSON holds `ImageAttachment(resource uuid, caption)`, there is no foreign key to `Resource`,
 so deleting or replacing a resource never touches a message (and cleanup does not know the link). The messages of a chat form a

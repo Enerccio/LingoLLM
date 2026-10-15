@@ -1,6 +1,7 @@
 package com.github.enerccio.lingollm.loc;
 
 import com.github.enerccio.lingollm.bound.SessionPoint;
+import com.github.enerccio.lingollm.domain.collections.CEFR;
 import com.github.enerccio.lingollm.domain.model.impl.settings.UserSetting;
 import com.github.enerccio.lingollm.domain.service.SettingService;
 import com.github.enerccio.lingollm.test.LingoLLMTestBase;
@@ -150,6 +151,15 @@ class LocalizationTest extends LingoLLMTestBase {
         LocalizationBundleEN en = new LocalizationBundleEN();
         for (L key : L.values()) {
             assertNotNull(en.getValue(key), key.name());
+        }
+    }
+
+    @Test
+    void everyCefrLevelHasALocalizedName() {
+        for (CEFR level : CEFR.values()) {
+            L key = loc.getCefrLevel(level);
+            assertNotNull(key, level.name());
+            assertTrue(loc.getValue(key).startsWith(level.name()), level.name());
         }
     }
 }

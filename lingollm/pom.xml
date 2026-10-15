@@ -168,6 +168,20 @@
       <version>1.5.6</version>
     </dependency>
 
+    <!-- prompt templates ({{variable}}), see TemplateService -->
+    <dependency>
+      <groupId>com.github.jknack</groupId>
+      <artifactId>handlebars</artifactId>
+      <version>4.5.5</version>
+    </dependency>
+
+    <!-- cache of compiled templates (TemplateServiceImpl) -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>3.1.8</version>
+    </dependency>
+
     <!-- local token estimate (TokenEstimator) -->
     <dependency>
       <groupId>com.knuddels</groupId>

@@ -31,6 +31,7 @@ class TestCrudTest extends ExtendableCrudContract<Test> {
         test.setLanguage(languageService.save(language));
         test.setName("Articles");
         test.setDescription("der, die, das");
+        test.setReasoning("The articles first");
         return test;
     }
 
@@ -38,6 +39,7 @@ class TestCrudTest extends ExtendableCrudContract<Test> {
     protected void assertCreated(Test loaded) {
         assertThat(loaded.getName()).isEqualTo("Articles");
         assertThat(loaded.getDescription()).isEqualTo("der, die, das");
+        assertThat(loaded.getReasoning()).isEqualTo("The articles first");
         assertThat(loaded.getLanguage()).isNotNull();
     }
 

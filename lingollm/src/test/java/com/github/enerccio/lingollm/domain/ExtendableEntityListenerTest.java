@@ -5,6 +5,7 @@ import com.github.enerccio.lingollm.domain.model.ExtendableEntity;
 import com.github.enerccio.lingollm.domain.model.ImageAttachment;
 import com.github.enerccio.lingollm.domain.model.impl.FreeChatMessage;
 import com.github.enerccio.lingollm.domain.model.impl.Language;
+import com.github.enerccio.lingollm.ui.lang.LanguageDefaults;
 import com.github.enerccio.lingollm.domain.traits.ExtendedAttribute;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,7 +39,9 @@ class ExtendableEntityListenerTest {
     void roundTripsStringsWithSpecialCharacters() throws Exception {
         Language language = new Language();
         language.setNote("Write \"more\"\nwith ünïcödé ✓");
-        language.setDefaults("{\"a\": 1}");
+        LanguageDefaults defaults = new LanguageDefaults();
+        defaults.setGaugeTestPrompt("Test \"{{language}}\"\nlevel");
+        language.setDefaults(defaults);
 
         listener.serialize(language);
 
@@ -46,7 +49,8 @@ class ExtendableEntityListenerTest {
         loaded.setExtendedContent(language.getExtendedContent());
         listener.deserialize(loaded);
         assertThat(loaded.getNote()).isEqualTo("Write \"more\"\nwith ünïcödé ✓");
-        assertThat(loaded.getDefaults()).isEqualTo("{\"a\": 1}");
+        assertThat(loaded.getDefaults().getGaugeTestPrompt()).isEqualTo("Test \"{{language}}\"\nlevel");
+        assertThat(loaded.getDefaults().getFreeChatTemplate()).isNull();
     }
 
     @Test

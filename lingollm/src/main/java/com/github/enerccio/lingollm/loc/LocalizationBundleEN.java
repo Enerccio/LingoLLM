@@ -171,6 +171,7 @@ public class LocalizationBundleEN extends LocalizationBundleBase {
         setValue(L.LABEL_LANGUAGE_TEMPLATE, "Language");
         setValue(L.LABEL_LANGUAGE_PROFILE, "Language profile");
         setValue(L.LABEL_FREE_CHAT, "Free chat");
+        setValue(L.LABEL_LEVEL_TEST, "Level test");
 
 
         // --- ENUM ---

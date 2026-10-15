@@ -51,7 +51,8 @@ public interface InferenceService {
     /**
      * Asks for the whole answer at once instead of a stream. Still asynchronous: the call returns at once and the
      * callback gets the text when the model is done. Sampling parameters, limits and usage counting are those of
-     * {@link #stream(List, InferenceAsyncCallback)}. Reasoning is not part of the result.
+     * {@link #stream(List, InferenceAsyncCallback)}. The reasoning, if the provider sends it, goes to
+     * {@link InferenceOutcomeCallback#onReasoning} before the result.
      *
      * @param schema JSON schema the answer must match, null for any text. The provider is asked to follow it
      *               (response format), and the answer is checked against it either way: the callback learns from
@@ -111,6 +112,11 @@ public interface InferenceService {
             @Override
             public void onFunctionCall(LLMToolCall call, String result, boolean failed) throws Exception {
                 callback.onFunctionCall(call, result, failed);
+            }
+
+            @Override
+            public void onReasoning(String reasoning) throws Exception {
+                callback.onReasoning(reasoning);
             }
 
             @Override
@@ -188,6 +194,13 @@ public interface InferenceService {
 
         /** Same as {@link InferenceAsyncCallback#onFunctionCall}. */
         default void onFunctionCall(LLMToolCall call, String result, boolean failed) throws Exception {
+        }
+
+        /**
+         * What the model reasoned before it answered, when the provider sends it. Called just before the result, and
+         * only when there is some; for a request with function calls it is the reasoning of the last round.
+         */
+        default void onReasoning(String reasoning) throws Exception {
         }
 
     }
