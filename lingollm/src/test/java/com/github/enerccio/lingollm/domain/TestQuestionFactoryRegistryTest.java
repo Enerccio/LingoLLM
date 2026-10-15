@@ -41,9 +41,7 @@ class TestQuestionFactoryRegistryTest extends LingoLLMTestBase {
     }
 
     private static LanguageString text(String raw) {
-        LanguageString string = new LanguageString();
-        string.setRawString(raw);
-        return string;
+        return LanguageString.of(raw);
     }
 
     /** Not known to the application until it is registered. */
@@ -96,7 +94,7 @@ class TestQuestionFactoryRegistryTest extends LingoLLMTestBase {
         TestQuestion question = new TestQuestion();
         question.setLanguage(test.getLanguage());
         question.setParentTest(test);
-        question.setFactory(SingleChoiceFactory.class.getName());
+        question.setTestQuestionFactory(SingleChoiceFactory.class.getName());
         question = questionService.save(question);
 
         TestQuestionHandler<?> handler = registry.getFactory(question).createHandler(test, question);
@@ -106,7 +104,7 @@ class TestQuestionFactoryRegistryTest extends LingoLLMTestBase {
         handler.save();
 
         TestQuestion loaded = questionService.find(question.getId());
-        assertThat(loaded.getFactory()).isEqualTo(SingleChoiceFactory.class.getName());
+        assertThat(loaded.getTestQuestionFactory()).isEqualTo(SingleChoiceFactory.class.getName());
         String data = loaded.getAttributes().get("$testData").toString();
         assertThat(data).contains("Pick the verb").contains("taberu").contains("\"correctAnswer\":1");
     }

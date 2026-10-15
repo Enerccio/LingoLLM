@@ -8,7 +8,8 @@ import com.github.enerccio.lingollm.domain.traits.ExtendedAttribute;
 import jakarta.persistence.*;
 
 /**
- * A question of a {@link Test}.
+ * A question of a {@link Test}, in a {@link TestQuestionGroup}. The questions of a group follow their {@link #getOrdinal()
+ * ordinal}.
  */
 @Entity
 @Table(name = "test_questions")
@@ -19,6 +20,11 @@ public class TestQuestion extends LanguageBoundEntity {
     @CleanupReference(Policy.OWNED_BY)
     private Test parentTest;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "questionGroup_id")
+    @CleanupReference(Policy.OWNED_BY)
+    private TestQuestionGroup questionGroup;
+
     @ExtendedAttribute
     @Transient
     private String testQuestionFactory;
@@ -26,7 +32,7 @@ public class TestQuestion extends LanguageBoundEntity {
     @Transient
     private TestQuestionFactory cachedFactory;
 
-    // position in the test
+    // position in the group
     private Integer ordinal;
 
     public Test getParentTest() {
@@ -35,6 +41,17 @@ public class TestQuestion extends LanguageBoundEntity {
 
     public void setParentTest(Test parentTest) {
         this.parentTest = parentTest;
+    }
+
+    /**
+     * @return the group the question belongs to, what the question is shown with
+     */
+    public TestQuestionGroup getQuestionGroup() {
+        return questionGroup;
+    }
+
+    public void setQuestionGroup(TestQuestionGroup questionGroup) {
+        this.questionGroup = questionGroup;
     }
 
     public Integer getOrdinal() {

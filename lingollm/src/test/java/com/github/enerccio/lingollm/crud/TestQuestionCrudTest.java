@@ -56,14 +56,14 @@ class TestQuestionCrudTest extends ExtendableCrudContract<TestQuestion> {
         question.setLanguage(test.getLanguage());
         question.setParentTest(test);
         question.setOrdinal(1);
-        question.setFactory("some.Factory");
+        question.setTestQuestionFactory("some.Factory");
         return question;
     }
 
     @Override
     protected void assertCreated(TestQuestion loaded) {
         assertThat(loaded.getOrdinal()).isEqualTo(1);
-        assertThat(loaded.getFactory()).isEqualTo("some.Factory");
+        assertThat(loaded.getTestQuestionFactory()).isEqualTo("some.Factory");
         assertThat(loaded.getParentTest()).isNotNull();
     }
 

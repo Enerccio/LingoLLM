@@ -15,12 +15,17 @@ anything specific to its stories); the database starts at `V1`.
 - Tests: language bound entities `Test`, `TestQuestion`, `TestResult` (an attempt) and `TestQuestionResult` (an answer)
   with their repositories and services (tables added to `V1`). Deleting a test, soft or hard, deletes its questions,
   attempts and answers; deleting an attempt deletes its answers; deleting a language profile soft deletes them too.
+- `LanguageString` is read only and carries metadata: a list of `LanguageStringMetadata` (type, `[start, end)` over the raw
+  string, a string value whose meaning belongs to the type) kept apart from the text. Create it with
+  `LanguageString.builder()` / `LanguageString.of(...)`; any number of metadata may be added. For Japanese,
+  `Furigana` adds and reads metadata of the type `furigana` (the value is the reading, not checked: a model may answer
+  with anything).
 - Question groups: `TestQuestionGroup` (a group of questions of a test that share something, e.g. a text to read; the
   questions are ordered by the ordinal of the group, then their own) with `TestQuestionGroupService`. Like questions,
   groups have a factory (`TestQuestionGroupFactory`, resolved by `TestQuestionGroupFactoryRegistry`; built-in
   `PlainGroupFactory` and `ReadingTextGroupFactory`), so extensions can add group types (audio...). Deleting a test
   deletes its groups too (table `test_question_groups` and column `test_questions.questionGroup_id` in `V1`).
-- Test questions: `TestQuestion.factory` names the `TestQuestionFactory` (`SingleChoiceFactory`, `MultipleChoiceFactory`,
+- Test questions: `TestQuestion.testQuestionFactory` names the `TestQuestionFactory` (`SingleChoiceFactory`, `MultipleChoiceFactory`,
   `ReadingComprehensionWithSingleChoiceFactory`, `ReadingComprehensionWithMultipleChoicesFactory`) and `TestQuestionFactoryRegistry` resolves and caches factories by class name. Extensions register
   their own factories with `register` and remove them with `unregister` when unloaded.
 - `@ExtendedAttribute(inject = true)` also works on POJO fields (and lists, maps...), not only on `JsonObject`: they are

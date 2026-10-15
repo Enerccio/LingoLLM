@@ -17,7 +17,7 @@ public class TestQuestionFactoryRegistryImpl implements TestQuestionFactoryRegis
 
     @Override
     public TestQuestionFactory getFactory(TestQuestion question) {
-        return question == null ? null : getFactory(question.getFactory());
+        return question == null ? null : getFactory(question.getTestQuestionFactory());
     }
 
     @Override

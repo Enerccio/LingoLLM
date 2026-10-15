@@ -53,16 +53,14 @@ class TestQuestionHandlersTest extends LingoLLMTestBase {
     }
 
     private static LanguageString text(String raw) {
-        LanguageString string = new LanguageString();
-        string.setRawString(raw);
-        return string;
+        return LanguageString.of(raw);
     }
 
     private TestQuestion question(Class<? extends TestQuestionFactory> factory) throws Exception {
         TestQuestion question = new TestQuestion();
         question.setLanguage(test.getLanguage());
         question.setParentTest(test);
-        question.setFactory(factory.getName());
+        question.setTestQuestionFactory(factory.getName());
         return questionService.save(question);
     }
 

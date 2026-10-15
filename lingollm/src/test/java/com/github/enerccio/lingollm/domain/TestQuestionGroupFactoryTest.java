@@ -49,9 +49,7 @@ class TestQuestionGroupFactoryTest extends LingoLLMTestBase {
     }
 
     private static LanguageString text(String raw) {
-        LanguageString string = new LanguageString();
-        string.setRawString(raw);
-        return string;
+        return LanguageString.of(raw);
     }
 
     private TestQuestionGroup group(Class<? extends TestQuestionGroupFactory> factory) throws Exception {
